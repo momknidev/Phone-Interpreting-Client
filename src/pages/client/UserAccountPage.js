@@ -53,14 +53,14 @@ export default function UserAccountPage() {
   return (
     <>
       <Helmet>
-        <title> User: Account Settings | Telephone Mediation App</title>
+        <title> Account Settings | Telephone Mediation App</title>
       </Helmet>
 
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
           heading="Account"
           links={[
-            { name: 'Dashboard', href: PATH_DASHBOARD.intranetDashboard },
+            { name: 'Dashboard', href: PATH_DASHBOARD.clientDashboard },
             { name: 'Account Settings' },
           ]}
         />
