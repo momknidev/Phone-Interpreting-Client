@@ -63,7 +63,7 @@ export default function AuthLoginForm() {
         });
         return;
       }
-      const token = responseData?.loginPortal?.token;
+      const token = responseData?.login?.token;
 
       if (token) {
         await login(token);

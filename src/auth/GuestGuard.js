@@ -14,10 +14,17 @@ GuestGuard.propTypes = {
 };
 
 export default function GuestGuard({ children }) {
-  const { isAuthenticated, isInitialized } = useAuthContext();
-
+  const { isAuthenticated, isInitialized, user } = useAuthContext();
   if (isAuthenticated) {
-    return <Navigate to={PATH_DASHBOARD.root} />;
+    let redirectPath = '/';
+
+    if (user?.role === 'admin') {
+      redirectPath = PATH_DASHBOARD.adminDashboard;
+    } else if (user?.role === 'client') {
+      redirectPath = PATH_DASHBOARD.clientDashboard;
+    }
+
+    return <Navigate to={redirectPath} />;
   }
 
   if (!isInitialized) {

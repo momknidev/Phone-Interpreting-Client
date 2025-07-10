@@ -4,9 +4,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 // components
 import LoadingScreen from '../components/loading-screen';
 //
-import ClientLogin from '../pages/auth/LoginPage';
-// import IntranetLogin from '../pages/auth/intranet/LoginPage';
-// import MediatorLogin from '../pages/auth/mediator/LoginPage';
+import Login from '../pages/auth/LoginPage';
 import { useAuthContext } from './useAuthContext';
 import RoleBasedGuard from './RoleBasedGuard';
 
@@ -33,7 +31,7 @@ export default function AuthGuard({ children, type, roles }) {
     if (pathname !== requestedLocation) {
       setRequestedLocation(pathname);
     }
-    return <ClientLogin />;
+    return <Login />;
   }
 
   if (requestedLocation && pathname !== requestedLocation) {

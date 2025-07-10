@@ -1,7 +1,7 @@
 import { Navigate, useRoutes } from 'react-router-dom';
 // auth
 import AuthGuard from '../auth/AuthGuard';
-import GuestGuard from '../auth/ClientGuard';
+import GuestGuard from '../auth/GuestGuard';
 
 // layouts
 import CompactLayout from '../layouts/compact';
@@ -47,7 +47,7 @@ export default function Router() {
         {
           path: 'app',
           element: (
-            <RoleBasedGuard roles={['admin', 'user']} hasContent>
+            <RoleBasedGuard roles={['admin']} hasContent>
               <DashboardPage />{' '}
             </RoleBasedGuard>
           ),
@@ -56,7 +56,7 @@ export default function Router() {
         {
           path: 'profile',
           element: (
-            <RoleBasedGuard roles={['admin', 'user']} hasContent>
+            <RoleBasedGuard roles={['admin']} hasContent>
               <AdminAccountPage />
             </RoleBasedGuard>
           ),
@@ -76,7 +76,7 @@ export default function Router() {
         {
           path: 'app',
           element: (
-            <RoleBasedGuard hasContent roles={['admin', 'user']}>
+            <RoleBasedGuard hasContent roles={['client']}>
               <ClientDashboardPage />
             </RoleBasedGuard>
           ),

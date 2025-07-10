@@ -50,7 +50,7 @@ export default function RoleBasedGuard({ hasContent, roles, type, children }) {
               color: 'text.primary',
             }}
           >
-            You are logged in as {user?.type}, this route is not accessible to you.
+            This route is not accessible to you.
           </Typography>
         </m.div>
 
@@ -64,7 +64,7 @@ export default function RoleBasedGuard({ hasContent, roles, type, children }) {
           <ForbiddenIllustration sx={{ height: 260, my: { xs: 5, sm: 10 } }} />
         </m.div>
         <m.div variants={varBounce().in}>
-          <Button variant="contained" size="large" component={Link} href={`/${user?.type}/app`}>
+          <Button variant="contained" size="large" component={Link} href="/">
             Go to Home
           </Button>
         </m.div>

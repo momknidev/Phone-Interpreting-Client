@@ -21,22 +21,7 @@ export default function AccountPopover() {
   const navigate = useNavigate();
 
   const { user, logout } = useAuthContext();
-  // let link = '';
-  // const type = user?.type;
-  // if (type === 'mediator') {
-  //   link = PATH_DASHBOARD.mediatorProfile;
-  // } else if (type === 'client') {
-  //   link = PATH_DASHBOARD.clientProfile;
-  // } else if (type === 'intranet') {
-  //   link = PATH_DASHBOARD.intranetProfile;
-  // }
 
-  // const OPTIONS = [
-  //   {
-  //     label: 'Account',
-  //     linkTo: link,
-  //   },
-  // ];
   const { enqueueSnackbar } = useSnackbar();
 
   const [openPopover, setOpenPopover] = useState(null);
@@ -85,13 +70,17 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <CustomAvatar src={user?.photoURL} alt={user?.displayName} name={user?.displayName} />
+        <CustomAvatar
+          src={user?.photoURL}
+          alt={user?.firstName || ` `` ${user?.lastName}` || ''}
+          name={user?.firstName || ` `` ${user?.lastName}` || ''}
+        />
       </IconButtonAnimate>
 
       <MenuPopover open={openPopover} onClose={handleClosePopover} sx={{ width: 200, p: 0 }}>
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {user?.displayName}
+            {user?.firstName || ` `` ${user?.lastName}` || ''}
           </Typography>
 
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>

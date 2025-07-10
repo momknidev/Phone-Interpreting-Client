@@ -10,13 +10,7 @@ import { PATH_DASHBOARD } from '../../../routes/paths';
 import { CustomAvatar } from '../../../components/custom-avatar';
 
 // ----------------------------------------------------------------------
-const roleTranslation = {
-  client: 'Cliente',
-  mediator: 'Mediatore',
-  intranet: 'Intranet',
-  admin: 'Admin',
-  user: 'User',
-};
+
 const StyledRoot = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
@@ -30,21 +24,16 @@ const StyledRoot = styled('div')(({ theme }) => ({
 export default function NavAccount() {
   const { user } = useAuthContext();
 
-  // Check if the user exists and has a valid type
   if (!user || !user.type) {
-    return null; // You can return null or render a fallback UI if needed
+    return null;
   }
-
-  // Dynamically set the link based on the user type
   let link = '';
   const type = user?.type;
 
-  if (type === 'mediator') {
-    link = PATH_DASHBOARD.mediatorProfile;
+  if (type === 'admin') {
+    link = PATH_DASHBOARD.adminDashboard;
   } else if (type === 'client') {
     link = PATH_DASHBOARD.clientProfile;
-  } else if (type === 'intranet') {
-    link = PATH_DASHBOARD.intranetProfile;
   }
 
   if (!link) {
@@ -54,15 +43,19 @@ export default function NavAccount() {
   return (
     <Link component={RouterLink} to={link} underline="none" color="inherit">
       <StyledRoot>
-        <CustomAvatar src={user?.photoURL} alt={user?.displayName} name={user?.displayName} />
+        <CustomAvatar
+          src={user?.photoURL}
+          alt={user?.firstName || ` `` ${user?.lastName}` || ''}
+          name={user?.firstName || ` `` ${user?.lastName}` || ''}
+        />
 
         <Box sx={{ ml: 2, minWidth: 0 }}>
           <Typography variant="subtitle2" noWrap>
-            {user?.displayName}
+            {user?.firstName || ` `` ${user?.lastName}` || ''}
           </Typography>
 
           <Typography variant="body2" noWrap sx={{ color: 'text.secondary' }}>
-            {roleTranslation[user?.role]}
+            {user?.role}
           </Typography>
         </Box>
       </StyledRoot>
