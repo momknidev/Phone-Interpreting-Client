@@ -38,11 +38,31 @@ export default function ClientCreateEditForm({ isEdit = false, currentUser }) {
     phone: Yup.string().required('Phone is required'),
     password: isEdit
       ? Yup.string()
-          .min(8, 'Password must be at least 8 characters')
-          .matches(/[a-zA-Z]/, 'Password must contain at least one letter')
-          .matches(/[0-9]/, 'Password must contain at least one number')
-          .matches(/(?=.*[!@#$%^&*])/, 'Password must contain at least one special character')
           .nullable()
+          .transform((value) => (value === '' ? null : value))
+          .test('password-validation', 'Password must meet requirements', (value, context) => {
+            // Skip validation if password is null or empty
+            if (!value) return true;
+
+            // Validate only if there's a value
+            const hasMinLength = value.length >= 8;
+            const hasLetter = /[a-zA-Z]/.test(value);
+            const hasNumber = /[0-9]/.test(value);
+            const hasSpecialChar = /[!@#$%^&*]/.test(value);
+
+            if (!hasMinLength)
+              return context.createError({ message: 'Password must be at least 8 characters' });
+            if (!hasLetter)
+              return context.createError({ message: 'Password must contain at least one letter' });
+            if (!hasNumber)
+              return context.createError({ message: 'Password must contain at least one number' });
+            if (!hasSpecialChar)
+              return context.createError({
+                message: 'Password must contain at least one special character',
+              });
+
+            return true;
+          })
       : Yup.string()
           .required('Password is required')
           .min(8, 'Password must be at least 8 characters')
@@ -58,7 +78,7 @@ export default function ClientCreateEditForm({ isEdit = false, currentUser }) {
       lastName: currentUser?.lastName || '',
       phone: currentUser?.phone || '',
       email: currentUser?.email || '',
-      password: '',
+      password: null,
     }),
     [currentUser]
   );
@@ -91,13 +111,13 @@ export default function ClientCreateEditForm({ isEdit = false, currentUser }) {
             userDetails: {
               firstName: data.firstName,
               lastName: data.lastName,
-              email: currentUser.email,
+              email: data.email,
               role: 'client',
               phone: data.phone,
               type: 'client',
               ...(data.password && { password: data.password }),
             },
-            file: data.avatarUrl ? data.avatarUrl[0] : null,
+            file: data.avatarUrl && typeof data.avatarUrl !== 'string' ? data.avatarUrl[0] : null,
           },
         });
         enqueueSnackbar('Update success!');
@@ -176,7 +196,7 @@ export default function ClientCreateEditForm({ isEdit = false, currentUser }) {
             >
               <RHFTextField name="firstName" label="First Name" />
               <RHFTextField name="lastName" label="Last Name" />
-              <RHFTextField name="email" label="Email Address" disabled={isEdit} />
+              <RHFTextField name="email" label="Email Address" />
               <RHFTextField name="phone" label="Phone Number" />
 
               <RHFTextField

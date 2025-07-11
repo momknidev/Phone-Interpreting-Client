@@ -71,10 +71,10 @@ export default function ClientListPage() {
   };
 
   const handleViewRow = (id) => {
-    navigate(PATH_DASHBOARD.clientUser.view(id));
+    navigate(PATH_DASHBOARD.adminClients.view(id));
   };
   const handleEditRow = (id) => {
-    navigate(PATH_DASHBOARD.clientUser.edit(id));
+    navigate(PATH_DASHBOARD.adminClients.edit(id));
   };
 
   const handleResetFilter = () => {

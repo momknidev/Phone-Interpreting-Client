@@ -31,7 +31,7 @@ export default function UserTableToolbar({ filterName, onFilterName }) {
         size="small"
         value={filterName}
         onChange={onFilterName}
-        placeholder="Cerca..."
+        placeholder="Search..."
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
