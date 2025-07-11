@@ -18,6 +18,10 @@ export const LoginPage = Loadable(lazy(() => import('../pages/auth/LoginPage')))
 
 // DASHBOARD: ADMIN
 export const DashboardPage = Loadable(lazy(() => import('../pages/admin/DashboardPage')));
+export const ClientCreatePage = Loadable(lazy(() => import('../pages/admin/ClientCreatePage')));
+export const ClientEditPage = Loadable(lazy(() => import('../pages/admin/ClientEditPage')));
+export const ClientListPage = Loadable(lazy(() => import('../pages/admin/ClientListPage')));
+export const ClientDetailPage = Loadable(lazy(() => import('../pages/admin/ClientDetailPage')));
 export const AdminAccountPage = Loadable(lazy(() => import('../pages/admin/UserAccountPage')));
 
 // DASHBOARD: CLIENT

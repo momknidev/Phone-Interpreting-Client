@@ -35,3 +35,33 @@ export const CLIENT_BY_ID = gql`
     }
   }
 `;
+export const CLIENTS_PAGINATED_LIST = gql`
+  query usersPaginatedList(
+    $offset: Int
+    $limit: Int
+    $order: String
+    $orderBy: String
+    $name: String
+    $type: String
+  ) {
+    usersPaginatedList(
+      offset: $offset
+      limit: $limit
+      order: $order
+      orderBy: $orderBy
+      name: $name
+      type: $type
+    ) {
+      users {
+        id
+        firstName
+        lastName
+        email
+        avatarUrl
+        phone
+        createdAt
+      }
+      filteredCount
+    }
+  }
+`;

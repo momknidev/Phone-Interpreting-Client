@@ -25,7 +25,15 @@ export const PATH_DASHBOARD = {
   // client paths
   clientDashboard: path(CLIENT_DASHBOARD, '/app'),
   clientProfile: path(CLIENT_DASHBOARD, '/profile'),
+
   // admin paths
   adminDashboard: path(ADMIN_DASHBOARD, '/app'),
   intranetProfile: path(ADMIN_DASHBOARD, '/profile'),
+  adminClients: {
+    root: path(ADMIN_DASHBOARD, '/client'),
+    new: path(ADMIN_DASHBOARD, '/client/new'),
+    list: path(ADMIN_DASHBOARD, '/client/list'),
+    edit: (id) => path(ADMIN_DASHBOARD, `/client/${id}/edit`),
+    detail: (id) => path(ADMIN_DASHBOARD, `/client/${id}`),
+  },
 };

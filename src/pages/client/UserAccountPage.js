@@ -14,7 +14,7 @@ import { useSettingsContext } from '../../components/settings';
 import {
   AccountGeneral,
   AccountChangePassword,
-} from '../../sections/@dashboard/admin/user/account';
+} from '../../sections/@dashboard/admin/profile/account';
 import { CLIENT_BY_ID } from '../../graphQL/queries';
 import { useAuthContext } from '../../auth/useAuthContext';
 

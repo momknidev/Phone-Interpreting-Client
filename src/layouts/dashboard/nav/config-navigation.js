@@ -23,6 +23,21 @@ const navConfig = [
   // ----------------------------------------------------------------------
   {
     items: [
+      // Admin Items
+      {
+        title: 'Dashboard',
+        path: PATH_DASHBOARD.adminDashboard,
+        icon: ICONS.dashboard,
+        roles: ['admin'],
+        type: 'admin',
+      },
+      {
+        title: 'Client',
+        path: PATH_DASHBOARD.adminClients.list,
+        icon: ICONS.user,
+        roles: ['admin'],
+        type: 'admin',
+      },
       // Client Items
       {
         title: 'Dashboard',
@@ -30,14 +45,6 @@ const navConfig = [
         icon: ICONS.dashboard,
         roles: ['client'],
         type: 'client',
-      },
-
-      {
-        title: 'Dashboard',
-        path: PATH_DASHBOARD.adminDashboard,
-        icon: ICONS.dashboard,
-        roles: ['admin'],
-        type: 'admin',
       },
     ],
   },

@@ -17,6 +17,10 @@ import {
   ClientDashboardPage,
   AdminAccountPage,
   ClientAccountPage,
+  ClientListPage,
+  ClientCreatePage,
+  ClientDetailPage,
+  ClientEditPage,
 } from './elements';
 import RoleBasedGuard from '../auth/RoleBasedGuard';
 
@@ -48,11 +52,47 @@ export default function Router() {
           path: 'app',
           element: (
             <RoleBasedGuard roles={['admin']} hasContent>
-              <DashboardPage />{' '}
+              <DashboardPage />
             </RoleBasedGuard>
           ),
         },
-
+        {
+          path: 'client',
+          children: [
+            {
+              path: 'list',
+              element: (
+                <RoleBasedGuard roles={['admin']} hasContent>
+                  <ClientListPage />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: 'new',
+              element: (
+                <RoleBasedGuard roles={['admin']} hasContent>
+                  <ClientCreatePage />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: ':id',
+              element: (
+                <RoleBasedGuard roles={['admin']} hasContent>
+                  <ClientDetailPage />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: ':id/edit',
+              element: (
+                <RoleBasedGuard roles={['admin']} hasContent>
+                  <ClientEditPage />
+                </RoleBasedGuard>
+              ),
+            },
+          ],
+        },
         {
           path: 'profile',
           element: (
