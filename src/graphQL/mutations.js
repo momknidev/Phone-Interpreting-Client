@@ -61,3 +61,20 @@ export const UPDATE_USER_PASSWORD = gql`
     }
   }
 `;
+export const CHANGE_STATUS = gql`
+  mutation ChangeStatus($id: ID!, $status: String) {
+    changeStatus(id: $id, status: $status) {
+      id
+      firstName
+      lastName
+      email
+      avatarUrl
+      phone
+      role
+      type
+      createdAt
+      updatedAt
+      status
+    }
+  }
+`;

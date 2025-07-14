@@ -1,44 +1,95 @@
+import { useState } from 'react';
 /* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 // @mui
-import { Stack, Avatar, TableRow, TableCell, Typography, Link, IconButton } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import {
+  Stack,
+  Avatar,
+  TableRow,
+  TableCell,
+  Typography,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from '@mui/material';
+import { useSnackbar } from 'notistack';
+import { useMutation } from '@apollo/client';
+import { LoadingButton } from '@mui/lab';
 
 // components
 import Iconify from '../../../../../components/iconify';
-import { PATH_DASHBOARD } from '../../../../../routes/paths';
+import { CHANGE_STATUS } from '../../../../../graphQL/mutations';
+import Label from '../../../../../components/label';
 
 // ----------------------------------------------------------------------
 
 UserTableRow.propTypes = {
   row: PropTypes.object,
-  onViewRow: PropTypes.func,
   onEditRow: PropTypes.func,
-  onResetPassword: PropTypes.func,
+  onChangeStatus: PropTypes.func,
 };
 
-export default function UserTableRow({ row, onViewRow, onEditRow, onResetPassword }) {
-  const { email, avatarUrl, phone, firstName, lastName } = row;
+export default function UserTableRow({ row, onEditRow, onChangeStatus }) {
+  const { enqueueSnackbar } = useSnackbar();
+  const [changeStatus, { loading }] = useMutation(CHANGE_STATUS);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [statusToChange, setStatusToChange] = useState(null);
+
+  const handleOpenDialog = (newStatus) => {
+    setStatusToChange(newStatus);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const handleChangeStatus = async () => {
+    const { id } = row;
+    const status = statusToChange;
+
+    console.log({ id, status });
+
+    try {
+      await changeStatus({
+        variables: {
+          id,
+          status,
+        },
+      });
+      enqueueSnackbar(`Status updated`, {
+        variant: 'success',
+      });
+      row.status = status;
+
+      if (onChangeStatus) {
+        onChangeStatus();
+      }
+      // eslint-disable-next-line no-shadow
+    } catch (error) {
+      console.error('Error changing status:', error);
+      enqueueSnackbar(`Error changing status: ${error.message}`, {
+        variant: 'error',
+      });
+    }
+
+    handleCloseDialog();
+  };
+
+  const { email, avatarUrl, phone, firstName, lastName, status } = row;
 
   return (
     <TableRow hover>
       <TableCell sx={{ px: 1 }}>
         <Stack direction="row" alignItems="center" spacing={2}>
           <Avatar alt={firstName} src={avatarUrl} />
-          {/* <Link
-            component={RouterLink}
-            to={PATH_DASHBOARD.adminClients.detail(id)}
-            sx={{
-              color: 'text.blue',
-              textDecoration: 'none',
-              '&:hover': { color: 'text.primary', textDecoration: 'underline' },
-              '&:active': { color: 'text.primary', textDecoration: 'underline' },
-            }}
-          > */}
+
           <Typography variant="subtitle2" noWrap>
             {`${firstName} ${lastName}`}
           </Typography>
-          {/* </Link> */}
         </Stack>
       </TableCell>
 
@@ -50,12 +101,56 @@ export default function UserTableRow({ row, onViewRow, onEditRow, onResetPasswor
         {phone}
       </TableCell>
       <TableCell sx={{ px: 1 }} align="left">
+        <Label color={status === 'active' ? 'success' : 'error'}>{status}</Label>
+      </TableCell>
+      <TableCell sx={{ px: 1 }} align="left">
         <Stack direction="row" spacing={1}>
           <IconButton color="primary" onClick={onEditRow}>
             <Iconify icon="eva:edit-fill" />
           </IconButton>
+          <IconButton
+            color={status === 'active' ? 'error' : 'success'}
+            onClick={() => handleOpenDialog(status === 'active' ? 'in-active' : 'active')}
+            title={status === 'active' ? 'Change status to in-active' : 'Change status to active'}
+          >
+            <Iconify icon={status === 'active' ? 'eva:slash-fill' : 'eva:checkmark-fill'} />
+          </IconButton>
         </Stack>
       </TableCell>
+
+      {/* Confirmation Dialog */}
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Confirm Status Change</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to change the status to {statusToChange}?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <LoadingButton
+            loading={loading}
+            variant="outlined"
+            color="error"
+            onClick={handleCloseDialog}
+          >
+            Cancel
+          </LoadingButton>
+          <LoadingButton
+            loading={loading}
+            variant="contained"
+            onClick={handleChangeStatus}
+            color="primary"
+            autoFocus
+          >
+            Confirm
+          </LoadingButton>
+        </DialogActions>
+      </Dialog>
     </TableRow>
   );
 }

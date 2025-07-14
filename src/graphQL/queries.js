@@ -29,7 +29,7 @@ export const CLIENT_BY_ID = gql`
       phone
       role
       type
-      token
+      status
       createdAt
       updatedAt
     }
@@ -59,6 +59,7 @@ export const CLIENTS_PAGINATED_LIST = gql`
         email
         avatarUrl
         phone
+        status
         createdAt
       }
       filteredCount
