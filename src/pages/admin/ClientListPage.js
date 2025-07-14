@@ -92,7 +92,7 @@ export default function ClientListPage() {
 
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Client Users List"
+          heading="Client List"
           links={[{ name: 'Dashboard', href: PATH_DASHBOARD.root }, { name: 'List' }]}
           action={
             <Stack direction="row" spacing={2} alignItems="center">

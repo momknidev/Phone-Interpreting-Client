@@ -72,15 +72,15 @@ export default function AccountPopover() {
       >
         <CustomAvatar
           src={user?.photoURL}
-          alt={user?.firstName || ` `` ${user?.lastName}` || ''}
-          name={user?.firstName || ` `` ${user?.lastName}` || ''}
+          alt={`${user?.firstName || ' '}   ${user?.lastName || ''}`}
+          name={`${user?.firstName || ' '}   ${user?.lastName || ''}`}
         />
       </IconButtonAnimate>
 
       <MenuPopover open={openPopover} onClose={handleClosePopover} sx={{ width: 200, p: 0 }}>
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {user?.firstName || ` `` ${user?.lastName}` || ''}
+            {`${user?.firstName || ' '}   ${user?.lastName || ''}`}
           </Typography>
 
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
@@ -88,18 +88,10 @@ export default function AccountPopover() {
           </Typography>
         </Box>
 
-        {/* <Stack sx={{ p: 1 }}>
-          {OPTIONS.map((option) => (
-            <MenuItem key={option.label} onClick={() => handleClickItem(option.linkTo)}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </Stack> */}
-
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <MenuItem onClick={handleLogout} sx={{ m: 1 }}>
-          Esci
+          Logout
         </MenuItem>
       </MenuPopover>
     </>
