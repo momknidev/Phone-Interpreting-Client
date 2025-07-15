@@ -33,6 +33,7 @@ export const PATH_DASHBOARD = {
     edit: (id) => path(CLIENT_DASHBOARD, `/mediator/${id}/edit`),
     view: (id) => path(CLIENT_DASHBOARD, `/mediator/${id}`),
   },
+  languageList: path(CLIENT_DASHBOARD, '/language'),
 
   // admin paths
   adminDashboard: path(ADMIN_DASHBOARD, '/app'),

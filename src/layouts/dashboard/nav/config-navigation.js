@@ -16,6 +16,7 @@ const ICONS = {
   dashboard: icon('ic_dashboard'),
   invoice: icon('ic_invoice'),
   calendar: icon('ic_calendar'),
+  language: icon('ic_language'),
 };
 
 const navConfig = [
@@ -43,6 +44,13 @@ const navConfig = [
         title: 'Dashboard',
         path: PATH_DASHBOARD.clientDashboard,
         icon: ICONS.dashboard,
+        roles: ['client'],
+        type: 'client',
+      },
+      {
+        title: 'Language',
+        path: PATH_DASHBOARD.languageList,
+        icon: ICONS.language,
         roles: ['client'],
         type: 'client',
       },

@@ -1,5 +1,8 @@
 {
   "javascript.validate.enable": false,
   "typescript.validate.enable": false,
-  "prettier.enable": true
+  "prettier.enable": true,
+  "editor.tabCompletion": "on",
+  "editor.suggest.insertMode": "insert",
+  "editor.suggest.showIssues": true
 }
