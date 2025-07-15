@@ -25,6 +25,14 @@ export const PATH_DASHBOARD = {
   // client paths
   clientDashboard: path(CLIENT_DASHBOARD, '/app'),
   clientProfile: path(CLIENT_DASHBOARD, '/profile'),
+  mediator: {
+    root: path(CLIENT_DASHBOARD, '/mediator'),
+    new: path(CLIENT_DASHBOARD, '/mediator/new'),
+    list: path(CLIENT_DASHBOARD, '/mediator/list'),
+    group: path(CLIENT_DASHBOARD, '/mediator/group'),
+    edit: (id) => path(CLIENT_DASHBOARD, `/mediator/${id}/edit`),
+    view: (id) => path(CLIENT_DASHBOARD, `/mediator/${id}`),
+  },
 
   // admin paths
   adminDashboard: path(ADMIN_DASHBOARD, '/app'),

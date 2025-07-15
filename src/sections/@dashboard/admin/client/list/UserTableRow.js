@@ -68,7 +68,6 @@ export default function UserTableRow({ row, onEditRow, onChangeStatus }) {
       if (onChangeStatus) {
         onChangeStatus();
       }
-      // eslint-disable-next-line no-shadow
     } catch (error) {
       console.error('Error changing status:', error);
       enqueueSnackbar(`Error changing status: ${error.message}`, {

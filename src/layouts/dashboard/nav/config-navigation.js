@@ -46,6 +46,17 @@ const navConfig = [
         roles: ['client'],
         type: 'client',
       },
+      {
+        title: 'Mediator',
+        path: PATH_DASHBOARD.mediator.root,
+        icon: ICONS.user,
+        roles: ['client'],
+        type: 'client',
+        children: [
+          { title: 'list', path: PATH_DASHBOARD.mediator.list },
+          { title: 'group', path: PATH_DASHBOARD.mediator.group },
+        ],
+      },
     ],
   },
 ];

@@ -1,0 +1,57 @@
+import { Helmet } from 'react-helmet-async';
+import { useParams } from 'react-router-dom';
+// @mui
+import { Container, Skeleton } from '@mui/material';
+import { useQuery } from '@apollo/client';
+
+// routes
+import { PATH_DASHBOARD } from '../../routes/paths';
+// _mock_
+// components
+import { useSettingsContext } from '../../components/settings';
+import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
+// sections
+import MediatorNewEditForm from '../../sections/@dashboard/client/mediator/MediatorNewEditForm';
+import { MEDIATOR_BY_ID } from '../../graphQL/queries';
+
+// ----------------------------------------------------------------------
+
+export default function MediatorEditPage() {
+  const { themeStretch } = useSettingsContext();
+  const { id } = useParams();
+  const { data, loading, error } = useQuery(MEDIATOR_BY_ID, {
+    variables: { id },
+    fetchPolicy: 'no-cache',
+  });
+  if (error) {
+    return `Error: ${error?.message}`;
+  }
+  return (
+    <>
+      <Helmet>
+        <title> Mediators: Edit Mediators | Telephone Mediator App</title>
+      </Helmet>
+
+      <Container maxWidth={themeStretch ? false : 'lg'}>
+        <CustomBreadcrumbs
+          heading="Edit Mediators"
+          links={[
+            {
+              name: 'Dashboard',
+              href: PATH_DASHBOARD.clientDashboard,
+            },
+            {
+              name: 'Mediators',
+              href: PATH_DASHBOARD.mediator.list,
+            },
+            { name: data?.mediatorById?.firstName },
+          ]}
+        />
+        {loading && !data && !error && <Skeleton height={300} width="100%" />}
+        {!loading && data && !error && (
+          <MediatorNewEditForm isEdit currentMediator={data?.mediatorById} />
+        )}
+      </Container>
+    </>
+  );
+}

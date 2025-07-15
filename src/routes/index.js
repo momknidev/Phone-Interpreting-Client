@@ -21,6 +21,11 @@ import {
   ClientCreatePage,
   ClientDetailPage,
   ClientEditPage,
+  MediatorGroupPage,
+  MediatorCreatePage,
+  MediatorEditPage,
+  MediatorViewPage,
+  MediatorListPage,
 } from './elements';
 import RoleBasedGuard from '../auth/RoleBasedGuard';
 
@@ -121,8 +126,59 @@ export default function Router() {
             </RoleBasedGuard>
           ),
         },
-
-        { path: 'profile', element: <ClientAccountPage /> },
+        {
+          path: 'mediator',
+          children: [
+            {
+              path: 'group',
+              element: (
+                <RoleBasedGuard roles={['client']} hasContent>
+                  <MediatorGroupPage />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: 'list',
+              element: (
+                <RoleBasedGuard roles={['client']} hasContent>
+                  <MediatorListPage />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: 'new',
+              element: (
+                <RoleBasedGuard roles={['client']} hasContent>
+                  <MediatorCreatePage />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: ':id/edit',
+              element: (
+                <RoleBasedGuard roles={['client']} hasContent>
+                  <MediatorEditPage />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: ':id',
+              element: (
+                <RoleBasedGuard roles={['client']} hasContent>
+                  <MediatorViewPage />
+                </RoleBasedGuard>
+              ),
+            },
+          ],
+        },
+        {
+          path: 'profile',
+          element: (
+            <RoleBasedGuard hasContent roles={['client']}>
+              <ClientAccountPage />{' '}
+            </RoleBasedGuard>
+          ),
+        },
       ],
     },
 
