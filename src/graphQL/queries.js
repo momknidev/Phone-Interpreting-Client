@@ -214,6 +214,7 @@ export const MEDIATORS_PAGINATED_LIST = gql`
         availableForEmergencies
         availableOnHolidays
         priority
+        groupIDs
       }
     }
   }

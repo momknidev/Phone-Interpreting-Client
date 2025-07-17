@@ -34,6 +34,7 @@ const TABLE_HEAD = [
   { id: 'firstName', label: 'Mediator', align: 'left' },
   { id: '', label: 'Email', align: 'left' },
   { id: '', label: 'Phone No.', align: 'left' },
+  { id: '', label: 'Groups.', align: 'left' },
   { id: '', label: 'Languages', align: 'left' },
   { id: '' },
 ];

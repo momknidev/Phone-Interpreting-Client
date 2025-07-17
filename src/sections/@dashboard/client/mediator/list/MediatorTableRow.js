@@ -50,6 +50,7 @@ export default function MediatorTableToolbar({
     targetLanguage2,
     targetLanguage3,
     targetLanguage4,
+    groupIDs,
   } = row;
 
   const [openPopover, setOpenPopover] = useState(null);
@@ -106,11 +107,13 @@ export default function MediatorTableToolbar({
         <TableCell sx={{ px: 1 }} align="left">
           {phone}
         </TableCell>
-
+        <TableCell sx={{ px: 1 }} align="left">
+          {groupIDs?.join(', ') || 'No Groups'}
+        </TableCell>
         <TableCell align="left" sx={{ textTransform: 'capitalize', px: 1 }}>
           {[targetLanguage1, targetLanguage2, targetLanguage3, targetLanguage4]
             .filter((lang) => lang != null && lang !== undefined)
-            .join(', ')}{' '}
+            .join(', ')}
         </TableCell>
 
         <TableCell sx={{ px: 1 }} align="right">
