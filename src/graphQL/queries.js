@@ -115,6 +115,7 @@ export const MEDIATOR_BY_ID = gql`
       sourceLanguage4
       targetLanguage4
       createdAt
+      groupIDs
       updatedAt
       status
       monday_time_slots
@@ -252,6 +253,20 @@ export const LANGUAGE_BY_ID = gql`
       language_name
       created_at
       updated_at
+    }
+  }
+`;
+
+export const ALL_GROUPS = gql`
+  query AllGroups {
+    allGroups {
+      id
+      groupName
+      status
+      user
+      userID
+      createdAt
+      updatedAt
     }
   }
 `;

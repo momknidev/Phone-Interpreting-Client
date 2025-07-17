@@ -36,7 +36,7 @@ import FormProvider, {
   RHFCheckbox,
 } from '../../../../components/hook-form';
 import { ADD_MEDIATOR, UPDATE_MEDIATOR } from '../../../../graphQL/mutations';
-import { ALL_LANGUAGES } from '../../../../graphQL/queries';
+import { ALL_GROUPS, ALL_LANGUAGES } from '../../../../graphQL/queries';
 import { PATH_DASHBOARD } from '../../../../routes/paths';
 import Iconify from '../../../../components/iconify';
 
@@ -73,6 +73,7 @@ const marks = [
 export default function MediatorNewEditForm({ isEdit = false, currentMediator }) {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const { data, error, loading } = useQuery(ALL_GROUPS);
   const [editMediator] = useMutation(UPDATE_MEDIATOR);
   const [addMediator] = useMutation(ADD_MEDIATOR);
   const { data: languagesData, loading: languagesLoading } = useQuery(ALL_LANGUAGES);
@@ -90,7 +91,6 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
     saturday: parseTimeSlots(currentMediator?.saturday_time_slots || ''),
     sunday: parseTimeSlots(currentMediator?.sunday_time_slots || ''),
   });
-  console.log({ timeSlots });
   // Function to parse time slots from the database format "HH:MM-HH:MM,HH:MM-HH:MM"
   function parseTimeSlots(slotsString) {
     if (!slotsString) return [];
@@ -140,9 +140,6 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
 
     const startMinutes = convertTimeToMinutes(start);
     const endMinutes = convertTimeToMinutes(end);
-    console.log({ startMinutes, endMinutes });
-    console.log({ start, end });
-    console.log({ isValid: startMinutes < endMinutes });
     return startMinutes < endMinutes;
   }
 
@@ -209,6 +206,16 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
     }
   }, [languagesData]);
 
+  useEffect(() => {
+    if (data?.allGroups) {
+      const groupIDs = currentMediator?.groupIDs || [];
+      const groups = Array.isArray(data.allGroups) ? data.allGroups : [];
+      const groupValue = groups.filter((group) => groupIDs.includes(group.id));
+      console.log({ groupValue });
+      setValue('group', groupValue);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
   const NewUserSchema = Yup.object().shape({
     avatarUrl: Yup.mixed().nullable(),
     firstName: Yup.string().required('First name is required'),
@@ -222,6 +229,7 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
       .of(Yup.object()),
     availableOnHolidays: Yup.boolean(),
     availableForEmergencies: Yup.boolean(),
+    group: Yup.array().required('Group is required').min(1, 'At least one group is required'),
     priority: Yup.number().nullable().required('Priority is required'),
   });
 
@@ -242,6 +250,7 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
       email: currentMediator?.email || '',
       phone: currentMediator?.phone || '',
       IBAN: currentMediator?.IBAN || '',
+      group: [],
       targetLanguage: [],
       availableOnHolidays: currentMediator?.availableOnHolidays || false,
       availableForEmergencies: currentMediator?.availableForEmergencies || false,
@@ -260,10 +269,10 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
     setValue,
     handleSubmit,
     watch,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = methods;
   const values = watch();
-
+  console.log({ values, errors });
   useEffect(() => {
     if (isEdit && currentMediator && Object.keys(languageMap).length > 0) {
       // Get all language IDs from the mediator
@@ -278,12 +287,13 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
       const selectedLanguages = findLanguageObjectsByIds(languageIds);
 
       reset({
-        ...defaultValues,
+        ...values,
         targetLanguage: selectedLanguages,
       });
     }
+
     if (!isEdit && Object.keys(languageMap).length > 0) {
-      reset(defaultValues);
+      reset(values);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEdit, currentMediator, reset, defaultValues, languageMap]);
@@ -324,6 +334,7 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
               email: data?.email,
               phone: data?.phone,
               IBAN: data?.IBAN,
+              groupIDs: data?.group?.map((item) => item.id),
               priority: data?.priority,
               status: 'active',
               ...availabilityData,
@@ -340,6 +351,7 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
               lastName: data?.lastName,
               email: data?.email,
               phone: data?.phone,
+              groupIDs: data?.group?.map((item) => item.id),
               IBAN: data?.IBAN,
               priority: data?.priority,
               ...availabilityData,
@@ -414,6 +426,17 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
               <RHFTextField name="email" label="Email Address" />
               <RHFTextField name="phone" label="Phone Number" />
               <RHFTextField name="IBAN" label="IBAN" />
+              <RHFAutocomplete
+                name="group"
+                label="Group"
+                multiple
+                options={data?.allGroups || []}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                getOptionLabel={(option) => option.groupName}
+                loading={loading}
+                ChipProps={{ size: 'small' }}
+                renderInput={(params) => <TextField {...params} label="Group" />}
+              />
             </Box>
             <Box
               sx={{
