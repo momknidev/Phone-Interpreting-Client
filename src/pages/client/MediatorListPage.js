@@ -19,6 +19,7 @@ import {
 } from '@mui/material';
 import { useMutation, useQuery } from '@apollo/client';
 import { useSnackbar } from 'notistack';
+import * as XLSX from 'xlsx'; // Import xlsx library for exporting Excel files
 
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
@@ -45,9 +46,9 @@ import { DELETE_MEDIATOR, UPLOAD_MEDIATOR_FILE } from '../../graphQL/mutations';
 
 const TABLE_HEAD = [
   { id: 'firstName', label: 'Mediator', align: 'left' },
-  { id: '', label: 'Email', align: 'left' },
-  { id: '', label: 'Phone No.', align: 'left' },
-  { id: '', label: 'Groups.', align: 'left' },
+  { id: 'email', label: 'Email', align: 'left' },
+  { id: 'phone', label: 'Phone No.', align: 'left' },
+  { id: '', label: 'Groups', align: 'left' },
   { id: '', label: 'Languages', align: 'left' },
   { id: '' },
 ];
@@ -147,6 +148,45 @@ export default function MediatorListPage() {
     setFilterName('');
   };
 
+  // Export data to Excel
+  const exportToExcel = () => {
+    if (!data) {
+      enqueueSnackbar('No data to export', { variant: 'warning' });
+      return;
+    }
+
+    const tableData = data?.mediatorsPaginatedList?.mediators?.map((row) => ({
+      firstName: row.firstName,
+      lastName: row.lastName,
+      email: row.email,
+      phone: row.phone,
+      IBAN: row.IBAN,
+      sourceLanguage1: row.sourceLanguage1,
+      groups: row?.groupIDs.join(', '),
+      targetLanguage1: row.targetLanguage1,
+      targetLanguage2: row.targetLanguage2,
+      targetLanguage3: row.targetLanguage3,
+      targetLanguage4: row.targetLanguage4,
+      monday_time_slots: row.monday_time_slots,
+      tuesday_time_slots: row.tuesday_time_slots,
+      wednesday_time_slots: row.wednesday_time_slots,
+      thursday_time_slots: row.thursday_time_slots,
+      friday_time_slots: row.friday_time_slots,
+      saturday_time_slots: row.saturday_time_slots,
+      sunday_time_slots: row.sunday_time_slots,
+      availableForEmergencies: row.availableForEmergencies,
+      availableOnHolidays: row.availableOnHolidays,
+      priority: row.priority,
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(tableData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Mediators');
+
+    // Save the file
+    XLSX.writeFile(wb, 'Mediators_List.xlsx');
+  };
+
   if (error) {
     return `Error: ${error?.message}`;
   }
@@ -170,6 +210,14 @@ export default function MediatorListPage() {
                 startIcon={<Iconify icon="eva:plus-fill" />}
               >
                 New Mediator
+              </Button>
+
+              <Button
+                variant="contained"
+                startIcon={<Iconify icon="file-icons:microsoft-excel" />}
+                onClick={exportToExcel} // Trigger export on click
+              >
+                Export to Excel
               </Button>
               <IconButton
                 color="primary"
