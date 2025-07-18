@@ -271,3 +271,54 @@ export const ALL_GROUPS = gql`
     }
   }
 `;
+export const GET_USER_CODE_BY_ID = gql`
+  query UserCode($id: ID!) {
+    userCode(id: $id) {
+      id
+      user_code
+      userID
+      user_name
+      created_at
+      updated_at
+    }
+  }
+`;
+export const PAGINATED_USER_CODES = gql`
+  query UserCodesPaginated(
+    $offset: Int
+    $limit: Int
+    $order: String
+    $orderBy: String
+    $search: String
+  ) {
+    userCodesPaginated(
+      offset: $offset
+      limit: $limit
+      order: $order
+      orderBy: $orderBy
+      search: $search
+    ) {
+      filteredCount
+      userCodes {
+        id
+        user_code
+        userID
+        user_name
+        created_at
+        updated_at
+      }
+    }
+  }
+`;
+export const ALL_USER_CODES = gql`
+  query AllUserCodes {
+    allUserCodes {
+      id
+      user_code
+      userID
+      user_name
+      created_at
+      updated_at
+    }
+  }
+`;

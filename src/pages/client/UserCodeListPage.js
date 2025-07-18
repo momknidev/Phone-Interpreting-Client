@@ -38,8 +38,8 @@ import {
   TableNoData,
 } from '../../components/table';
 // GraphQL
-import { LANGUAGES } from '../../graphQL/queries';
-import { CREATE_LANGUAGE, UPDATE_LANGUAGE, DELETE_LANGUAGE } from '../../graphQL/mutations';
+import { PAGINATED_USER_CODES } from '../../graphQL/queries';
+import { CREATE_USER_CODE, UPDATE_USER_CODE, DELETE_USER_CODE } from '../../graphQL/mutations';
 import Iconify from '../../components/iconify';
 import { fDateTime } from '../../utils/formatTime';
 
@@ -47,15 +47,15 @@ import { fDateTime } from '../../utils/formatTime';
 
 const TABLE_HEAD = [
   // { id: 'id', label: 'ID', align: 'center' },
-  { id: 'language_code', label: 'Language Code', align: 'center' },
-  { id: 'language_name', label: 'Language Name', align: 'center' },
+  { id: 'user_name', label: 'User Name', align: 'center' },
+  { id: 'user_code', label: 'User Code', align: 'center' },
   { id: 'updated_at', label: 'Update Date', align: 'center' },
   { id: '', label: 'Actions', align: 'center' },
 ];
 
 // ----------------------------------------------------------------------
 
-export default function LanguageListPage() {
+export default function UserCodeListPage() {
   const {
     dense,
     page,
@@ -68,7 +68,7 @@ export default function LanguageListPage() {
     onChangePage,
     onChangeRowsPerPage,
   } = useTable({
-    defaultOrderBy: 'language_code',
+    defaultOrderBy: 'user_code',
     defaultOrder: 'asc',
     defaultRowsPerPage: 20,
     defaultDense: false,
@@ -79,14 +79,14 @@ export default function LanguageListPage() {
   const { enqueueSnackbar } = useSnackbar();
   const [openDialog, setOpenDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState({ language_code: '', language_name: '' });
+  const [currentUserCode, setCurrentUserCode] = useState({ user_code: '', user_name: '' });
   const [isEditing, setIsEditing] = useState(false);
 
-  const [createLanguage, { loading: createLoading }] = useMutation(CREATE_LANGUAGE);
-  const [updateLanguage, { loading: editLoading }] = useMutation(UPDATE_LANGUAGE);
-  const [deleteLanguage, { loading: deleteLoading }] = useMutation(DELETE_LANGUAGE);
+  const [createUserCode, { loading: createLoading }] = useMutation(CREATE_USER_CODE);
+  const [updateUserCode, { loading: editLoading }] = useMutation(UPDATE_USER_CODE);
+  const [deleteUserCode, { loading: deleteLoading }] = useMutation(DELETE_USER_CODE);
 
-  const { loading, data, error, refetch } = useQuery(LANGUAGES, {
+  const { loading, data, error, refetch } = useQuery(PAGINATED_USER_CODES, {
     variables: {
       offset: page,
       limit: rowsPerPage,
@@ -102,12 +102,12 @@ export default function LanguageListPage() {
     setSearch(event.target.value);
   };
 
-  const handleOpenDialog = (language = null) => {
-    if (language) {
-      setCurrentLanguage(language);
+  const handleOpenDialog = (userCode = null) => {
+    if (userCode) {
+      setCurrentUserCode(userCode);
       setIsEditing(true);
     } else {
-      setCurrentLanguage({ language_code: '', language_name: '' });
+      setCurrentUserCode({ user_code: '', user_name: '' });
       setIsEditing(false);
     }
     setOpenDialog(true);
@@ -115,72 +115,72 @@ export default function LanguageListPage() {
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-    setCurrentLanguage({ language_code: '', language_name: '' });
+    setCurrentUserCode({ user_code: '', user_name: '' });
     setIsEditing(false);
   };
 
-  const handleOpenDeleteDialog = (language) => {
-    setCurrentLanguage(language);
+  const handleOpenDeleteDialog = (userCode) => {
+    setCurrentUserCode(userCode);
     setOpenDeleteDialog(true);
   };
 
   const handleCloseDeleteDialog = () => {
     setOpenDeleteDialog(false);
-    setCurrentLanguage({ language_code: '', language_name: '' });
+    setCurrentUserCode({ user_code: '', user_name: '' });
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setCurrentLanguage({ ...currentLanguage, [name]: value });
+    setCurrentUserCode({ ...currentUserCode, [name]: value });
   };
 
-  const handleSaveLanguage = async () => {
+  const handleSaveUserCode = async () => {
     try {
       if (isEditing) {
-        await updateLanguage({
+        await updateUserCode({
           variables: {
-            id: currentLanguage.id,
+            id: currentUserCode.id,
             input: {
-              language_code: Number(currentLanguage.language_code),
-              language_name: currentLanguage.language_name,
+              user_code: Number(currentUserCode.user_code),
+              user_name: currentUserCode.user_name,
             },
           },
         });
-        enqueueSnackbar('Language updated successfully', { variant: 'success' });
+        enqueueSnackbar('User Code updated successfully', { variant: 'success' });
       } else {
-        await createLanguage({
+        await createUserCode({
           variables: {
             input: {
-              language_code: Number(currentLanguage.language_code),
-              language_name: currentLanguage.language_name,
+              user_code: Number(currentUserCode.user_code),
+              user_name: currentUserCode.user_name,
             },
           },
         });
-        enqueueSnackbar('Language created successfully', { variant: 'success' });
+        enqueueSnackbar('User Code created successfully', { variant: 'success' });
       }
       handleCloseDialog();
       refetch();
     } catch (err) {
-      console.error('Error while saving the language:', err);
-      enqueueSnackbar('Error while saving the language', {
+      console.error('Error while saving the user code:', err);
+      enqueueSnackbar('Error while saving the user code', {
         variant: 'error',
       });
     }
   };
 
-  const handleDeleteLanguage = async () => {
+  const handleDeleteUserCode = async () => {
     try {
-      await deleteLanguage({
+      await deleteUserCode({
         variables: {
-          id: currentLanguage.id,
+          id: currentUserCode.id,
         },
       });
-      enqueueSnackbar('Language deleted successfully', { variant: 'success' });
+      enqueueSnackbar('User Code deleted successfully', { variant: 'success' });
       handleCloseDeleteDialog();
       refetch();
     } catch (err) {
-      console.error('Error while deleting the language:', err);
-      enqueueSnackbar('Error while deleting the language', {
+      console.error('Error while deleting the user code:', err);
+      enqueueSnackbar('Error while deleting the user code', {
         variant: 'error',
       });
     }
@@ -190,24 +190,24 @@ export default function LanguageListPage() {
     return `Error: ${error?.message}`;
   }
 
-  const languages = data?.languages?.languages || [];
-  const isNotFound = !languages.length && !loading;
+  const userCodes = data?.userCodesPaginated?.userCodes || [];
+  const isNotFound = !userCodes.length && !loading;
 
   return (
     <>
       <Helmet>
-        <title> Language List | Telephone Mediation App</title>
+        <title> User Code List | Telephone Mediation App</title>
       </Helmet>
 
       <Container maxWidth={themeStretch ? false : 'xl'}>
         <CustomBreadcrumbs
-          heading="Language List"
+          heading="User Code List"
           links={[
             {
               name: 'Dashboard',
               href: PATH_DASHBOARD.mediatorDashboard,
             },
-            { name: 'Languages' },
+            { name: 'User Codes' },
           ]}
           action={
             <Stack direction="row" spacing={2} alignItems="center">
@@ -229,7 +229,7 @@ export default function LanguageListPage() {
                 startIcon={<Iconify icon="ic:round-plus" />}
                 onClick={() => handleOpenDialog()}
               >
-                New Language
+                New User Code
               </Button>
             </Stack>
           }
@@ -243,7 +243,6 @@ export default function LanguageListPage() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  // rowCount={languages.length}
                   onSort={onSort}
                 />
 
@@ -258,10 +257,10 @@ export default function LanguageListPage() {
                   )}
 
                   {!loading &&
-                    languages.map((row) => (
+                    userCodes.map((row) => (
                       <TableRow key={row.id}>
-                        <TableCell align="center">{row.language_code}</TableCell>
-                        <TableCell align="center">{row.language_name}</TableCell>
+                        <TableCell align="center">{row.user_code}</TableCell>
+                        <TableCell align="center">{row.user_name}</TableCell>
 
                         <TableCell align="center">
                           {fDateTime(new Date(Number(row.updated_at)))}
@@ -279,7 +278,7 @@ export default function LanguageListPage() {
 
                   {isNotFound && (
                     <TableNoData>
-                      {search ? 'No results found' : 'No languages available'}
+                      {search ? 'No results found' : 'No user code available'}
                     </TableNoData>
                   )}
                 </TableBody>
@@ -288,7 +287,7 @@ export default function LanguageListPage() {
           </TableContainer>
 
           <TablePaginationCustom
-            count={data?.languages?.filteredCount || 0}
+            count={data?.userCodesPaginated?.filteredCount || 0}
             page={page}
             rowsPerPage={rowsPerPage}
             onPageChange={onChangePage}
@@ -299,9 +298,9 @@ export default function LanguageListPage() {
         </Card>
       </Container>
 
-      {/* Create/Edit Language Dialog */}
+      {/* Create/Edit User Code Dialog */}
       <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="xs" fullWidth>
-        <DialogTitle>{isEditing ? 'Edit Language' : 'New Language'}</DialogTitle>
+        <DialogTitle>{isEditing ? 'Edit User Code' : 'New User Code'}</DialogTitle>
 
         <DialogContent>
           <Typography
@@ -310,28 +309,28 @@ export default function LanguageListPage() {
             }}
           >
             {isEditing
-              ? 'Edit the details of the selected language.'
-              : 'Enter the details of the new language.'}
+              ? 'Edit the details of the selected user code.'
+              : 'Enter the details of the new user code.'}
           </Typography>
           <TextField
             autoFocus
             type="number"
             margin="dense"
-            name="language_code"
-            label="Language Code"
+            name="user_code"
+            label="User Code Code"
             fullWidth
             variant="outlined"
-            value={currentLanguage.language_code}
+            value={currentUserCode.user_code}
             onChange={handleInputChange}
             sx={{ mb: 2 }}
           />
           <TextField
             margin="dense"
-            name="language_name"
-            label="Language Name"
+            name="user_name"
+            label="User Code Name"
             fullWidth
             variant="outlined"
-            value={currentLanguage.language_name}
+            value={currentUserCode.user_name}
             onChange={handleInputChange}
           />
         </DialogContent>
@@ -341,7 +340,7 @@ export default function LanguageListPage() {
           </LoadingButton>
           <LoadingButton
             loading={createLoading || editLoading}
-            onClick={handleSaveLanguage}
+            onClick={handleSaveUserCode}
             variant="contained"
           >
             {isEditing ? 'Update' : 'Save'}
@@ -354,15 +353,15 @@ export default function LanguageListPage() {
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to delete the language {currentLanguage.language_name}? This
-            action cannot be undone.
+            Are you sure you want to delete the user code {currentUserCode.user_name}? This action
+            cannot be undone.
           </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDeleteDialog}>Cancel</Button>
           <LoadingButton
             loading={deleteLoading}
-            onClick={handleDeleteLanguage}
+            onClick={handleDeleteUserCode}
             variant="contained"
             color="error"
           >

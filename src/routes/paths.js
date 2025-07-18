@@ -34,6 +34,7 @@ export const PATH_DASHBOARD = {
     view: (id) => path(CLIENT_DASHBOARD, `/mediator/${id}`),
   },
   languageList: path(CLIENT_DASHBOARD, '/language'),
+  userCodeList: path(CLIENT_DASHBOARD, '/user-code'),
 
   // admin paths
   adminDashboard: path(ADMIN_DASHBOARD, '/app'),

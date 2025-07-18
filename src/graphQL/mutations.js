@@ -243,3 +243,32 @@ export const UPLOAD_MEDIATOR_FILE = gql`
     uploadMediatorFile(file: $file)
   }
 `;
+export const DELETE_USER_CODE = gql`
+  mutation DeleteUserCode($id: ID!) {
+    deleteUserCode(id: $id)
+  }
+`;
+export const CREATE_USER_CODE = gql`
+  mutation CreateUserCode($input: UserCodeInput!) {
+    createUserCode(input: $input) {
+      id
+      user_code
+      userID
+      user_name
+      created_at
+      updated_at
+    }
+  }
+`;
+export const UPDATE_USER_CODE = gql`
+  mutation UpdateUserCode($input: UserCodeInput!, $id: ID!) {
+    updateUserCode(input: $input, id: $id) {
+      id
+      user_code
+      userID
+      user_name
+      created_at
+      updated_at
+    }
+  }
+`;
