@@ -211,7 +211,6 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
       const groupIDs = currentMediator?.groupIDs || [];
       const groups = Array.isArray(data.allGroups) ? data.allGroups : [];
       const groupValue = groups.filter((group) => groupIDs.includes(group.id));
-      console.log({ groupValue });
       setValue('group', groupValue);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -272,7 +271,7 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
     formState: { isSubmitting, errors },
   } = methods;
   const values = watch();
-  console.log({ values, errors });
+  // console.log({ values, errors });
   useEffect(() => {
     if (isEdit && currentMediator && Object.keys(languageMap).length > 0) {
       // Get all language IDs from the mediator
@@ -324,8 +323,9 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
         availableForEmergencies: data.availableForEmergencies,
       };
       const languageData = getLanguageIdsForMutation();
+      let updatedRecord = null;
       if (isEdit) {
-        await editMediator({
+        updatedRecord = await editMediator({
           variables: {
             id: currentMediator.id,
             mediatorData: {
@@ -344,7 +344,7 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
           },
         });
       } else {
-        await addMediator({
+        updatedRecord = await addMediator({
           variables: {
             mediatorData: {
               firstName: data?.firstName,
@@ -361,7 +361,10 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
         });
       }
       reset();
-      navigate(PATH_DASHBOARD.mediator.list);
+      // eslint-disable-next-line no-unused-expressions
+      isEdit
+        ? navigate(PATH_DASHBOARD.mediator.view(updatedRecord?.data?.updateMediator?.id))
+        : navigate(PATH_DASHBOARD.mediator.list);
       enqueueSnackbar(!isEdit ? 'Mediator created!' : 'Mediator updated!');
     } catch (error) {
       enqueueSnackbar(error?.message, { variant: 'error' });

@@ -1,62 +1,113 @@
 import PropTypes from 'prop-types';
 // @mui
-import { Grid, Typography, Card, CardContent, Avatar } from '@mui/material';
+import { Grid, Typography, Card, CardContent, Avatar, Divider, Chip } from '@mui/material';
 import { Stack } from '@mui/system';
-//
-
-// ----------------------------------------------------------------------
 
 Profile.propTypes = {
   mediatorData: PropTypes.object,
 };
 
 export default function Profile({ mediatorData }) {
+  const {
+    firstName,
+    lastName,
+    email,
+    phone,
+    IBAN,
+    targetLanguage1,
+    targetLanguage2,
+    targetLanguage3,
+    targetLanguage4,
+    groups,
+    monday_time_slots,
+    tuesday_time_slots,
+    wednesday_time_slots,
+    thursday_time_slots,
+    friday_time_slots,
+    saturday_time_slots,
+    sunday_time_slots,
+  } = mediatorData || {};
+
+  const timeSlots = {
+    Monday: monday_time_slots,
+    Tuesday: tuesday_time_slots,
+    Wednesday: wednesday_time_slots,
+    Thursday: thursday_time_slots,
+    Friday: friday_time_slots,
+    Saturday: saturday_time_slots,
+    Sunday: sunday_time_slots,
+  };
+
   return (
     <Card>
       <CardContent>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={12}>
-            <Stack
-              alignContent="center"
-              justifyContent="center"
-              direction="row"
-              spacing={2}
-              sx={{ mb: 2 }}
-            >
-              <Stack
-                direction="column"
-                alignItems="center"
-                spacing={2}
-                sx={{ mb: 2, maxWidth: 300 }}
-              >
-                <Avatar alt={mediatorData?.firstName} sx={{ width: 64, height: 64, mb: 2 }} />
-                <Typography variant="h6">
-                  {`${mediatorData?.firstName} ${mediatorData?.lastName}`}
-                </Typography>
-              </Stack>
+        <Grid container spacing={4}>
+          {/* Header */}
+          <Grid item xs={12}>
+            <Stack alignItems="center" spacing={2}>
+              <Avatar alt={`${firstName} ${lastName}`} sx={{ width: 64, height: 64 }} />
+              <Typography variant="h5">{`${firstName} ${lastName}`}</Typography>
             </Stack>
           </Grid>
-          <Grid item xs={12} md={4}>
-            <Typography variant="subtitle1" gutterBottom>
-              Contact Information
-            </Typography>
-            <Typography>Email: {mediatorData?.email}</Typography>
-            <Typography>Phone: {mediatorData?.phone}</Typography>
+
+          <Grid item xs={12}>
+            <Divider>
+              <Chip label="Personal Info" />
+            </Divider>
           </Grid>
 
-          {/* Third Column */}
+          {/* Contact Information */}
           <Grid item xs={12} md={4}>
-            <Typography variant="subtitle1" gutterBottom>
-              Languages
+            <Typography>Email: {email || 'N/A'}</Typography>
+            <Typography>Phone: {phone || 'N/A'}</Typography>
+            <Typography>IBAN: {IBAN || 'N/A'}</Typography>
+          </Grid>
+
+          {/* Language Info */}
+          <Grid item xs={12} md={4}>
+            <Typography>Language Combination</Typography>
+
+            <Typography>
+              {' '}
+              {`Italian <> ${[
+                mediatorData?.targetLanguage1,
+                mediatorData?.targetLanguage2,
+                mediatorData?.targetLanguage3,
+                mediatorData?.targetLanguage4,
+              ]
+                .filter((lang) => lang != null && lang !== undefined)
+                .join(', ')}`}
             </Typography>
-            {`Italian <> ${[
-              mediatorData?.targetLanguage1,
-              mediatorData?.targetLanguage2,
-              mediatorData?.targetLanguage3,
-              mediatorData?.targetLanguage4,
-            ]
-              .filter((lang) => lang != null && lang !== undefined)
-              .join(', ')}`}
+          </Grid>
+
+          {/* Groups */}
+          <Grid item xs={12} md={4}>
+            <Typography sx={{ mb: 1 }}>Groups</Typography>
+            <Typography>
+              {groups
+                ? groups
+                    .split(',')
+                    .map((g) => g.trim())
+                    .join(', ')
+                : 'No groups assigned'}
+            </Typography>
+          </Grid>
+
+          {/* Availability */}
+          <Grid item xs={12}>
+            <Divider sx={{ mt: 2 }}>
+              <Chip label="Weekly Availability" />
+            </Divider>
+            <Grid container spacing={2} sx={{ mt: 1 }}>
+              {Object.entries(timeSlots).map(([day, slot]) => (
+                <Grid key={day} item xs={6} md={3}>
+                  <Typography variant="body2" fontWeight="bold">
+                    {day}:
+                  </Typography>
+                  <Typography variant="body2">{slot || 'Not available'}</Typography>
+                </Grid>
+              ))}
+            </Grid>
           </Grid>
         </Grid>
       </CardContent>
