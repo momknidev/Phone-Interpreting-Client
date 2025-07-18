@@ -50,6 +50,7 @@ import Label from '../../components/label';
 
 const TABLE_HEAD = [
   { id: 'group', label: 'Group', align: 'left' },
+  { id: 'mediatorCount', label: 'Mediator Counts', align: 'center' },
   { id: 'status', label: 'Status', align: 'left' },
   { id: '', label: 'Action', align: 'left' },
 ];
@@ -247,7 +248,11 @@ export default function MediatorGroupPage() {
                             {`${row?.groupName} `}
                           </Typography>
                         </TableCell>
-
+                        <TableCell sx={{ px: 1 }} align="center">
+                          <Typography variant="subtitle2" noWrap>
+                            {`${row?.mediatorCount} `}
+                          </Typography>
+                        </TableCell>
                         <TableCell sx={{ px: 1 }} align="left">
                           <Label color={row?.status === 'active' ? 'success' : 'error'}>
                             {row?.status}

@@ -88,7 +88,7 @@ export const GROUPS_PAGINATED_LIST = gql`
         groupName
         status
         user
-        userID
+        mediatorCount
         createdAt
         updatedAt
       }
