@@ -2,13 +2,26 @@ import { Helmet } from 'react-helmet-async';
 import { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 // @mui
-import { Card, Table, Button, TableBody, Container, TableContainer, Stack } from '@mui/material';
+import {
+  Card,
+  Table,
+  Button,
+  TableBody,
+  Container,
+  TableContainer,
+  Stack,
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  CircularProgress,
+} from '@mui/material';
 import { useMutation, useQuery } from '@apollo/client';
 import { useSnackbar } from 'notistack';
 
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
-// _mock_
 // components
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
@@ -26,7 +39,7 @@ import {
   MediatorTableRow,
 } from '../../sections/@dashboard/client/mediator/list';
 import { MEDIATORS_PAGINATED_LIST } from '../../graphQL/queries';
-import { DELETE_MEDIATOR } from '../../graphQL/mutations';
+import { DELETE_MEDIATOR, UPLOAD_MEDIATOR_FILE } from '../../graphQL/mutations';
 
 // ----------------------------------------------------------------------
 
@@ -63,8 +76,11 @@ export default function MediatorListPage() {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const [deleteMediator, { loading: loadingDelete }] = useMutation(DELETE_MEDIATOR);
+  const [uploadMediatorFile, { loading: loadingUpload }] = useMutation(UPLOAD_MEDIATOR_FILE); // New mutation for file upload
 
   const [filterName, setFilterName] = useState('');
+  const [openUploadDialog, setOpenUploadDialog] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null); // Store selected file
 
   const { loading, data, error, refetch } = useQuery(MEDIATORS_PAGINATED_LIST, {
     variables: {
@@ -76,6 +92,7 @@ export default function MediatorListPage() {
     },
     fetchPolicy: 'no-cache',
   });
+
   const handleDeleteRow = async (id) => {
     try {
       await deleteMediator({
@@ -88,6 +105,31 @@ export default function MediatorListPage() {
       enqueueSnackbar(`Error: ${error?.message}`, { variant: 'error' });
     }
   };
+
+  const handleUploadFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
+  const handleUploadFile = async () => {
+    if (!selectedFile) {
+      enqueueSnackbar('Please select a file to upload.', { variant: 'error' });
+      return;
+    }
+
+    try {
+      // Call the uploadMediatorFile mutation to upload the file
+      await uploadMediatorFile({
+        variables: { file: selectedFile },
+      });
+      enqueueSnackbar('File uploaded successfully!', { variant: 'success' });
+      refetch();
+      setOpenUploadDialog(false); // Close the dialog after success
+      // eslint-disable-next-line no-shadow
+    } catch (error) {
+      enqueueSnackbar(`Error: ${error.message}`, { variant: 'error' });
+    }
+  };
+
   const handleFilterName = (event) => {
     setPage(0);
     setFilterName(event.target.value);
@@ -96,6 +138,7 @@ export default function MediatorListPage() {
   const handleViewRow = (id) => {
     navigate(PATH_DASHBOARD.mediator.view(id));
   };
+
   const handleEditRow = (id) => {
     navigate(PATH_DASHBOARD.mediator.edit(id));
   };
@@ -103,9 +146,11 @@ export default function MediatorListPage() {
   const handleResetFilter = () => {
     setFilterName('');
   };
+
   if (error) {
     return `Error: ${error?.message}`;
   }
+
   return (
     <>
       <Helmet>
@@ -118,11 +163,6 @@ export default function MediatorListPage() {
           links={[{ name: 'Dashboard', href: PATH_DASHBOARD.clientDashboard }, { name: 'List' }]}
           action={
             <Stack spacing={1} direction="row" flexShrink={0} justifyContent="flex-end">
-              <MediatorTableToolbar
-                filterName={filterName}
-                onFilterName={handleFilterName}
-                onResetFilter={handleResetFilter}
-              />
               <Button
                 component={RouterLink}
                 to={PATH_DASHBOARD.mediator.new}
@@ -131,11 +171,21 @@ export default function MediatorListPage() {
               >
                 New Mediator
               </Button>
+              <IconButton
+                color="primary"
+                onClick={() => setOpenUploadDialog(true)} // Open the dialog on click
+              >
+                <Iconify icon="eva:cloud-upload-fill" />
+              </IconButton>
             </Stack>
           }
         />
-
-        <Card>
+        <MediatorTableToolbar
+          filterName={filterName}
+          onFilterName={handleFilterName}
+          onResetFilter={handleResetFilter}
+        />
+        <Card sx={{ pt: 1 }}>
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <Scrollbar>
               <Table size={dense ? 'small' : 'medium'} sx={{ minWidth: 800 }}>
@@ -184,6 +234,28 @@ export default function MediatorListPage() {
           />
         </Card>
       </Container>
+
+      {/* Upload File Dialog */}
+      <Dialog open={openUploadDialog} onClose={() => setOpenUploadDialog(false)}>
+        <DialogTitle>Upload Mediator File</DialogTitle>
+        <DialogContent>
+          <input
+            accept=".csv, .xlsx"
+            type="file"
+            onChange={handleUploadFileChange}
+            style={{ marginBottom: 16 }}
+          />
+          {loadingUpload && <CircularProgress />}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenUploadDialog(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleUploadFile} color="primary" disabled={loadingUpload}>
+            Upload
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

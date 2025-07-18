@@ -237,3 +237,9 @@ export const DELETE_MEDIATOR_GROUP = gql`
     deleteGroup(id: $id)
   }
 `;
+
+export const UPLOAD_MEDIATOR_FILE = gql`
+  mutation UploadMediatorFile($file: Upload!) {
+    uploadMediatorFile(file: $file)
+  }
+`;
