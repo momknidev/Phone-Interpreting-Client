@@ -302,6 +302,7 @@ export const PAGINATED_USER_CODES = gql`
       userCodes {
         id
         user_code
+        status
         userID
         user_name
         created_at

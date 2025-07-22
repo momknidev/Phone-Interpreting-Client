@@ -42,13 +42,14 @@ import { PAGINATED_USER_CODES } from '../../graphQL/queries';
 import { CREATE_USER_CODE, UPDATE_USER_CODE, DELETE_USER_CODE } from '../../graphQL/mutations';
 import Iconify from '../../components/iconify';
 import { fDateTime } from '../../utils/formatTime';
+import Label from '../../components/label';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  // { id: 'id', label: 'ID', align: 'center' },
   { id: 'user_name', label: 'User Name', align: 'center' },
   { id: 'user_code', label: 'User Code', align: 'center' },
+  { id: 'status', label: 'Status', align: 'center' },
   { id: 'updated_at', label: 'Update Date', align: 'center' },
   { id: '', label: 'Actions', align: 'center' },
 ];
@@ -79,7 +80,11 @@ export default function UserCodeListPage() {
   const { enqueueSnackbar } = useSnackbar();
   const [openDialog, setOpenDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [currentUserCode, setCurrentUserCode] = useState({ user_code: '', user_name: '' });
+  const [currentUserCode, setCurrentUserCode] = useState({
+    user_code: '',
+    user_name: '',
+    status: 'active',
+  });
   const [isEditing, setIsEditing] = useState(false);
 
   const [createUserCode, { loading: createLoading }] = useMutation(CREATE_USER_CODE);
@@ -107,7 +112,7 @@ export default function UserCodeListPage() {
       setCurrentUserCode(userCode);
       setIsEditing(true);
     } else {
-      setCurrentUserCode({ user_code: '', user_name: '' });
+      setCurrentUserCode({ user_code: '', user_name: '', status: 'active' });
       setIsEditing(false);
     }
     setOpenDialog(true);
@@ -115,7 +120,7 @@ export default function UserCodeListPage() {
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-    setCurrentUserCode({ user_code: '', user_name: '' });
+    setCurrentUserCode({ user_code: '', user_name: '', status: 'active' });
     setIsEditing(false);
   };
 
@@ -126,12 +131,12 @@ export default function UserCodeListPage() {
 
   const handleCloseDeleteDialog = () => {
     setOpenDeleteDialog(false);
-    setCurrentUserCode({ user_code: '', user_name: '' });
+    setCurrentUserCode({ user_code: '', user_name: '', status: 'active' });
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setCurrentUserCode({ ...currentUserCode, [name]: value });
+    setCurrentUserCode((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSaveUserCode = async () => {
@@ -143,6 +148,7 @@ export default function UserCodeListPage() {
             input: {
               user_code: Number(currentUserCode.user_code),
               user_name: currentUserCode.user_name,
+              status: currentUserCode.status,
             },
           },
         });
@@ -153,6 +159,7 @@ export default function UserCodeListPage() {
             input: {
               user_code: Number(currentUserCode.user_code),
               user_name: currentUserCode.user_name,
+              status: currentUserCode.status,
             },
           },
         });
@@ -247,21 +254,18 @@ export default function UserCodeListPage() {
                 />
 
                 <TableBody>
-                  {loading && (
-                    <>
-                      <TableSkeleton />
-                      <TableSkeleton />
-                      <TableSkeleton />
-                      <TableSkeleton />
-                    </>
-                  )}
+                  {loading && Array.from({ length: 4 }).map((_, i) => <TableSkeleton key={i} />)}
 
                   {!loading &&
                     userCodes.map((row) => (
                       <TableRow key={row.id}>
                         <TableCell align="center">{row.user_code}</TableCell>
                         <TableCell align="center">{row.user_name}</TableCell>
-
+                        <TableCell align="center">
+                          <Label color={row?.status === 'active' ? 'success' : 'error'}>
+                            {row.status === 'active' ? 'Active' : 'Inactive'}
+                          </Label>
+                        </TableCell>
                         <TableCell align="center">
                           {fDateTime(new Date(Number(row.updated_at)))}
                         </TableCell>
@@ -298,42 +302,57 @@ export default function UserCodeListPage() {
         </Card>
       </Container>
 
-      {/* Create/Edit User Code Dialog */}
+      {/* Create/Edit Dialog */}
       <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="xs" fullWidth>
         <DialogTitle>{isEditing ? 'Edit User Code' : 'New User Code'}</DialogTitle>
 
         <DialogContent>
-          <Typography
-            sx={{
-              pb: 3,
-            }}
-          >
+          <Typography sx={{ pb: 3 }}>
             {isEditing
               ? 'Edit the details of the selected user code.'
               : 'Enter the details of the new user code.'}
           </Typography>
+
           <TextField
             autoFocus
             type="number"
             margin="dense"
             name="user_code"
-            label="User Code Code"
+            label="User Code"
             fullWidth
             variant="outlined"
             value={currentUserCode.user_code}
             onChange={handleInputChange}
             sx={{ mb: 2 }}
           />
+
           <TextField
             margin="dense"
             name="user_name"
-            label="User Code Name"
+            label="User Name"
             fullWidth
             variant="outlined"
             value={currentUserCode.user_name}
             onChange={handleInputChange}
+            sx={{ mb: 2 }}
           />
+
+          <TextField
+            select
+            margin="dense"
+            name="status"
+            label="Status"
+            fullWidth
+            variant="outlined"
+            value={currentUserCode.status}
+            onChange={handleInputChange}
+            SelectProps={{ native: true }}
+          >
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </TextField>
         </DialogContent>
+
         <DialogActions>
           <LoadingButton loading={createLoading || editLoading} onClick={handleCloseDialog}>
             Cancel
