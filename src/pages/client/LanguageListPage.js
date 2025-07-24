@@ -19,6 +19,7 @@ import {
   Typography,
   Stack,
   InputAdornment,
+  Autocomplete,
 } from '@mui/material';
 import { useMutation, useQuery } from '@apollo/client';
 import { useSnackbar } from 'notistack';
@@ -42,11 +43,11 @@ import { LANGUAGES } from '../../graphQL/queries';
 import { CREATE_LANGUAGE, UPDATE_LANGUAGE, DELETE_LANGUAGE } from '../../graphQL/mutations';
 import Iconify from '../../components/iconify';
 import { fDateTime } from '../../utils/formatTime';
+import { languages as languagesOptions } from '../../_mock/languages';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  // { id: 'id', label: 'ID', align: 'center' },
   { id: 'language_code', label: 'Language Code', align: 'center' },
   { id: 'language_name', label: 'Language Name', align: 'center' },
   { id: 'updated_at', label: 'Update Date', align: 'center' },
@@ -132,6 +133,10 @@ export default function LanguageListPage() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setCurrentLanguage({ ...currentLanguage, [name]: value });
+  };
+
+  const handleLanguageNameChange = (event, newValue) => {
+    setCurrentLanguage({ ...currentLanguage, language_name: newValue || '' });
   };
 
   const handleSaveLanguage = async () => {
@@ -243,7 +248,6 @@ export default function LanguageListPage() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  // rowCount={languages.length}
                   onSort={onSort}
                 />
 
@@ -262,7 +266,6 @@ export default function LanguageListPage() {
                       <TableRow key={row.id}>
                         <TableCell align="center">{row.language_code}</TableCell>
                         <TableCell align="center">{row.language_name}</TableCell>
-
                         <TableCell align="center">
                           {fDateTime(new Date(Number(row.updated_at)))}
                         </TableCell>
@@ -304,11 +307,7 @@ export default function LanguageListPage() {
         <DialogTitle>{isEditing ? 'Edit Language' : 'New Language'}</DialogTitle>
 
         <DialogContent>
-          <Typography
-            sx={{
-              pb: 3,
-            }}
-          >
+          <Typography sx={{ pb: 3 }}>
             {isEditing
               ? 'Edit the details of the selected language.'
               : 'Enter the details of the new language.'}
@@ -325,14 +324,21 @@ export default function LanguageListPage() {
             onChange={handleInputChange}
             sx={{ mb: 2 }}
           />
-          <TextField
-            margin="dense"
-            name="language_name"
-            label="Language Name"
-            fullWidth
-            variant="outlined"
+          <Autocomplete
+            options={languagesOptions.map((option) => option.text)}
             value={currentLanguage.language_name}
-            onChange={handleInputChange}
+            onChange={handleLanguageNameChange}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                margin="dense"
+                label="Language Name"
+                fullWidth
+                variant="outlined"
+              />
+            )}
+            sx={{ mb: 2 }}
+            freeSolo
           />
         </DialogContent>
         <DialogActions>
