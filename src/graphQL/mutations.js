@@ -272,3 +272,34 @@ export const UPDATE_USER_CODE = gql`
     }
   }
 `;
+
+export const ADD_MEDIATOR_TO_GROUP = gql`
+  mutation AddMediatorToGroup($groupId: ID!, $mediatorId: ID!) {
+    addMediatorToGroup(groupID: $groupId, mediatorID: $mediatorId) {
+      id
+      groupName
+      status
+      user
+      userID
+      createdAt
+      updatedAt
+      mediatorCount
+      mediators
+    }
+  }
+`;
+export const REMOVE_MEDIATOR_FROM_GROUP = gql`
+  mutation RemoveMediatorFromGroup($groupId: ID!, $mediatorId: ID!) {
+    removeMediatorFromGroup(groupID: $groupId, mediatorID: $mediatorId) {
+      id
+      groupName
+      status
+      user
+      userID
+      createdAt
+      updatedAt
+      mediatorCount
+      mediators
+    }
+  }
+`;

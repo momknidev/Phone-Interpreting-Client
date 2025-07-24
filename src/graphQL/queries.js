@@ -323,3 +323,28 @@ export const ALL_USER_CODES = gql`
     }
   }
 `;
+export const GROUP_BY_ID = gql`
+  query GroupByID($groupByIdId: String) {
+    groupByID(id: $groupByIdId) {
+      id
+      groupName
+      status
+      userID
+      createdAt
+      updatedAt
+      mediatorCount
+      mediators
+    }
+  }
+`;
+export const MEDIATOR_LIST_BASIC = gql`
+  query MediatorList {
+    mediatorList {
+      firstName
+      lastName
+      id
+      email
+      phone
+    }
+  }
+`;

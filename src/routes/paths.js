@@ -30,6 +30,7 @@ export const PATH_DASHBOARD = {
     new: path(CLIENT_DASHBOARD, '/mediator/new'),
     list: path(CLIENT_DASHBOARD, '/mediator/list'),
     group: path(CLIENT_DASHBOARD, '/mediator/group'),
+    groupDetail: (id) => path(CLIENT_DASHBOARD, `/mediator/group/${id}`),
     edit: (id) => path(CLIENT_DASHBOARD, `/mediator/${id}/edit`),
     view: (id) => path(CLIENT_DASHBOARD, `/mediator/${id}`),
   },

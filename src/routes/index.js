@@ -28,6 +28,7 @@ import {
   MediatorListPage,
   LanguageListPage,
   UserCodeListPage,
+  MediatorGroupDetailPage,
 } from './elements';
 import RoleBasedGuard from '../auth/RoleBasedGuard';
 
@@ -152,6 +153,14 @@ export default function Router() {
               element: (
                 <RoleBasedGuard roles={['client']} hasContent>
                   <MediatorGroupPage />
+                </RoleBasedGuard>
+              ),
+            },
+            {
+              path: 'group/:id',
+              element: (
+                <RoleBasedGuard roles={['client']} hasContent>
+                  <MediatorGroupDetailPage />
                 </RoleBasedGuard>
               ),
             },

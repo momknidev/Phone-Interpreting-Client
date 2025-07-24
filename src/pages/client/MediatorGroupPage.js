@@ -23,9 +23,11 @@ import {
   FormControl,
   InputLabel,
   DialogContentText,
+  Link,
 } from '@mui/material';
 import { useQuery, useMutation } from '@apollo/client';
 import { LoadingButton } from '@mui/lab';
+import { Link as RouterLink } from 'react-router-dom';
 
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
@@ -244,9 +246,20 @@ export default function MediatorGroupPage() {
                     data?.groupsPaginatedList?.groups?.map((row) => (
                       <TableRow hover key={row.id}>
                         <TableCell sx={{ px: 1 }}>
-                          <Typography variant="subtitle2" noWrap>
-                            {`${row?.groupName} `}
-                          </Typography>
+                          <Link
+                            component={RouterLink}
+                            to={PATH_DASHBOARD.mediator.groupDetail(row?.id)}
+                            sx={{
+                              color: 'text.primary',
+                              textDecoration: 'none',
+                              '&:hover': { color: 'text.primary', textDecoration: 'underline' },
+                              '&:active': { color: 'text.primary', textDecoration: 'underline' },
+                            }}
+                          >
+                            <Typography variant="subtitle2" noWrap>
+                              {`${row?.groupName} `}
+                            </Typography>
+                          </Link>
                         </TableCell>
                         <TableCell sx={{ px: 1 }} align="center">
                           <Typography variant="subtitle2" noWrap>

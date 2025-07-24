@@ -6,13 +6,13 @@ import { it } from 'date-fns/locale';
 export function fDate(date, newFormat) {
   const fm = newFormat || 'dd MMM yyyy';
 
-  return date ? format(new Date(date), fm, { locale: it }) : '';
+  return date ? format(new Date(date), fm) : '';
 }
 
 export function fDateTime(date, newFormat) {
   const fm = newFormat || 'dd MMMM yyyy  p';
 
-  return date ? format(new Date(date), fm, { locale: it }) : '';
+  return date ? format(new Date(date), fm) : '';
 }
 
 export function fTimestamp(date) {
@@ -29,7 +29,7 @@ export function fToNow(date) {
 }
 
 export function fDayInItalian(date) {
-  return date ? format(new Date(date), 'EEEE', { locale: it }) : '';
+  return date ? format(new Date(date), 'EEEE') : '';
 }
 
 export function fDurationInHours(createdDate, interventionDate) {
