@@ -128,14 +128,7 @@ export const ADD_MEDIATOR = gql`
       lastName
       email
       phone
-      sourceLanguage1
-      targetLanguage1
-      sourceLanguage2
-      targetLanguage2
-      sourceLanguage3
-      targetLanguage3
-      sourceLanguage4
-      targetLanguage4
+
       createdAt
       updatedAt
       status
@@ -163,14 +156,7 @@ export const UPDATE_MEDIATOR = gql`
       lastName
       email
       phone
-      sourceLanguage1
-      targetLanguage1
-      sourceLanguage2
-      targetLanguage2
-      sourceLanguage3
-      targetLanguage3
-      sourceLanguage4
-      targetLanguage4
+
       createdAt
       updatedAt
       status

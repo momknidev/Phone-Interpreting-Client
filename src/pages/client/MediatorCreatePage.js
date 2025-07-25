@@ -17,22 +17,22 @@ export default function MediatorCreatePage() {
   return (
     <>
       <Helmet>
-        <title> Mediatore: Crea un nuovo account | Gestione mediazioni sanitarie Arca di Noè</title>
+        <title> Mediator: Register New Mediator | Telephone Mediation App</title>
       </Helmet>
 
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Nuovo account mediatore"
+          heading="New Mediator Account"
           links={[
             {
               name: 'Dashboard',
               href: PATH_DASHBOARD.clientDashboard,
             },
             {
-              name: 'Mediatori',
+              name: 'Mediators',
               href: PATH_DASHBOARD.mediator.list,
             },
-            { name: 'Nuovo' },
+            { name: 'New' },
           ]}
         />
         <MediatorNewEditForm />

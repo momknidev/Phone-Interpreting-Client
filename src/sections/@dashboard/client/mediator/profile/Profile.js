@@ -14,10 +14,7 @@ export default function Profile({ mediatorData }) {
     email,
     phone,
     IBAN,
-    targetLanguage1,
-    targetLanguage2,
-    targetLanguage3,
-    targetLanguage4,
+    languages,
     groups,
     monday_time_slots,
     tuesday_time_slots,
@@ -66,30 +63,22 @@ export default function Profile({ mediatorData }) {
           {/* Language Info */}
           <Grid item xs={12} md={4}>
             <Typography>Language Combination</Typography>
-
-            <Typography>
-              {' '}
-              {`Italian <> ${[
-                mediatorData?.targetLanguage1,
-                mediatorData?.targetLanguage2,
-                mediatorData?.targetLanguage3,
-                mediatorData?.targetLanguage4,
-              ]
-                .filter((lang) => lang != null && lang !== undefined)
-                .join(', ')}`}
-            </Typography>
+            {languages && languages.length > 0 ? (
+              languages.map((lang, index) => (
+                <Typography key={index}>
+                  {lang.sourceLanguageName} {'<=>'} {lang.targetLanguageName}
+                </Typography>
+              ))
+            ) : (
+              <Typography>No languages assigned</Typography>
+            )}
           </Grid>
 
           {/* Groups */}
           <Grid item xs={12} md={4}>
             <Typography sx={{ mb: 1 }}>Groups</Typography>
             <Typography>
-              {groups
-                ? groups
-                    .split(',')
-                    .map((g) => g.trim())
-                    .join(', ')
-                : 'No groups assigned'}
+              {groups ? groups?.map((g) => g.groupName) : 'No groups assigned'}
             </Typography>
           </Grid>
 

@@ -54,7 +54,7 @@ export default function MediatorViewPage() {
               href: PATH_DASHBOARD.root,
             },
             {
-              name: 'Mediator',
+              name: 'Mediators',
               href: PATH_DASHBOARD.mediator.list,
             },
             { name: data?.mediatorById?.firstName },
