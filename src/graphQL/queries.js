@@ -162,20 +162,18 @@ export const ALL_MEDIATOR_LIST = gql`
 export const MEDIATORS_PAGINATED_LIST = gql`
   query MediatorsPaginatedList(
     $offset: Int
-    $order: String
     $limit: Int
+    $order: String
     $orderBy: String
     $name: String
-    $targetLanguage: String
     $status: String
   ) {
     mediatorsPaginatedList(
       offset: $offset
-      order: $order
       limit: $limit
+      order: $order
       orderBy: $orderBy
       name: $name
-      targetLanguage: $targetLanguage
       status: $status
     ) {
       filteredCount
@@ -187,7 +185,11 @@ export const MEDIATORS_PAGINATED_LIST = gql`
         lastName
         email
         phone
+        languages {
+          sourceLanguageName
 
+          targetLanguageName
+        }
         createdAt
         updatedAt
         status
@@ -203,10 +205,6 @@ export const MEDIATORS_PAGINATED_LIST = gql`
         priority
         groups {
           groupName
-        }
-        languages {
-          sourceLanguageName
-          targetLanguageName
         }
       }
     }

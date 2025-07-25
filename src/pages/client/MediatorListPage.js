@@ -161,12 +161,9 @@ export default function MediatorListPage() {
       email: row.email,
       phone: row.phone,
       IBAN: row.IBAN,
-      sourceLanguage1: row.sourceLanguage1,
-      groups: row?.groupIDs.join(', '),
-      targetLanguage1: row.targetLanguage1,
-      targetLanguage2: row.targetLanguage2,
-      targetLanguage3: row.targetLanguage3,
-      targetLanguage4: row.targetLanguage4,
+      sourceLanguages: row.languages?.map((item) => item.sourceLanguageName).join(','),
+      targetLanguages: row.languages?.map((item) => item.targetLanguageName).join(','),
+      groups: row?.groups?.map((g) => g.groupName).join(', '),
       monday_time_slots: row.monday_time_slots,
       tuesday_time_slots: row.tuesday_time_slots,
       wednesday_time_slots: row.wednesday_time_slots,
@@ -215,14 +212,11 @@ export default function MediatorListPage() {
               <Button
                 variant="contained"
                 startIcon={<Iconify icon="file-icons:microsoft-excel" />}
-                onClick={exportToExcel} // Trigger export on click
+                onClick={exportToExcel}
               >
                 Export to Excel
               </Button>
-              <IconButton
-                color="primary"
-                onClick={() => setOpenUploadDialog(true)} // Open the dialog on click
-              >
+              <IconButton color="primary" onClick={() => setOpenUploadDialog(true)}>
                 <Iconify icon="eva:cloud-upload-fill" />
               </IconButton>
             </Stack>
@@ -294,6 +288,17 @@ export default function MediatorListPage() {
             style={{ marginBottom: 16 }}
           />
           {loadingUpload && <CircularProgress />}
+          <div style={{ marginTop: 16 }}>
+            <a
+              href="/assets/Mediators_Upload_Sample_Document.xlsx"
+              download
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ textDecoration: 'underline', color: '#1976d2' }}
+            >
+              Download Sample File
+            </a>
+          </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenUploadDialog(false)} color="primary">
