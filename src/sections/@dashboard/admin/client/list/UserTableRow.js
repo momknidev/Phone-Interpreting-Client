@@ -78,16 +78,16 @@ export default function UserTableRow({ row, onEditRow, onChangeStatus }) {
     handleCloseDialog();
   };
 
-  const { email, avatarUrl, phone, firstName, lastName, status } = row;
+  const { email, avatar_url, phone, first_name, last_name, status } = row;
 
   return (
     <TableRow hover>
       <TableCell sx={{ px: 1 }}>
         <Stack direction="row" alignItems="center" spacing={2}>
-          <Avatar alt={firstName} src={avatarUrl} />
+          <Avatar alt={first_name} src={avatar_url} />
 
           <Typography variant="subtitle2" noWrap>
-            {`${firstName} ${lastName}`}
+            {`${first_name} ${last_name}`}
           </Typography>
         </Stack>
       </TableCell>
@@ -97,7 +97,7 @@ export default function UserTableRow({ row, onEditRow, onChangeStatus }) {
       </TableCell>
 
       <TableCell sx={{ px: 1 }} align="left">
-        {phone}
+        {phone ?? ''}
       </TableCell>
       <TableCell sx={{ px: 1 }} align="left">
         <Label color={status === 'active' ? 'success' : 'error'}>{status}</Label>

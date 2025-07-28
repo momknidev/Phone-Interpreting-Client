@@ -29,9 +29,9 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
   const { enqueueSnackbar } = useSnackbar();
   const [editClient] = useMutation(EDIT_CLIENT);
   const NewUserSchema = Yup.object().shape({
-    avatarUrl: Yup.mixed().nullable(),
-    firstName: Yup.string().required('First name is required'),
-    lastName: Yup.string().required('Last name is required'),
+    avatar_url: Yup.mixed().nullable(),
+    first_name: Yup.string().required('First name is required'),
+    last_name: Yup.string().required('Last name is required'),
     // email: Yup.string().required('Email is required').email('Email must be a valid email address'),
     phone: Yup.string().required('Phone is required'),
     department: Yup.string(),
@@ -40,9 +40,9 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
 
   const defaultValues = useMemo(
     () => ({
-      avatarUrl: currentUser?.avatarUrl || null,
-      firstName: currentUser?.firstName || '',
-      lastName: currentUser?.lastName || '',
+      avatar_url: currentUser?.avatar_url || null,
+      first_name: currentUser?.first_name || '',
+      last_name: currentUser?.last_name || '',
       phone: currentUser?.phone || '',
       department: currentUser?.department || '',
       email: currentUser?.email || '',
@@ -74,15 +74,15 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
         variables: {
           id: currentUser.id,
           clientDetails: {
-            firstName: data.firstName,
-            lastName: data.lastName,
+            first_name: data.first_name,
+            last_name: data.last_name,
             email: currentUser.email,
             role: currentUser.role,
             phone: data.phone,
             department: data.department,
             type: 'client',
           },
-          file: data.avatarUrl ? data.avatarUrl[0] : null,
+          file: data.avatar_url ? data.avatar_url[0] : null,
         },
       });
       reset();
@@ -100,7 +100,7 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
         preview: URL.createObjectURL(file),
       });
       if (file) {
-        setValue('avatarUrl', newFile, { shouldValidate: true });
+        setValue('avatar_url', newFile, { shouldValidate: true });
       }
     },
     [setValue]
@@ -112,7 +112,7 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
           <Card sx={{ py: 0, px: 3 }}>
             <Box sx={{ mb: 5 }}>
               <RHFUploadAvatar
-                name="avatarUrl"
+                name="avatar_url"
                 maxSize={3145728}
                 onDrop={handleDrop}
                 helperText={
@@ -146,8 +146,8 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFTextField name="firstName" label="First Name" />
-              <RHFTextField name="lastName" label="Last Name" />
+              <RHFTextField name="first_name" label="First Name" />
+              <RHFTextField name="last_name" label="Last Name" />
               <RHFTextField disabled name="email" label="Email Address" />
               <RHFTextField name="phone" label="Phone Number" />
               {/* <RHFTextField name="department" label="Department" /> */}

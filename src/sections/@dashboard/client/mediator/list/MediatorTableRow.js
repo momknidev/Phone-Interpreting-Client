@@ -42,8 +42,8 @@ export default function MediatorTableToolbar({
 }) {
   const {
     id,
-    firstName,
-    lastName,
+    first_name,
+    last_name,
     email,
     phone,
     languages,
@@ -81,7 +81,7 @@ export default function MediatorTableToolbar({
       <TableRow hover>
         <TableCell sx={{ px: 1 }}>
           <Stack direction="row" alignItems="center" spacing={2}>
-            {/* <Avatar alt={firstName} src={avatarUrl} /> */}
+            {/* <Avatar alt={first_name} src={avatar_url} /> */}
             <Link
               component={RouterLink}
               to={PATH_DASHBOARD.mediator.view(id)}
@@ -93,7 +93,7 @@ export default function MediatorTableToolbar({
               }}
             >
               <Typography variant="subtitle2" noWrap>
-                {`${firstName} ${lastName}`}
+                {`${first_name} ${last_name}`}
               </Typography>{' '}
             </Link>
           </Stack>
@@ -106,7 +106,7 @@ export default function MediatorTableToolbar({
           {phone}
         </TableCell>
         <TableCell sx={{ px: 1 }} align="left">
-          {groups?.map((item) => item?.groupName)?.join(', ') || 'No Groups'}
+          {groups?.map((item) => item?.group_name)?.join(', ') || 'No Groups'}
         </TableCell>
         <TableCell align="left" sx={{ textTransform: 'capitalize', px: 1 }}>
           <Typography>
@@ -162,7 +162,7 @@ export default function MediatorTableToolbar({
         <DialogTitle id="delete-dialog-title">Confirm Deletion</DialogTitle>
         <DialogContent>
           <DialogContentText id="delete-dialog-description">
-            Are you sure you want to delete the mediator {`${firstName} ${lastName}`}? This action
+            Are you sure you want to delete the mediator {`${first_name} ${last_name}`}? This action
             cannot be undone.
           </DialogContentText>
         </DialogContent>

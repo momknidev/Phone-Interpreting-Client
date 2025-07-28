@@ -45,7 +45,7 @@ import { DELETE_MEDIATOR, UPLOAD_MEDIATOR_FILE } from '../../graphQL/mutations';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'firstName', label: 'Mediator', align: 'left' },
+  { id: 'first_name', label: 'Mediator', align: 'left' },
   { id: 'email', label: 'Email', align: 'left' },
   { id: 'phone', label: 'Phone No.', align: 'left' },
   { id: '', label: 'Groups', align: 'left' },
@@ -69,7 +69,7 @@ export default function MediatorListPage() {
     onChangeRowsPerPage,
   } = useTable({
     defaultRowsPerPage: 20,
-    defaultOrderBy: 'firstName',
+    defaultOrderBy: 'first_name',
     defaultOrder: 'asc',
   });
   const { themeStretch } = useSettingsContext();
@@ -156,14 +156,14 @@ export default function MediatorListPage() {
     }
 
     const tableData = data?.mediatorsPaginatedList?.mediators?.map((row) => ({
-      firstName: row.firstName,
-      lastName: row.lastName,
+      first_name: row.first_name,
+      last_name: row.last_name,
       email: row.email,
       phone: row.phone,
-      IBAN: row.IBAN,
+      iban: row.iban,
       sourceLanguages: row.languages?.map((item) => item.sourceLanguageName).join(','),
       targetLanguages: row.languages?.map((item) => item.targetLanguageName).join(','),
-      groups: row?.groups?.map((g) => g.groupName).join(', '),
+      groups: row?.groups?.map((g) => g.group_name).join(', '),
       monday_time_slots: row.monday_time_slots,
       tuesday_time_slots: row.tuesday_time_slots,
       wednesday_time_slots: row.wednesday_time_slots,

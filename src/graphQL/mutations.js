@@ -1,38 +1,39 @@
 import { gql } from '@apollo/client';
 
 export const ADD_CLIENT = gql`
-  mutation AddUser($userDetails: userDetails, $file: Upload) {
-    addUser(userDetails: $userDetails, file: $file) {
+  mutation AddClient($clientDetails: clientDetails, $file: Upload) {
+    addClient(clientDetails: $clientDetails, file: $file) {
       id
-      firstName
-      lastName
+      first_name
+      last_name
       email
-      avatarUrl
+      avatar_url
       phone
       role
       type
       token
-      createdAt
-      updatedAt
+      created_at
+      updated_at
+      status
     }
   }
 `;
 
 // You can add more mutations below as your project grows
 export const EDIT_CLIENT = gql`
-  mutation EditUser($userDetails: userDetails, $file: Upload, $id: String) {
-    editUser(userDetails: $userDetails, file: $file, id: $id) {
+  mutation EditUser($clientDetails: clientDetails, $file: Upload, $id: String) {
+    editClient(clientDetails: $clientDetails, file: $file, id: $id) {
       id
-      firstName
-      lastName
+      first_name
+      last_name
       email
-      avatarUrl
+      avatar_url
       phone
       role
       type
       token
-      createdAt
-      updatedAt
+      created_at
+      updated_at
     }
   }
 `;
@@ -48,16 +49,16 @@ export const UPDATE_USER_PASSWORD = gql`
       oldPassword: $oldPassword
     ) {
       id
-      firstName
-      lastName
+      first_name
+      last_name
       email
-      avatarUrl
+      avatar_url
       phone
       role
       type
       token
-      createdAt
-      updatedAt
+      created_at
+      updated_at
     }
   }
 `;
@@ -65,15 +66,15 @@ export const CHANGE_STATUS = gql`
   mutation ChangeStatus($id: ID!, $status: String) {
     changeStatus(id: $id, status: $status) {
       id
-      firstName
-      lastName
+      first_name
+      last_name
       email
-      avatarUrl
+      avatar_url
       phone
       role
       type
-      createdAt
-      updatedAt
+      created_at
+      updated_at
       status
     }
   }
@@ -83,11 +84,11 @@ export const ADD_GROUP = gql`
   mutation AddGroup($groupInput: groupInput) {
     addGroup(groupInput: $groupInput) {
       id
-      groupName
+      group_name
       status
-      userID
-      createdAt
-      updatedAt
+      client_id
+      created_at
+      updated_at
     }
   }
 `;
@@ -96,11 +97,11 @@ export const EDIT_GROUP = gql`
   mutation EditGroup($groupInput: groupInput, $id: String) {
     editGroup(groupInput: $groupInput, id: $id) {
       id
-      groupName
+      group_name
       status
-      userID
-      createdAt
-      updatedAt
+      client_id
+      created_at
+      updated_at
     }
   }
 `;
@@ -109,11 +110,11 @@ export const CHANGE_GROUP_STATUS = gql`
   mutation ChangeGroupStatus($id: ID!, $status: String) {
     changeGroupStatus(id: $id, status: $status) {
       id
-      groupName
+      group_name
       status
-      userID
-      createdAt
-      updatedAt
+      client_id
+      created_at
+      updated_at
     }
   }
 `;
@@ -122,15 +123,15 @@ export const ADD_MEDIATOR = gql`
   mutation AddMediator($mediatorData: MediatorInput) {
     addMediator(mediatorData: $mediatorData) {
       id
-      userID
-      IBAN
-      firstName
-      lastName
+      client_id
+      iban
+      first_name
+      last_name
       email
       phone
 
-      createdAt
-      updatedAt
+      created_at
+      updated_at
       status
       monday_time_slots
       tuesday_time_slots
@@ -150,15 +151,15 @@ export const UPDATE_MEDIATOR = gql`
   mutation UpdateMediator($mediatorData: MediatorInput, $id: String!) {
     updateMediator(mediatorData: $mediatorData, id: $id) {
       id
-      userID
-      IBAN
-      firstName
-      lastName
+      client_id
+      iban
+      first_name
+      last_name
       email
       phone
 
-      createdAt
-      updatedAt
+      created_at
+      updated_at
       status
       monday_time_slots
       tuesday_time_slots
@@ -193,7 +194,7 @@ export const CREATE_LANGUAGE = gql`
     createLanguage(input: $input) {
       id
       language_code
-      userID
+      client_id
       language_name
       created_at
       updated_at
@@ -205,7 +206,7 @@ export const UPDATE_LANGUAGE = gql`
     updateLanguage(input: $input, id: $id) {
       id
       language_code
-      userID
+      client_id
       language_name
       created_at
       updated_at
@@ -229,30 +230,30 @@ export const UPLOAD_MEDIATOR_FILE = gql`
     uploadMediatorFile(file: $file)
   }
 `;
-export const DELETE_USER_CODE = gql`
-  mutation DeleteUserCode($id: ID!) {
-    deleteUserCode(id: $id)
+export const DELETE_CLIENT_CODE = gql`
+  mutation DeleteClientCode($id: ID!) {
+    deleteClientCode(id: $id)
   }
 `;
-export const CREATE_USER_CODE = gql`
-  mutation CreateUserCode($input: UserCodeInput!) {
-    createUserCode(input: $input) {
+export const CREATE_CLIENT_CODE = gql`
+  mutation CreateClientCode($input: ClientCodeInput!) {
+    createClientCode(input: $input) {
       id
-      user_code
-      userID
-      user_name
+      client_code
+      client_id
+      code_label
       created_at
       updated_at
     }
   }
 `;
-export const UPDATE_USER_CODE = gql`
-  mutation UpdateUserCode($input: UserCodeInput!, $id: ID!) {
-    updateUserCode(input: $input, id: $id) {
+export const UPDATE_CLIENT_CODE = gql`
+  mutation UpdateClientCode($input: ClientCodeInput!, $id: ID!) {
+    updateClientCode(input: $input, id: $id) {
       id
-      user_code
-      userID
-      user_name
+      client_code
+      client_id
+      code_label
       created_at
       updated_at
     }
@@ -260,32 +261,77 @@ export const UPDATE_USER_CODE = gql`
 `;
 
 export const ADD_MEDIATOR_TO_GROUP = gql`
-  mutation AddMediatorToGroup($groupId: ID!, $mediatorId: ID!) {
-    addMediatorToGroup(groupID: $groupId, mediatorID: $mediatorId) {
+  mutation AddMediatorToGroup($groupId: ID!, $mediator_id: ID!) {
+    addMediatorToGroup(groupID: $groupId, mediatorID: $mediator_id) {
       id
-      groupName
+      group_name
       status
       user
-      userID
-      createdAt
-      updatedAt
+      client_id
+      created_at
+      updated_at
       mediatorCount
       mediators
     }
   }
 `;
 export const REMOVE_MEDIATOR_FROM_GROUP = gql`
-  mutation RemoveMediatorFromGroup($groupId: ID!, $mediatorId: ID!) {
-    removeMediatorFromGroup(groupID: $groupId, mediatorID: $mediatorId) {
+  mutation RemoveMediatorFromGroup($groupId: ID!, $mediator_id: ID!) {
+    removeMediatorFromGroup(groupID: $groupId, mediatorID: $mediator_id) {
       id
-      groupName
+      group_name
       status
       user
-      userID
-      createdAt
-      updatedAt
+      client_id
+      created_at
+      updated_at
       mediatorCount
       mediators
+    }
+  }
+`;
+
+export const CREATE_PHONE_MEDIATION = gql`
+  mutation CreatePhoneMediation($input: CreatePhoneMediationInput) {
+    createPhoneMediation(input: $input) {
+      id
+      client_id
+      mediator_id
+      mediator
+      caller_phone
+      caller_code
+      source_language_id
+      target_language_id
+      sourceLanguage
+      targetLanguage
+      status
+      mediation_date
+      mediation_duration
+      amount
+      created_at
+      updated_at
+    }
+  }
+`;
+export const UPDATE_PHONE_MEDIATION = gql`
+  mutation UpdatePhoneMediation($input: CreatePhoneMediationInput, $id: ID) {
+    updatePhoneMediation(input: $input, id: $id) {
+      id
+      client_id
+      mediator_id
+      mediator
+      caller_phone
+      caller_code
+      source_language_id
+      target_language_id
+      sourceLanguage
+      targetLanguage
+      status
+      mediation_date
+      mediation_duration
+      amount
+      created_at
+      updated_at
     }
   }
 `;

@@ -137,7 +137,7 @@ NotificationItem.propTypes = {
     title: PropTypes.string,
     isUnRead: PropTypes.bool,
     description: PropTypes.string,
-    createdAt: PropTypes.instanceOf(Date),
+    created_at: PropTypes.instanceOf(Date),
   }),
 };
 
@@ -165,7 +165,7 @@ function NotificationItem({ notification }) {
         secondary={
           <Stack direction="row" sx={{ mt: 0.5, typography: 'caption', color: 'text.disabled' }}>
             <Iconify icon="eva:clock-fill" width={16} sx={{ mr: 0.5 }} />
-            <Typography variant="caption">{fToNow(notification.createdAt)}</Typography>
+            <Typography variant="caption">{fToNow(notification.created_at)}</Typography>
           </Stack>
         }
       />

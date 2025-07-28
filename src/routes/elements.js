@@ -38,7 +38,10 @@ export const MediatorCreatePage = Loadable(
 );
 export const MediatorEditPage = Loadable(lazy(() => import('../pages/client/MediatorEditPage')));
 export const LanguageListPage = Loadable(lazy(() => import('../pages/client/LanguageListPage')));
-export const UserCodeListPage = Loadable(lazy(() => import('../pages/client/UserCodeListPage')));
+export const ClientCodeListPage = Loadable(
+  lazy(() => import('../pages/client/ClientCodeListPage'))
+);
+export const PhoneMediationList = Loadable(lazy(() => import('../pages/client/MediationListPage')));
 // DASHBOARD: COMMON
 
 // MAIN

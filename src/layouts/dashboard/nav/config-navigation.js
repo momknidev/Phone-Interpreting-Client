@@ -49,6 +49,13 @@ const navConfig = [
         type: 'client',
       },
       {
+        title: 'Mediations',
+        path: PATH_DASHBOARD.phoneMediation,
+        icon: ICONS.booking,
+        roles: ['client'],
+        type: 'client',
+      },
+      {
         title: 'Language',
         path: PATH_DASHBOARD.languageList,
         icon: ICONS.language,
@@ -56,8 +63,8 @@ const navConfig = [
         type: 'client',
       },
       {
-        title: 'User Code',
-        path: PATH_DASHBOARD.userCodeList,
+        title: 'Client Code',
+        path: PATH_DASHBOARD.clientCodeList,
         icon: ICONS.phone,
         roles: ['client'],
         type: 'client',

@@ -30,12 +30,12 @@ export default function Profile({ userData }) {
                 sx={{ mb: 2, maxWidth: 300 }}
               >
                 <Avatar
-                  src={userData.avatarUrl}
-                  alt={userData.firstName}
+                  src={userData.avatar_url}
+                  alt={userData.first_name}
                   sx={{ width: 64, height: 64, mb: 2 }}
                 />
                 <Typography variant="h6">
-                  {userData.displayName || `${userData.firstName} ${userData.lastName}`}
+                  {userData.displayName || `${userData.first_name} ${userData.last_name}`}
                 </Typography>
               </Stack>
             </Stack>
@@ -64,10 +64,10 @@ export default function Profile({ userData }) {
               <Chip key={index} label={cust} sx={{ mb: 1 }} />
             ))}
             {/* <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-              Creato il: {new Date(Number(userData.createdAt)).toLocaleString()}
+              Creato il: {new Date(Number(userData.created_at)).toLocaleString()}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Aggiornato il: {new Date(Number(userData.updatedAt)).toLocaleString()}
+              Aggiornato il: {new Date(Number(userData.updated_at)).toLocaleString()}
             </Typography> */}
           </Grid>
         </Grid>

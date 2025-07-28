@@ -27,7 +27,7 @@ UserTableRow.propTypes = {
 };
 
 export default function UserTableRow({ row, onViewRow, onEditRow }) {
-  const { id, displayName, email, avatarUrl, role } = row;
+  const { id, displayName, email, avatar_url, role } = row;
 
   const [openPopover, setOpenPopover] = useState(null);
 
@@ -44,7 +44,7 @@ export default function UserTableRow({ row, onViewRow, onEditRow }) {
       <TableRow hover>
         <TableCell sx={{ px: 1 }}>
           <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar alt={displayName} src={avatarUrl} />
+            <Avatar alt={displayName} src={avatar_url} />
             <Link
               component={RouterLink}
               to={PATH_DASHBOARD.clientUser.view(id)}
@@ -71,7 +71,7 @@ export default function UserTableRow({ row, onViewRow, onEditRow }) {
           {role}
         </TableCell> */}
 
-        {/* <TableCell sx={{px:1}} align="left">{fDateTime(Number(createdAt))}</TableCell> */}
+        {/* <TableCell sx={{px:1}} align="left">{fDateTime(Number(created_at))}</TableCell> */}
         <TableCell sx={{ px: 1 }} align="right">
           <IconButton color={openPopover ? 'inherit' : 'default'} onClick={handleOpenPopover}>
             <Iconify icon="eva:more-vertical-fill" />

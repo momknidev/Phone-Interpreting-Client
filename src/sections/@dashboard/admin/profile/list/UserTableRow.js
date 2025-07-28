@@ -42,7 +42,7 @@ UserTableRow.propTypes = {
 };
 
 export default function UserTableRow({ row, onViewRow, onEditRow, onResetPassword }) {
-  const { id, displayName, email, avatarUrl, customer } = row;
+  const { id, displayName, email, avatar_url, customer } = row;
 
   const [openResetDialog, setOpenResetDialog] = useState(false);
   const handleCloseResetDialog = () => {
@@ -54,7 +54,7 @@ export default function UserTableRow({ row, onViewRow, onEditRow, onResetPasswor
       <TableRow hover>
         <TableCell sx={{ px: 1 }}>
           <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar alt={displayName} src={avatarUrl} />
+            <Avatar alt={displayName} src={avatar_url} />
             <Link
               component={RouterLink}
               to={PATH_DASHBOARD.clientUser.view(id)}

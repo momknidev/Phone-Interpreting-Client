@@ -38,8 +38,12 @@ import {
   TableNoData,
 } from '../../components/table';
 // GraphQL
-import { PAGINATED_USER_CODES } from '../../graphQL/queries';
-import { CREATE_USER_CODE, UPDATE_USER_CODE, DELETE_USER_CODE } from '../../graphQL/mutations';
+import { PAGINATED_CLIENT_CODES } from '../../graphQL/queries';
+import {
+  CREATE_CLIENT_CODE,
+  UPDATE_CLIENT_CODE,
+  DELETE_CLIENT_CODE,
+} from '../../graphQL/mutations';
 import Iconify from '../../components/iconify';
 import { fDateTime } from '../../utils/formatTime';
 import Label from '../../components/label';
@@ -47,8 +51,8 @@ import Label from '../../components/label';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'user_name', label: 'User Name', align: 'center' },
-  { id: 'user_code', label: 'User Code', align: 'center' },
+  { id: 'code_label', label: 'Code Label', align: 'center' },
+  { id: 'client_code', label: 'User Code', align: 'center' },
   { id: 'status', label: 'Status', align: 'center' },
   { id: 'updated_at', label: 'Update Date', align: 'center' },
   { id: '', label: 'Actions', align: 'center' },
@@ -56,7 +60,7 @@ const TABLE_HEAD = [
 
 // ----------------------------------------------------------------------
 
-export default function UserCodeListPage() {
+export default function ClientCodeListPage() {
   const {
     dense,
     page,
@@ -69,7 +73,7 @@ export default function UserCodeListPage() {
     onChangePage,
     onChangeRowsPerPage,
   } = useTable({
-    defaultOrderBy: 'user_code',
+    defaultOrderBy: 'client_code',
     defaultOrder: 'asc',
     defaultRowsPerPage: 20,
     defaultDense: false,
@@ -80,18 +84,18 @@ export default function UserCodeListPage() {
   const { enqueueSnackbar } = useSnackbar();
   const [openDialog, setOpenDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [currentUserCode, setCurrentUserCode] = useState({
-    user_code: '',
-    user_name: '',
+  const [currentClientCode, setCurrentClientCode] = useState({
+    client_code: '',
+    code_label: '',
     status: 'active',
   });
   const [isEditing, setIsEditing] = useState(false);
 
-  const [createUserCode, { loading: createLoading }] = useMutation(CREATE_USER_CODE);
-  const [updateUserCode, { loading: editLoading }] = useMutation(UPDATE_USER_CODE);
-  const [deleteUserCode, { loading: deleteLoading }] = useMutation(DELETE_USER_CODE);
+  const [createClientCode, { loading: createLoading }] = useMutation(CREATE_CLIENT_CODE);
+  const [updateClientCode, { loading: editLoading }] = useMutation(UPDATE_CLIENT_CODE);
+  const [deleteClientCode, { loading: deleteLoading }] = useMutation(DELETE_CLIENT_CODE);
 
-  const { loading, data, error, refetch } = useQuery(PAGINATED_USER_CODES, {
+  const { loading, data, error, refetch } = useQuery(PAGINATED_CLIENT_CODES, {
     variables: {
       offset: page,
       limit: rowsPerPage,
@@ -107,12 +111,12 @@ export default function UserCodeListPage() {
     setSearch(event.target.value);
   };
 
-  const handleOpenDialog = (userCode = null) => {
-    if (userCode) {
-      setCurrentUserCode(userCode);
+  const handleOpenDialog = (ClientCode = null) => {
+    if (ClientCode) {
+      setCurrentClientCode(ClientCode);
       setIsEditing(true);
     } else {
-      setCurrentUserCode({ user_code: '', user_name: '', status: 'active' });
+      setCurrentClientCode({ client_code: '', code_label: '', status: 'active' });
       setIsEditing(false);
     }
     setOpenDialog(true);
@@ -120,46 +124,46 @@ export default function UserCodeListPage() {
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-    setCurrentUserCode({ user_code: '', user_name: '', status: 'active' });
+    setCurrentClientCode({ client_code: '', code_label: '', status: 'active' });
     setIsEditing(false);
   };
 
-  const handleOpenDeleteDialog = (userCode) => {
-    setCurrentUserCode(userCode);
+  const handleOpenDeleteDialog = (ClientCode) => {
+    setCurrentClientCode(ClientCode);
     setOpenDeleteDialog(true);
   };
 
   const handleCloseDeleteDialog = () => {
     setOpenDeleteDialog(false);
-    setCurrentUserCode({ user_code: '', user_name: '', status: 'active' });
+    setCurrentClientCode({ client_code: '', code_label: '', status: 'active' });
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setCurrentUserCode((prev) => ({ ...prev, [name]: value }));
+    setCurrentClientCode((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSaveUserCode = async () => {
+  const handleSaveClientCode = async () => {
     try {
       if (isEditing) {
-        await updateUserCode({
+        await updateClientCode({
           variables: {
-            id: currentUserCode.id,
+            id: currentClientCode.id,
             input: {
-              user_code: Number(currentUserCode.user_code),
-              user_name: currentUserCode.user_name,
-              status: currentUserCode.status,
+              client_code: Number(currentClientCode.client_code),
+              code_label: currentClientCode.code_label,
+              status: currentClientCode.status,
             },
           },
         });
         enqueueSnackbar('User Code updated successfully', { variant: 'success' });
       } else {
-        await createUserCode({
+        await createClientCode({
           variables: {
             input: {
-              user_code: Number(currentUserCode.user_code),
-              user_name: currentUserCode.user_name,
-              status: currentUserCode.status,
+              client_code: Number(currentClientCode.client_code),
+              code_label: currentClientCode.code_label,
+              status: currentClientCode.status,
             },
           },
         });
@@ -175,11 +179,11 @@ export default function UserCodeListPage() {
     }
   };
 
-  const handleDeleteUserCode = async () => {
+  const handleDeleteClientCode = async () => {
     try {
-      await deleteUserCode({
+      await deleteClientCode({
         variables: {
-          id: currentUserCode.id,
+          id: currentClientCode.id,
         },
       });
       enqueueSnackbar('User Code deleted successfully', { variant: 'success' });
@@ -197,8 +201,8 @@ export default function UserCodeListPage() {
     return `Error: ${error?.message}`;
   }
 
-  const userCodes = data?.userCodesPaginated?.userCodes || [];
-  const isNotFound = !userCodes.length && !loading;
+  const ClientCodes = data?.clientCodesPaginated?.clientCodes || [];
+  const isNotFound = !ClientCodes.length && !loading;
 
   return (
     <>
@@ -257,10 +261,10 @@ export default function UserCodeListPage() {
                   {loading && Array.from({ length: 4 }).map((_, i) => <TableSkeleton key={i} />)}
 
                   {!loading &&
-                    userCodes.map((row) => (
+                    ClientCodes.map((row) => (
                       <TableRow key={row.id}>
-                        <TableCell align="center">{row.user_code}</TableCell>
-                        <TableCell align="center">{row.user_name}</TableCell>
+                        <TableCell align="center">{row.client_code}</TableCell>
+                        <TableCell align="center">{row.code_label}</TableCell>
                         <TableCell align="center">
                           <Label color={row?.status === 'active' ? 'success' : 'error'}>
                             {row.status === 'active' ? 'Active' : 'Inactive'}
@@ -291,7 +295,7 @@ export default function UserCodeListPage() {
           </TableContainer>
 
           <TablePaginationCustom
-            count={data?.userCodesPaginated?.filteredCount || 0}
+            count={data?.ClientCodesPaginated?.filteredCount || 0}
             page={page}
             rowsPerPage={rowsPerPage}
             onPageChange={onChangePage}
@@ -317,22 +321,22 @@ export default function UserCodeListPage() {
             autoFocus
             type="number"
             margin="dense"
-            name="user_code"
+            name="client_code"
             label="User Code"
             fullWidth
             variant="outlined"
-            value={currentUserCode.user_code}
+            value={currentClientCode.client_code}
             onChange={handleInputChange}
             sx={{ mb: 2 }}
           />
 
           <TextField
             margin="dense"
-            name="user_name"
-            label="User Name"
+            name="code_label"
+            label="Label"
             fullWidth
             variant="outlined"
-            value={currentUserCode.user_name}
+            value={currentClientCode.code_label}
             onChange={handleInputChange}
             sx={{ mb: 2 }}
           />
@@ -344,7 +348,7 @@ export default function UserCodeListPage() {
             label="Status"
             fullWidth
             variant="outlined"
-            value={currentUserCode.status}
+            value={currentClientCode.status}
             onChange={handleInputChange}
             SelectProps={{ native: true }}
           >
@@ -359,7 +363,7 @@ export default function UserCodeListPage() {
           </LoadingButton>
           <LoadingButton
             loading={createLoading || editLoading}
-            onClick={handleSaveUserCode}
+            onClick={handleSaveClientCode}
             variant="contained"
           >
             {isEditing ? 'Update' : 'Save'}
@@ -372,15 +376,15 @@ export default function UserCodeListPage() {
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to delete the user code {currentUserCode.user_name}? This action
-            cannot be undone.
+            Are you sure you want to delete the user code {currentClientCode.code_label}? This
+            action cannot be undone.
           </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDeleteDialog}>Cancel</Button>
           <LoadingButton
             loading={deleteLoading}
-            onClick={handleDeleteUserCode}
+            onClick={handleDeleteClientCode}
             variant="contained"
             color="error"
           >

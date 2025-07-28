@@ -53,7 +53,7 @@ export default function ClientDetailPage() {
           {data && data.clientByID && (
             <>
               <Typography variant="h4" gutterBottom sx={{ mb: 3 }}>
-                {data.clientByID.firstName} {data.clientByID.lastName}
+                {data.clientByID.first_name} {data.clientByID.last_name}
               </Typography>
               <Typography variant="body1" sx={{ mb: 1 }}>
                 <strong>Email:</strong> {data.clientByID.email}
@@ -63,7 +63,7 @@ export default function ClientDetailPage() {
               </Typography>
 
               <Typography variant="body1" sx={{ mb: 1 }}>
-                <strong>Created:</strong> {new Date(data.clientByID.createdAt).toLocaleString()}
+                <strong>Created:</strong> {new Date(data.clientByID.created_at).toLocaleString()}
               </Typography>
             </>
           )}

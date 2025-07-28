@@ -29,7 +29,7 @@ export default function NavDocs() {
 
       <div>
         <Typography gutterBottom variant="subtitle1">
-          {`${translate('docs.hi')}, ${user?.firstName || ' '} ${user?.lastName || ''}`}
+          {`${translate('docs.hi')}, ${user?.first_name || ' '} ${user?.last_name || ''}`}
         </Typography>
       </div>
     </Stack>

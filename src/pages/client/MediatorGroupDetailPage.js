@@ -70,7 +70,7 @@ export default function MediatorGroupDetailPage() {
 
   const handleAddMediator = async () => {
     await addMediatorToGroup({
-      variables: { groupId: id, mediatorId: selectedMediator },
+      variables: { groupId: id, mediator_id: selectedMediator },
     });
     setOpenAdd(false);
     setSelectedMediator('');
@@ -79,7 +79,7 @@ export default function MediatorGroupDetailPage() {
 
   const handleRemoveMediator = async () => {
     await removeMediatorFromGroup({
-      variables: { groupId: id, mediatorId: mediatorToRemove.id },
+      variables: { groupId: id, mediator_id: mediatorToRemove.id },
     });
     setOpenRemove(false);
     setMediatorToRemove(null);
@@ -103,14 +103,14 @@ export default function MediatorGroupDetailPage() {
               name: 'Mediator Groups',
               href: PATH_DASHBOARD.mediator.group,
             },
-            { name: group?.groupName || 'Group Detail' },
+            { name: group?.group_name || 'Group Detail' },
           ]}
         />
         <Card sx={{ p: 3, mb: 3 }}>
-          <Typography variant="h5">{group?.groupName}</Typography>
+          <Typography variant="h5">{group?.group_name}</Typography>
           <Stack direction="row" spacing={2} mt={2}>
             <Label color={group?.status === 'active' ? 'success' : 'error'}>{group?.status}</Label>
-            <Typography variant="body2">Created At: {fDate(group?.createdAt)}</Typography>
+            <Typography variant="body2">Created At: {fDate(group?.created_at)}</Typography>
           </Stack>
         </Card>
         <Card>
@@ -140,7 +140,7 @@ export default function MediatorGroupDetailPage() {
                   group?.mediators?.map((mediator) => (
                     <TableRow key={mediator.id}>
                       <TableCell>
-                        {mediator.firstName} {mediator.lastName}
+                        {mediator.first_name} {mediator.last_name}
                       </TableCell>
                       <TableCell>{mediator.email}</TableCell>
                       <TableCell>
@@ -170,7 +170,7 @@ export default function MediatorGroupDetailPage() {
           <DialogContentText>
             Are you sure you want to remove mediator{' '}
             <b>
-              {mediatorToRemove?.firstName} {mediatorToRemove?.lastName}
+              {mediatorToRemove?.first_name} {mediatorToRemove?.last_name}
             </b>{' '}
             from this group?
           </DialogContentText>
@@ -199,7 +199,7 @@ export default function MediatorGroupDetailPage() {
               <Autocomplete
                 options={allMediatorsData?.mediatorList || []}
                 getOptionLabel={(option) =>
-                  `${option.firstName} ${option.lastName} (${option.email})`
+                  `${option.first_name} ${option.last_name} (${option.email})`
                 }
                 value={
                   allMediatorsData?.mediatorList?.find((m) => m.id === selectedMediator) || null

@@ -30,9 +30,9 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
   const [editClient] = useMutation(EDIT_CLIENT);
   const [addClient] = useMutation(ADD_CLIENT);
   const NewUserSchema = Yup.object().shape({
-    avatarUrl: Yup.mixed().nullable(),
-    firstName: Yup.string().required('Il nome è obbligatorio'),
-    lastName: Yup.string().required('Il cognome è obbligatorio'),
+    avatar_url: Yup.mixed().nullable(),
+    first_name: Yup.string().required('Il nome è obbligatorio'),
+    last_name: Yup.string().required('Il cognome è obbligatorio'),
     email: Yup.string()
       .required('Email è obbligatoria')
       .email('Email deve essere un indirizzo valido'),
@@ -48,9 +48,9 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
 
   const defaultValues = useMemo(
     () => ({
-      avatarUrl: currentUser?.avatarUrl || null,
-      firstName: currentUser?.firstName || '',
-      lastName: currentUser?.lastName || '',
+      avatar_url: currentUser?.avatar_url || null,
+      first_name: currentUser?.first_name || '',
+      last_name: currentUser?.last_name || '',
       email: currentUser?.email || '',
       phone: currentUser?.phone || '',
       isAdmin: currentUser?.role === 'admin' ? true : false || false,
@@ -91,8 +91,8 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
           variables: {
             id: currentUser.id,
             clientDetails: {
-              firstName: data.firstName,
-              lastName: data.lastName,
+              first_name: data.first_name,
+              last_name: data.last_name,
               email: data.email,
               phone: data.phone,
               password: data.password,
@@ -100,15 +100,15 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
               type: data.type,
               role: 'admin',
             },
-            file: data.avatarUrl ? data.avatarUrl[0] : null,
+            file: data.avatar_url ? data.avatar_url[0] : null,
           },
         });
       } else {
         await addClient({
           variables: {
             clientDetails: {
-              firstName: data.firstName,
-              lastName: data.lastName,
+              first_name: data.first_name,
+              last_name: data.last_name,
               email: data.email,
               phone: data.phone,
               password: data.password,
@@ -116,7 +116,7 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
               type: data.type,
               role: 'admin',
             },
-            file: data.avatarUrl ? data.avatarUrl[0] : null,
+            file: data.avatar_url ? data.avatar_url[0] : null,
           },
         });
       }
@@ -139,7 +139,7 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
       });
 
       if (file) {
-        setValue('avatarUrl', newFile, { shouldValidate: true });
+        setValue('avatar_url', newFile, { shouldValidate: true });
       }
     },
     [setValue]
@@ -152,7 +152,7 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
           <Card sx={{ py: 10, px: 3 }}>
             <Box sx={{ mb: 5 }}>
               <RHFUploadAvatar
-                name="avatarUrl"
+                name="avatar_url"
                 maxSize={3145728}
                 onDrop={handleDrop}
                 helperText={
@@ -186,8 +186,8 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFTextField name="firstName" label="Nome" />
-              <RHFTextField name="lastName" label="Cognome" />
+              <RHFTextField name="first_name" label="Nome" />
+              <RHFTextField name="last_name" label="Cognome" />
               <RHFTextField name="email" label="Indirizzo E-mail" />
               <RHFTextField name="phone" label="Numero di Telefono" />
 

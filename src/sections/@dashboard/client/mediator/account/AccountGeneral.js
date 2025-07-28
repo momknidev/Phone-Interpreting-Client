@@ -23,16 +23,16 @@ export default function AccountGeneral() {
   const { user } = useAuthContext();
 
   const UpdateUserSchema = Yup.object().shape({
-    firstName: Yup.string().required('Name is required'),
-    lastName: Yup.string().required('Name is required'),
+    first_name: Yup.string().required('Name is required'),
+    last_name: Yup.string().required('Name is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
     photoURL: Yup.mixed().required('Avatar is required'),
     phone: Yup.string().required('Phone number is required'),
   });
 
   const defaultValues = {
-    firstName: user?.firstName || '',
-    lastName: user?.lastName || '',
+    first_name: user?.first_name || '',
+    last_name: user?.last_name || '',
     email: user?.email || '',
     photoURL: user?.photoURL || null,
     phone: user?.phone || '',
@@ -114,8 +114,8 @@ export default function AccountGeneral() {
                   sm: 'repeat(2, 1fr)',
                 }}
               >
-                <RHFTextField name="firstName" label="First Name" />
-                <RHFTextField name="lastName" label="Last Name" />
+                <RHFTextField name="first_name" label="First Name" />
+                <RHFTextField name="last_name" label="Last Name" />
 
                 <RHFTextField name="email" label="Email Address" />
 

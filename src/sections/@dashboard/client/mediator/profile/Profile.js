@@ -9,11 +9,11 @@ Profile.propTypes = {
 
 export default function Profile({ mediatorData }) {
   const {
-    firstName,
-    lastName,
+    first_name,
+    last_name,
     email,
     phone,
-    IBAN,
+    iban,
     languages,
     groups,
     monday_time_slots,
@@ -42,8 +42,8 @@ export default function Profile({ mediatorData }) {
           {/* Header */}
           <Grid item xs={12}>
             <Stack alignItems="center" spacing={2}>
-              <Avatar alt={`${firstName} ${lastName}`} sx={{ width: 64, height: 64 }} />
-              <Typography variant="h5">{`${firstName} ${lastName}`}</Typography>
+              <Avatar alt={`${first_name} ${last_name}`} sx={{ width: 64, height: 64 }} />
+              <Typography variant="h5">{`${first_name} ${last_name}`}</Typography>
             </Stack>
           </Grid>
 
@@ -57,7 +57,7 @@ export default function Profile({ mediatorData }) {
           <Grid item xs={12} md={4}>
             <Typography>Email: {email || 'N/A'}</Typography>
             <Typography>Phone: {phone || 'N/A'}</Typography>
-            <Typography>IBAN: {IBAN || 'N/A'}</Typography>
+            <Typography>IBAN: {iban || 'N/A'}</Typography>
           </Grid>
 
           {/* Language Info */}
@@ -78,7 +78,7 @@ export default function Profile({ mediatorData }) {
           <Grid item xs={12} md={4}>
             <Typography sx={{ mb: 1 }}>Groups</Typography>
             <Typography>
-              {groups ? groups?.map((g) => g.groupName) : 'No groups assigned'}
+              {groups ? groups?.map((g) => g.group_name) : 'No groups assigned'}
             </Typography>
           </Grid>
 

@@ -31,9 +31,9 @@ export default function ClientCreateEditForm({ isEdit = false, currentUser }) {
   const [addClient] = useMutation(ADD_CLIENT);
 
   const NewUserSchema = Yup.object().shape({
-    avatarUrl: Yup.mixed().nullable(),
-    firstName: Yup.string().required('First name is required'),
-    lastName: Yup.string().required('Last name is required'),
+    avatar_url: Yup.mixed().nullable(),
+    first_name: Yup.string().required('First name is required'),
+    last_name: Yup.string().required('Last name is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
     phone: Yup.string().required('Phone is required'),
     password: isEdit
@@ -73,9 +73,9 @@ export default function ClientCreateEditForm({ isEdit = false, currentUser }) {
 
   const defaultValues = useMemo(
     () => ({
-      avatarUrl: currentUser?.avatarUrl || null,
-      firstName: currentUser?.firstName || '',
-      lastName: currentUser?.lastName || '',
+      avatar_url: currentUser?.avatar_url || null,
+      first_name: currentUser?.first_name || '',
+      last_name: currentUser?.last_name || '',
       phone: currentUser?.phone || '',
       email: currentUser?.email || '',
       password: null,
@@ -108,32 +108,33 @@ export default function ClientCreateEditForm({ isEdit = false, currentUser }) {
         await editClient({
           variables: {
             id: currentUser.id,
-            userDetails: {
-              firstName: data.firstName,
-              lastName: data.lastName,
+            clientDetails: {
+              first_name: data.first_name,
+              last_name: data.last_name,
               email: data.email,
               role: 'client',
               phone: data.phone,
               type: 'client',
               ...(data.password && { password: data.password }),
             },
-            file: data.avatarUrl && typeof data.avatarUrl !== 'string' ? data.avatarUrl[0] : null,
+            file:
+              data.avatar_url && typeof data.avatar_url !== 'string' ? data.avatar_url[0] : null,
           },
         });
         enqueueSnackbar('Update success!');
       } else {
         await addClient({
           variables: {
-            userDetails: {
-              firstName: data.firstName,
-              lastName: data.lastName,
+            clientDetails: {
+              first_name: data.first_name,
+              last_name: data.last_name,
               email: data.email,
               role: 'client',
               phone: data.phone,
               type: 'client',
               password: data.password,
             },
-            file: data.avatarUrl ? data.avatarUrl[0] : null,
+            file: data.avatar_url ? data.avatar_url[0] : null,
           },
         });
         enqueueSnackbar('Client added successfully!');
@@ -152,7 +153,7 @@ export default function ClientCreateEditForm({ isEdit = false, currentUser }) {
         preview: URL.createObjectURL(file),
       });
       if (file) {
-        setValue('avatarUrl', newFile, { shouldValidate: true });
+        setValue('avatar_url', newFile, { shouldValidate: true });
       }
     },
     [setValue]
@@ -164,7 +165,7 @@ export default function ClientCreateEditForm({ isEdit = false, currentUser }) {
           <Card sx={{ p: 2, maxWidth: 800, mx: 'auto' }}>
             <Box sx={{ mb: 2 }}>
               <RHFUploadAvatar
-                name="avatarUrl"
+                name="avatar_url"
                 maxSize={3145728}
                 onDrop={handleDrop}
                 helperText={
@@ -194,8 +195,8 @@ export default function ClientCreateEditForm({ isEdit = false, currentUser }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFTextField name="firstName" label="First Name" />
-              <RHFTextField name="lastName" label="Last Name" />
+              <RHFTextField name="first_name" label="First Name" />
+              <RHFTextField name="last_name" label="Last Name" />
               <RHFTextField name="email" label="Email Address" />
               <RHFTextField name="phone" label="Phone Number" />
 

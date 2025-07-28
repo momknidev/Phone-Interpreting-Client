@@ -5,16 +5,16 @@ export const LOGIN = gql`
   query login($email: String, $password: String) {
     login(email: $email, password: $password) {
       id
-      firstName
-      lastName
+      first_name
+      last_name
       email
-      avatarUrl
+      avatar_url
       phone
       role
       type
       token
-      createdAt
-      updatedAt
+      created_at
+      updated_at
     }
   }
 `;
@@ -22,21 +22,21 @@ export const CLIENT_BY_ID = gql`
   query ClientByID($id: String) {
     clientByID(id: $id) {
       id
-      firstName
-      lastName
+      first_name
+      last_name
       email
-      avatarUrl
+      avatar_url
       phone
       role
       type
       status
-      createdAt
-      updatedAt
+      created_at
+      updated_at
     }
   }
 `;
 export const CLIENTS_PAGINATED_LIST = gql`
-  query usersPaginatedList(
+  query ClientsPaginatedList(
     $offset: Int
     $limit: Int
     $order: String
@@ -44,7 +44,7 @@ export const CLIENTS_PAGINATED_LIST = gql`
     $name: String
     $type: String
   ) {
-    usersPaginatedList(
+    clientPaginatedList(
       offset: $offset
       limit: $limit
       order: $order
@@ -52,15 +52,15 @@ export const CLIENTS_PAGINATED_LIST = gql`
       name: $name
       type: $type
     ) {
-      users {
+      clients {
         id
-        firstName
-        lastName
+        first_name
+        last_name
         email
-        avatarUrl
+        avatar_url
         phone
         status
-        createdAt
+        created_at
       }
       filteredCount
     }
@@ -85,12 +85,12 @@ export const GROUPS_PAGINATED_LIST = gql`
       filteredCount
       groups {
         id
-        groupName
+        group_name
         status
         user
         mediatorCount
-        createdAt
-        updatedAt
+        created_at
+        updated_at
       }
     }
   }
@@ -100,20 +100,20 @@ export const MEDIATOR_BY_ID = gql`
   query MediatorById($id: String!) {
     mediatorById(id: $id) {
       id
-      userID
-      IBAN
-      firstName
-      lastName
+      client_id
+      iban
+      first_name
+      last_name
       email
       phone
       languages {
         sourceLanguageName
         targetLanguageName
-        sourceLanguageId
-        targetLanguageId
+        source_language_id
+        target_language_id
       }
-      createdAt
-      updatedAt
+      created_at
+      updated_at
       status
       monday_time_slots
       tuesday_time_slots
@@ -127,7 +127,7 @@ export const MEDIATOR_BY_ID = gql`
       priority
       groups {
         id
-        groupName
+        group_name
       }
     }
   }
@@ -136,15 +136,15 @@ export const ALL_MEDIATOR_LIST = gql`
   query AllMediatorList {
     mediatorList {
       id
-      userID
-      IBAN
-      firstName
-      lastName
+      client_id
+      iban
+      first_name
+      last_name
       email
       phone
 
-      createdAt
-      updatedAt
+      created_at
+      updated_at
       status
       monday_time_slots
       tuesday_time_slots
@@ -179,10 +179,10 @@ export const MEDIATORS_PAGINATED_LIST = gql`
       filteredCount
       mediators {
         id
-        userID
-        IBAN
-        firstName
-        lastName
+        client_id
+        iban
+        first_name
+        last_name
         email
         phone
         languages {
@@ -190,8 +190,8 @@ export const MEDIATORS_PAGINATED_LIST = gql`
 
           targetLanguageName
         }
-        createdAt
-        updatedAt
+        created_at
+        updated_at
         status
         monday_time_slots
         tuesday_time_slots
@@ -204,7 +204,7 @@ export const MEDIATORS_PAGINATED_LIST = gql`
         availableOnHolidays
         priority
         groups {
-          groupName
+          group_name
         }
       }
     }
@@ -228,7 +228,7 @@ export const LANGUAGES = gql`
       languages {
         id
         language_code
-        userID
+        client_id
         language_name
         created_at
         updated_at
@@ -241,7 +241,7 @@ export const LANGUAGE_BY_ID = gql`
     language(id: $id) {
       id
       language_code
-      userID
+      client_id
       language_name
       created_at
       updated_at
@@ -253,36 +253,36 @@ export const ALL_GROUPS = gql`
   query AllGroups {
     allGroups {
       id
-      groupName
+      group_name
       status
       user
-      userID
-      createdAt
-      updatedAt
+      client_id
+      created_at
+      updated_at
     }
   }
 `;
-export const GET_USER_CODE_BY_ID = gql`
-  query UserCode($id: ID!) {
-    userCode(id: $id) {
+export const GET_CLIENT_CODE_BY_ID = gql`
+  query ClientCode($id: ID!) {
+    ClientCode(id: $id) {
       id
-      user_code
-      userID
+      client_code
+      client_id
       user_name
       created_at
       updated_at
     }
   }
 `;
-export const PAGINATED_USER_CODES = gql`
-  query UserCodesPaginated(
+export const PAGINATED_CLIENT_CODES = gql`
+  query ClientCodesPaginated(
     $offset: Int
     $limit: Int
     $order: String
     $orderBy: String
     $search: String
   ) {
-    userCodesPaginated(
+    clientCodesPaginated(
       offset: $offset
       limit: $limit
       order: $order
@@ -290,25 +290,25 @@ export const PAGINATED_USER_CODES = gql`
       search: $search
     ) {
       filteredCount
-      userCodes {
+      clientCodes {
         id
-        user_code
+        client_code
         status
-        userID
-        user_name
+        client_id
+        code_label
         created_at
         updated_at
       }
     }
   }
 `;
-export const ALL_USER_CODES = gql`
-  query AllUserCodes {
-    allUserCodes {
+export const ALL_CLIENT_CODES = gql`
+  query AllClientCodes {
+    allClientCodes {
       id
-      user_code
-      userID
-      user_name
+      client_code
+      client_id
+      code_label
       created_at
       updated_at
     }
@@ -318,11 +318,11 @@ export const GROUP_BY_ID = gql`
   query GroupByID($groupByIdId: String) {
     groupByID(id: $groupByIdId) {
       id
-      groupName
+      group_name
       status
-      userID
-      createdAt
-      updatedAt
+      client_id
+      created_at
+      updated_at
       mediatorCount
       mediators
     }
@@ -331,11 +331,73 @@ export const GROUP_BY_ID = gql`
 export const MEDIATOR_LIST_BASIC = gql`
   query MediatorList {
     mediatorList {
-      firstName
-      lastName
+      first_name
+      last_name
       id
       email
       phone
+    }
+  }
+`;
+
+export const ALL_PHONE_MEDIATION = gql`
+  query AllPhoneMediation {
+    allPhoneMediation {
+      id
+      client_id
+      mediator_id
+      mediator
+      caller_phone
+      caller_code
+      source_language_id
+      target_language_id
+      sourceLanguage
+      targetLanguage
+      phone_mediation_no
+      status
+      mediation_date
+      mediation_duration
+      amount
+      created_at
+      updated_at
+    }
+  }
+`;
+export const PHONE_MEDIATION_PAGINATED_LIST = gql`
+  query PhoneMediationPaginatedList(
+    $offset: Int
+    $limit: Int
+    $order: String
+    $orderBy: String
+    $search: String
+  ) {
+    phoneMediationPaginatedList(
+      offset: $offset
+      limit: $limit
+      order: $order
+      orderBy: $orderBy
+      search: $search
+    ) {
+      filteredCount
+      phoneMediation {
+        id
+        client_id
+        mediator_id
+        mediator
+        caller_phone
+        caller_code
+        source_language_id
+        target_language_id
+        source_language
+        phone_mediation_no
+        target_language
+        status
+        mediation_date
+        mediation_duration
+        amount
+        created_at
+        updated_at
+      }
     }
   }
 `;

@@ -35,11 +35,13 @@ export const PATH_DASHBOARD = {
     view: (id) => path(CLIENT_DASHBOARD, `/mediator/${id}`),
   },
   languageList: path(CLIENT_DASHBOARD, '/language'),
-  userCodeList: path(CLIENT_DASHBOARD, '/user-code'),
+  clientCodeList: path(CLIENT_DASHBOARD, '/user-code'),
+  phoneMediation: path(CLIENT_DASHBOARD, '/mediations'),
 
   // admin paths
   adminDashboard: path(ADMIN_DASHBOARD, '/app'),
   intranetProfile: path(ADMIN_DASHBOARD, '/profile'),
+
   adminClients: {
     root: path(ADMIN_DASHBOARD, '/client'),
     new: path(ADMIN_DASHBOARD, '/client/new'),

@@ -44,7 +44,7 @@ export default function MediatorEditPage() {
               name: 'Mediators',
               href: PATH_DASHBOARD.mediator.list,
             },
-            { name: data?.mediatorById?.firstName },
+            { name: data?.mediatorById?.first_name },
           ]}
         />
         {loading && !data && !error && <Skeleton height={300} width="100%" />}

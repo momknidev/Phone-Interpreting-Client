@@ -45,13 +45,13 @@ export default function NavAccount() {
       <StyledRoot>
         <CustomAvatar
           src={user?.photoURL}
-          alt={`${user?.firstName || ' '}   ${user?.lastName || ''}`}
-          name={`${user?.firstName || ' '}   ${user?.lastName || ''}`}
+          alt={`${user?.first_name || ' '}   ${user?.last_name || ''}`}
+          name={`${user?.first_name || ' '}   ${user?.last_name || ''}`}
         />
 
         <Box sx={{ ml: 2, minWidth: 0 }}>
           <Typography variant="subtitle2" noWrap>
-            {`${user?.firstName || ' '}   ${user?.lastName || ''}`}
+            {`${user?.first_name || ' '}   ${user?.last_name || ''}`}
           </Typography>
 
           <Typography variant="body2" noWrap sx={{ color: 'text.secondary' }}>

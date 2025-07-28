@@ -30,7 +30,7 @@ export default function DashboardPage() {
         <Grid container spacing={3}>
           <Grid item xs={12} md={12} lg={12}>
             <AppWelcome
-              title={`Welcome! \n ${user?.firstName || ' '} ${user?.lastName || ''}`}
+              title={`Welcome! \n ${user?.first_name || ' '} ${user?.last_name || ''}`}
               description="Welcome To admin portal"
               img={
                 <SeoIllustration

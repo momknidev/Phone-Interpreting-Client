@@ -227,11 +227,11 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
     languages.forEach((item) => {
       pairs.push({
         sourceLanguage: {
-          id: item?.sourceLanguageId,
+          id: item?.source_language_id,
           name: item?.sourceLanguageName || '',
         },
         targetLanguage: {
-          id: item?.targetLanguageId,
+          id: item?.target_language_id,
           name: item?.targetLanguageName || '',
         },
       });
@@ -241,12 +241,12 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
   };
 
   const NewUserSchema = Yup.object().shape({
-    avatarUrl: Yup.mixed().nullable(),
-    firstName: Yup.string().required('First name is required'),
-    lastName: Yup.string(),
+    avatar_url: Yup.mixed().nullable(),
+    first_name: Yup.string().required('First name is required'),
+    last_name: Yup.string(),
     email: Yup.string().email('Email must be a valid email address').nullable(),
     phone: Yup.string().required('Phone number is required'),
-    IBAN: Yup.string(),
+    iban: Yup.string(),
     languagePairs: Yup.array()
       .of(
         Yup.object().shape({
@@ -264,12 +264,12 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
 
   const defaultValues = useMemo(
     () => ({
-      avatarUrl: currentMediator?.avatarUrl || null,
-      firstName: currentMediator?.firstName || '',
-      lastName: currentMediator?.lastName || '',
+      avatar_url: currentMediator?.avatar_url || null,
+      first_name: currentMediator?.first_name || '',
+      last_name: currentMediator?.last_name || '',
       email: currentMediator?.email || '',
       phone: currentMediator?.phone || '',
-      IBAN: currentMediator?.IBAN || '',
+      iban: currentMediator?.iban || '',
       group: [],
       languagePairs: getDefaultLanguagePairs(),
       availableOnHolidays: currentMediator?.availableOnHolidays || false,
@@ -321,8 +321,8 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
   // Prepare language pairs for mutation
   const getLanguagePairsForMutation = () => {
     const pairs = values?.languagePairs?.map((pair) => ({
-      sourceLanguageId: pair?.sourceLanguage?.id,
-      targetLanguageId: pair?.targetLanguage?.id,
+      source_language_id: pair?.sourceLanguage?.id,
+      target_language_id: pair?.targetLanguage?.id,
     }));
     console.log('Language Pairs for Mutation:', pairs);
     return pairs;
@@ -351,11 +351,11 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
           variables: {
             id: currentMediator.id,
             mediatorData: {
-              firstName: data?.firstName,
-              lastName: data?.lastName,
+              first_name: data?.first_name,
+              last_name: data?.last_name,
               email: data?.email,
               phone: data?.phone,
-              IBAN: data?.IBAN,
+              iban: data?.iban,
               groupIDs: data?.group?.map((item) => item.id),
               priority: data?.priority,
               status: 'active',
@@ -369,12 +369,12 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
         updatedRecord = await addMediator({
           variables: {
             mediatorData: {
-              firstName: data?.firstName,
-              lastName: data?.lastName,
+              first_name: data?.first_name,
+              last_name: data?.last_name,
               email: data?.email,
               phone: data?.phone,
               groupIDs: data?.group?.map((item) => item.id),
-              IBAN: data?.IBAN,
+              iban: data?.iban,
               priority: data?.priority,
               ...availabilityData,
               languages: languagePairsData,
@@ -402,7 +402,7 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
       });
 
       if (file) {
-        setValue('avatarUrl', newFile, { shouldValidate: true });
+        setValue('avatar_url', newFile, { shouldValidate: true });
       }
     },
     [setValue]
@@ -415,7 +415,7 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
           <Card sx={{ p: 2 }}>
             <Box sx={{ mb: 1 }}>
               <RHFUploadAvatar
-                name="avatarUrl"
+                name="avatar_url"
                 maxSize={3145728}
                 onDrop={handleDrop}
                 helperText={
@@ -447,18 +447,18 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
                 md: 'repeat(3, 1fr)',
               }}
             >
-              <RHFTextField name="firstName" label="First Name" />
-              <RHFTextField name="lastName" label="Last Name" />
+              <RHFTextField name="first_name" label="First Name" />
+              <RHFTextField name="last_name" label="Last Name" />
               <RHFTextField name="email" label="Email Address" />
               <RHFTextField name="phone" label="Phone Number" />
-              <RHFTextField name="IBAN" label="IBAN" />
+              <RHFTextField name="iban" label="IBAN" />
               <RHFAutocomplete
                 name="group"
                 label="Group"
                 multiple
                 options={data?.allGroups || []}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
-                getOptionLabel={(option) => option.groupName}
+                getOptionLabel={(option) => option.group_name}
                 loading={loading}
                 ChipProps={{ size: 'small' }}
                 renderInput={(params) => <TextField {...params} label="Group" />}

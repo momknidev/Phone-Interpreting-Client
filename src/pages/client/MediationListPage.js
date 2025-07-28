@@ -1,15 +1,14 @@
 import { Helmet } from 'react-helmet-async';
 import { useState } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 // @mui
-import { Card, Table, Button, TableBody, Container, TableContainer, Stack } from '@mui/material';
+import { Card, Table, TableBody, Container, TableContainer } from '@mui/material';
 import { useQuery } from '@apollo/client';
 
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
 // _mock_
 // components
-import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 import { useSettingsContext } from '../../components/settings';
@@ -20,22 +19,29 @@ import {
   TableSkeleton,
 } from '../../components/table';
 // sections
-import { UserTableToolbar, UserTableRow } from '../../sections/@dashboard/admin/client/list';
-import { CLIENTS_PAGINATED_LIST } from '../../graphQL/queries';
+import {
+  BookingTableToolbar,
+  BookingTableRow,
+} from '../../sections/@dashboard/client/booking/list';
+import { PHONE_MEDIATION_PAGINATED_LIST } from '../../graphQL/queries';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', align: 'left' },
-  { id: 'email', label: 'Email', align: 'left' },
-  { id: 'phone', label: 'Phone', align: 'left' },
-  { id: 'status', label: 'Status', align: 'left' },
-  { id: '', label: 'Action', align: 'left' },
+  { id: '', label: 'Request ID', align: 'center' },
+  { id: 'language', label: 'Language', align: 'center' },
+  { id: '', label: 'Duration (Min)', align: 'center' },
+  { id: '', label: 'Mediator', align: 'center' },
+  { id: 'created_at', label: 'Created At', align: 'center' },
+  { id: 'deliveryDate', label: 'Mediation Date', align: 'center' },
+  { id: 'amount', label: 'Amount', align: 'center' },
+  { id: 'status', label: 'Status', align: 'center' },
+  // { id: '' },
 ];
 
 // ----------------------------------------------------------------------
 
-export default function ClientListPage() {
+export default function MediationListPage() {
   const {
     dense,
     page,
@@ -47,21 +53,21 @@ export default function ClientListPage() {
     onChangeDense,
     onChangePage,
     onChangeRowsPerPage,
-  } = useTable();
-  const { themeStretch } = useSettingsContext();
+  } = useTable({
+    defaultOrderBy: 'created_at',
+    defaultOrder: 'desc',
+  });
 
+  const { themeStretch } = useSettingsContext();
   const navigate = useNavigate();
 
-  const [filterName, setFilterName] = useState('');
-
-  const { loading, data, error } = useQuery(CLIENTS_PAGINATED_LIST, {
+  const [requestID, setFilterName] = useState('');
+  const { loading, data, error } = useQuery(PHONE_MEDIATION_PAGINATED_LIST, {
     variables: {
       offset: page,
       limit: rowsPerPage,
       order,
       orderBy,
-      name: filterName,
-      type: 'client',
     },
     fetchPolicy: 'no-cache',
   });
@@ -72,56 +78,40 @@ export default function ClientListPage() {
   };
 
   const handleViewRow = (id) => {
-    navigate(PATH_DASHBOARD.adminClients.view(id));
-  };
-  const handleEditRow = (id) => {
-    navigate(PATH_DASHBOARD.adminClients.edit(id));
+    navigate(PATH_DASHBOARD.mediatorBookingsView(id));
   };
 
-  const handleResetFilter = () => {
-    setFilterName('');
-  };
   if (error) {
     return `Error: ${error?.message}`;
   }
   return (
     <>
       <Helmet>
-        <title> Client: List | Phone Mediation Application</title>
+        <title> Phone Mediation List | Telephone Mediation App</title>
       </Helmet>
 
-      <Container maxWidth={themeStretch ? false : 'lg'}>
+      <Container maxWidth={themeStretch ? false : 'xl'}>
         <CustomBreadcrumbs
-          heading="Client List"
-          links={[{ name: 'Dashboard', href: PATH_DASHBOARD.root }, { name: 'List' }]}
-          action={
-            <Stack direction="row" spacing={2} alignItems="center">
-              <UserTableToolbar
-                filterName={filterName}
-                onFilterName={handleFilterName}
-                onResetFilter={handleResetFilter}
-              />
-              <Button
-                component={RouterLink}
-                to={PATH_DASHBOARD.adminClients.new}
-                variant="contained"
-                startIcon={<Iconify icon="eva:plus-fill" />}
-              >
-                New Client
-              </Button>
-            </Stack>
-          }
+          heading="Phone Mediation"
+          links={[
+            {
+              name: 'Dashboard',
+              href: PATH_DASHBOARD.clientDashboard,
+            },
+            { name: 'Mediation List' },
+          ]}
         />
 
         <Card>
+          <BookingTableToolbar requestID={requestID} onFilterName={handleFilterName} />
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <Scrollbar>
-              <Table size={dense ? 'small' : 'medium'}>
+              <Table size={dense ? 'small' : 'medium'} sx={{ minWidth: 800 }}>
                 <TableHeadCustom
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={data?.clientPaginatedList?.users?.length || 0}
+                  rowCount={data?.phoneMediationPaginatedList?.phoneMediation?.length || 0}
                   onSort={onSort}
                 />
 
@@ -138,12 +128,11 @@ export default function ClientListPage() {
                   {data &&
                     !error &&
                     !loading &&
-                    data?.clientPaginatedList?.clients?.map((row) => (
-                      <UserTableRow
+                    data?.phoneMediationPaginatedList?.phoneMediation?.map((row) => (
+                      <BookingTableRow
                         key={row.id}
                         row={row}
                         onViewRow={() => handleViewRow(row.id)}
-                        onEditRow={() => handleEditRow(row.id)}
                       />
                     ))}
                 </TableBody>
@@ -152,7 +141,7 @@ export default function ClientListPage() {
           </TableContainer>
 
           <TablePaginationCustom
-            count={data?.clientPaginatedList?.filteredCount || 0}
+            count={data?.phoneMediationPaginatedList?.filteredCount || 0}
             page={page}
             rowsPerPage={rowsPerPage}
             onPageChange={onChangePage}

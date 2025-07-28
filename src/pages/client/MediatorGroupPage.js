@@ -79,7 +79,7 @@ export default function MediatorGroupPage() {
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [currentGroup, setCurrentGroup] = useState(null);
-  const [groupName, setGroupName] = useState('');
+  const [group_name, setGroupName] = useState('');
   const [groupStatus, setGroupStatus] = useState('active');
 
   const { loading, data, error, refetch } = useQuery(GROUPS_PAGINATED_LIST, {
@@ -136,7 +136,7 @@ export default function MediatorGroupPage() {
 
   const handleOpenEditDialog = (group) => {
     setCurrentGroup(group);
-    setGroupName(group.groupName);
+    setGroupName(group.group_name);
     setGroupStatus(group.status);
     setOpenEditDialog(true);
   };
@@ -160,7 +160,7 @@ export default function MediatorGroupPage() {
     addGroup({
       variables: {
         groupInput: {
-          groupName,
+          group_name,
           status: groupStatus,
         },
       },
@@ -172,7 +172,7 @@ export default function MediatorGroupPage() {
       variables: {
         id: currentGroup.id,
         groupInput: {
-          groupName,
+          group_name,
           status: groupStatus,
         },
       },
@@ -257,7 +257,7 @@ export default function MediatorGroupPage() {
                             }}
                           >
                             <Typography variant="subtitle2" noWrap>
-                              {`${row?.groupName} `}
+                              {`${row?.group_name} `}
                             </Typography>
                           </Link>
                         </TableCell>
@@ -309,7 +309,7 @@ export default function MediatorGroupPage() {
             <TextField
               fullWidth
               label="Group Name"
-              value={groupName}
+              value={group_name}
               onChange={(e) => setGroupName(e.target.value)}
             />
             <FormControl fullWidth>
@@ -333,7 +333,7 @@ export default function MediatorGroupPage() {
             loading={loadingCreate}
             onClick={handleSubmitAdd}
             variant="contained"
-            disabled={!groupName}
+            disabled={!group_name}
           >
             Add
           </LoadingButton>
@@ -348,7 +348,7 @@ export default function MediatorGroupPage() {
             <TextField
               fullWidth
               label="Group Name"
-              value={groupName}
+              value={group_name}
               onChange={(e) => setGroupName(e.target.value)}
             />
             <FormControl fullWidth>
@@ -372,7 +372,7 @@ export default function MediatorGroupPage() {
             loading={loadingEdit}
             onClick={handleSubmitEdit}
             variant="contained"
-            disabled={!groupName}
+            disabled={!group_name}
           >
             Save
           </LoadingButton>
@@ -384,7 +384,7 @@ export default function MediatorGroupPage() {
         <DialogTitle>Delete Group</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete the group {currentGroup?.groupName}? This action cannot
+            Are you sure you want to delete the group {currentGroup?.group_name}? This action cannot
             be undone.
           </DialogContentText>
         </DialogContent>
