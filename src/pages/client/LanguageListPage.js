@@ -71,7 +71,7 @@ export default function LanguageListPage() {
   } = useTable({
     defaultOrderBy: 'language_code',
     defaultOrder: 'asc',
-    defaultRowsPerPage: 20,
+    defaultRowsPerPage: 25,
     defaultDense: false,
   });
 
