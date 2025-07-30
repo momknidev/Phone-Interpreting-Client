@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 // @mui
-import { TableRow, TableCell, Link } from '@mui/material';
+import { TableRow, TableCell } from '@mui/material';
 // components
 import Label from '../../../../../components/label';
 import { fDateTime } from '../../../../../utils/formatTime';
@@ -18,13 +18,13 @@ export default function BookingTableRow({ row, onEditRow, onViewRow }) {
   const {
     // id,
     interpreter,
-    caller_phone,
-    caller_code,
+    // caller_phone,
+    // caller_code,
     source_language,
     target_language,
     phone_mediation_no,
     status,
-    call_date,
+    // call_date,
     call_duration,
     amount,
     created_at,
@@ -39,15 +39,9 @@ export default function BookingTableRow({ row, onEditRow, onViewRow }) {
 
   return (
     <TableRow hover>
+      <TableCell align="center">{phone_mediation_no}</TableCell>
       <TableCell align="center">
-        <Link onClick={() => onViewRow()} color="primary" sx={{ cursor: 'pointer' }}>
-          {phone_mediation_no}
-        </Link>
-      </TableCell>
-      <TableCell align="center">
-        {source_language}
-        {'<=>'}
-        {target_language}
+        {source_language} &hArr; {target_language}
       </TableCell>
       <TableCell align="center">{call_duration} Min</TableCell>
 
