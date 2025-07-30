@@ -87,7 +87,7 @@ export default function ClientListPage() {
   return (
     <>
       <Helmet>
-        <title> Client: List | Phone Mediation Application</title>
+        <title> Client: List | Telephone Mediation App</title>
       </Helmet>
 
       <Container maxWidth={themeStretch ? false : 'lg'}>

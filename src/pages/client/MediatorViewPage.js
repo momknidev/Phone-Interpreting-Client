@@ -11,7 +11,7 @@ import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 import { useSettingsContext } from '../../components/settings';
 
 import { MEDIATOR_BY_ID } from '../../graphQL/queries';
-import { Profile } from '../../sections/@dashboard/client/mediator/profile';
+import { Profile } from '../../sections/@dashboard/client/interpreter/profile';
 
 // ----------------------------------------------------------------------
 
@@ -33,17 +33,17 @@ export default function MediatorViewPage() {
   return (
     <>
       <Helmet>
-        <title> Mediator: Profile | Arca di Noè Healthcare Mediation Management</title>
+        <title> Interpreter: Profile | Telephone Mediation App</title>
       </Helmet>
 
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Mediator Profile"
+          heading="Interpreter Profile"
           action={
             <Button
               variant="contained"
               startIcon={<i className="fas fa-edit" />}
-              onClick={() => navigate(PATH_DASHBOARD.mediator.edit(data?.mediatorById?.id))}
+              onClick={() => navigate(PATH_DASHBOARD.interpreter.edit(data?.mediatorById?.id))}
             >
               Edit
             </Button>
@@ -55,7 +55,7 @@ export default function MediatorViewPage() {
             },
             {
               name: 'Mediators',
-              href: PATH_DASHBOARD.mediator.list,
+              href: PATH_DASHBOARD.interpreter.list,
             },
             { name: data?.mediatorById?.first_name },
           ]}

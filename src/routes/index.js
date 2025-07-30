@@ -139,7 +139,7 @@ export default function Router() {
           ),
         },
         {
-          path: 'mediations',
+          path: 'call-reports',
           element: (
             <RoleBasedGuard hasContent roles={['client']}>
               <PhoneMediationList />
@@ -155,7 +155,7 @@ export default function Router() {
           ),
         },
         {
-          path: 'mediator',
+          path: 'interpreter',
           children: [
             {
               path: 'group',

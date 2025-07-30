@@ -47,12 +47,12 @@ export default function MediatorGroupDetailPage() {
     fetchPolicy: 'no-cache',
   });
 
-  // For Add Mediator Dialog
+  // For Add Interpreter Dialog
   const [openAdd, setOpenAdd] = useState(false);
   const [selectedMediator, setSelectedMediator] = useState('');
   const { data: allMediatorsData } = useQuery(MEDIATOR_LIST_BASIC);
 
-  // For Remove Mediator Dialog
+  // For Remove Interpreter Dialog
   const [openRemove, setOpenRemove] = useState(false);
   const [mediatorToRemove, setMediatorToRemove] = useState(null);
 
@@ -92,16 +92,16 @@ export default function MediatorGroupDetailPage() {
   return (
     <>
       <Helmet>
-        <title> Mediator Group Detail | Phone Mediation Application</title>
+        <title> Interpreter Group Detail | Telephone Mediation App</title>
       </Helmet>
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Mediator Groups"
+          heading="Interpreter Groups"
           links={[
             { name: 'Dashboard', href: PATH_DASHBOARD.root },
             {
-              name: 'Mediator Groups',
-              href: PATH_DASHBOARD.mediator.group,
+              name: 'Interpreter Groups',
+              href: PATH_DASHBOARD.interpreter.group,
             },
             { name: group?.group_name || 'Group Detail' },
           ]}
@@ -121,7 +121,7 @@ export default function MediatorGroupDetailPage() {
               startIcon={<Iconify icon="eva:plus-fill" />}
               onClick={() => setOpenAdd(true)}
             >
-              Add Mediator
+              Add Interpreter
             </Button>
           </Stack>
           <TableContainer>
@@ -137,17 +137,17 @@ export default function MediatorGroupDetailPage() {
                 {loading ? (
                   <TableSkeleton />
                 ) : (
-                  group?.mediators?.map((mediator) => (
-                    <TableRow key={mediator.id}>
+                  group?.mediators?.map((interpreter) => (
+                    <TableRow key={interpreter.id}>
                       <TableCell>
-                        {mediator.first_name} {mediator.last_name}
+                        {interpreter.first_name} {interpreter.last_name}
                       </TableCell>
-                      <TableCell>{mediator.email}</TableCell>
+                      <TableCell>{interpreter.email}</TableCell>
                       <TableCell>
                         <IconButton
                           color="error"
                           onClick={() => {
-                            setMediatorToRemove(mediator);
+                            setMediatorToRemove(interpreter);
                             setOpenRemove(true);
                           }}
                         >
@@ -163,12 +163,12 @@ export default function MediatorGroupDetailPage() {
         </Card>
       </Container>
 
-      {/* Remove Mediator Dialog */}
+      {/* Remove Interpreter Dialog */}
       <Dialog open={openRemove} onClose={() => setOpenRemove(false)}>
-        <DialogTitle>Remove Mediator</DialogTitle>
+        <DialogTitle>Remove Interpreter</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to remove mediator{' '}
+            Are you sure you want to remove interpreter{' '}
             <b>
               {mediatorToRemove?.first_name} {mediatorToRemove?.last_name}
             </b>{' '}
@@ -188,13 +188,13 @@ export default function MediatorGroupDetailPage() {
         </DialogActions>
       </Dialog>
 
-      {/* Add Mediator Dialog with Autocomplete */}
+      {/* Add Interpreter Dialog with Autocomplete */}
       <Dialog open={openAdd} onClose={() => setOpenAdd(false)}>
-        <DialogTitle>Add Mediator to Group</DialogTitle>
+        <DialogTitle>Add Interpreter to Group</DialogTitle>
         <DialogContent>
           <FormControl fullWidth sx={{ mt: 2, minWidth: 300 }}>
             {/* Replace Select with Autocomplete */}
-            <InputLabel shrink>Select Mediator</InputLabel>
+            <InputLabel shrink>Select Interpreter</InputLabel>
             <Stack sx={{ mt: 2 }}>
               <Autocomplete
                 options={allMediatorsData?.mediatorList || []}
@@ -208,7 +208,7 @@ export default function MediatorGroupDetailPage() {
                   setSelectedMediator(newValue ? newValue.id : '');
                 }}
                 renderInput={(params) => (
-                  <TextField {...params} label="Select Mediator" variant="outlined" />
+                  <TextField {...params} label="Select Interpreter" variant="outlined" />
                 )}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
               />

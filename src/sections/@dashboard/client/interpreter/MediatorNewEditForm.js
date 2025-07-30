@@ -386,9 +386,9 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
       reset();
       // eslint-disable-next-line no-unused-expressions
       isEdit
-        ? navigate(PATH_DASHBOARD.mediator.view(updatedRecord?.data?.updateMediator?.id))
-        : navigate(PATH_DASHBOARD.mediator.list);
-      enqueueSnackbar(!isEdit ? 'Mediator created!' : 'Mediator updated!');
+        ? navigate(PATH_DASHBOARD.interpreter.view(updatedRecord?.data?.updateMediator?.id))
+        : navigate(PATH_DASHBOARD.interpreter.list);
+      enqueueSnackbar(!isEdit ? 'Interpreter created!' : 'Interpreter updated!');
     } catch (error) {
       enqueueSnackbar(error?.message, { variant: 'error' });
     }

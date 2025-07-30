@@ -38,14 +38,14 @@ import {
 import {
   MediatorTableToolbar,
   MediatorTableRow,
-} from '../../sections/@dashboard/client/mediator/list';
+} from '../../sections/@dashboard/client/interpreter/list';
 import { MEDIATORS_PAGINATED_LIST } from '../../graphQL/queries';
 import { DELETE_MEDIATOR, UPLOAD_MEDIATOR_FILE } from '../../graphQL/mutations';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'first_name', label: 'Mediator', align: 'left' },
+  { id: 'first_name', label: 'Interpreter', align: 'left' },
   { id: 'email', label: 'Email', align: 'left' },
   { id: 'phone', label: 'Phone No.', align: 'left' },
   { id: '', label: 'Groups', align: 'left' },
@@ -102,7 +102,7 @@ export default function MediatorListPage() {
       refetch();
       // eslint-disable-next-line no-shadow
     } catch (error) {
-      console.error('Error deleting mediator:', error);
+      console.error('Error deleting interpreter:', error);
       enqueueSnackbar(`Error: ${error?.message}`, { variant: 'error' });
     }
   };
@@ -137,11 +137,11 @@ export default function MediatorListPage() {
   };
 
   const handleViewRow = (id) => {
-    navigate(PATH_DASHBOARD.mediator.view(id));
+    navigate(PATH_DASHBOARD.interpreter.view(id));
   };
 
   const handleEditRow = (id) => {
-    navigate(PATH_DASHBOARD.mediator.edit(id));
+    navigate(PATH_DASHBOARD.interpreter.edit(id));
   };
 
   const handleResetFilter = () => {
@@ -191,7 +191,7 @@ export default function MediatorListPage() {
   return (
     <>
       <Helmet>
-        <title> Mediator: List | Telephone Mediation App</title>
+        <title> Interpreter: List | Telephone Mediation App</title>
       </Helmet>
 
       <Container maxWidth={themeStretch ? false : 'lg'}>
@@ -202,11 +202,11 @@ export default function MediatorListPage() {
             <Stack spacing={1} direction="row" flexShrink={0} justifyContent="flex-end">
               <Button
                 component={RouterLink}
-                to={PATH_DASHBOARD.mediator.new}
+                to={PATH_DASHBOARD.interpreter.new}
                 variant="contained"
                 startIcon={<Iconify icon="eva:plus-fill" />}
               >
-                New Mediator
+                New Interpreter
               </Button>
 
               <Button
@@ -279,7 +279,7 @@ export default function MediatorListPage() {
 
       {/* Upload File Dialog */}
       <Dialog open={openUploadDialog} onClose={() => setOpenUploadDialog(false)}>
-        <DialogTitle>Upload Mediator File</DialogTitle>
+        <DialogTitle>Upload Interpreter File</DialogTitle>
         <DialogContent>
           <input
             accept=".csv, .xlsx"

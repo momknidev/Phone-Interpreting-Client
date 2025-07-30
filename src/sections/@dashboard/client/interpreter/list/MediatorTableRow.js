@@ -84,7 +84,7 @@ export default function MediatorTableToolbar({
             {/* <Avatar alt={first_name} src={avatar_url} /> */}
             <Link
               component={RouterLink}
-              to={PATH_DASHBOARD.mediator.view(id)}
+              to={PATH_DASHBOARD.interpreter.view(id)}
               sx={{
                 color: 'text.primary',
                 textDecoration: 'none',
@@ -162,8 +162,8 @@ export default function MediatorTableToolbar({
         <DialogTitle id="delete-dialog-title">Confirm Deletion</DialogTitle>
         <DialogContent>
           <DialogContentText id="delete-dialog-description">
-            Are you sure you want to delete the mediator {`${first_name} ${last_name}`}? This action
-            cannot be undone.
+            Are you sure you want to delete the interpreter {`${first_name} ${last_name}`}? This
+            action cannot be undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions>

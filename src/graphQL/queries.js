@@ -346,7 +346,7 @@ export const ALL_PHONE_MEDIATION = gql`
       id
       client_id
       mediator_id
-      mediator
+      interpreter
       caller_phone
       caller_code
       source_language_id
@@ -355,8 +355,8 @@ export const ALL_PHONE_MEDIATION = gql`
       targetLanguage
       phone_mediation_no
       status
-      mediation_date
-      mediation_duration
+      call_date
+      call_duration
       amount
       created_at
       updated_at
@@ -379,11 +379,11 @@ export const PHONE_MEDIATION_PAGINATED_LIST = gql`
       search: $search
     ) {
       filteredCount
-      phoneMediation {
+      callReports {
         id
         client_id
         mediator_id
-        mediator
+        interpreter
         caller_phone
         caller_code
         source_language_id
@@ -392,8 +392,8 @@ export const PHONE_MEDIATION_PAGINATED_LIST = gql`
         phone_mediation_no
         target_language
         status
-        mediation_date
-        mediation_duration
+        call_date
+        call_duration
         amount
         created_at
         updated_at

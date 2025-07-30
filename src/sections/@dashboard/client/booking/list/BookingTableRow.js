@@ -17,15 +17,15 @@ BookingTableRow.propTypes = {
 export default function BookingTableRow({ row, onEditRow, onViewRow }) {
   const {
     // id,
-    mediator,
+    interpreter,
     caller_phone,
     caller_code,
     source_language,
     target_language,
     phone_mediation_no,
     status,
-    mediation_date,
-    mediation_duration,
+    call_date,
+    call_duration,
     amount,
     created_at,
   } = row;
@@ -49,12 +49,12 @@ export default function BookingTableRow({ row, onEditRow, onViewRow }) {
         {'<=>'}
         {target_language}
       </TableCell>
-      <TableCell align="center">{mediation_duration} Min</TableCell>
+      <TableCell align="center">{call_duration} Min</TableCell>
 
-      <TableCell align="center">{mediator} </TableCell>
+      <TableCell align="center">{interpreter} </TableCell>
 
       <TableCell align="center">{fDateTime(created_at)}</TableCell>
-      <TableCell align="center">{fDateTime(mediation_duration)}</TableCell>
+      {/* <TableCell align="center">{fDateTime(call_duration)}</TableCell> */}
       <TableCell align="center">{fCurrency(amount)}</TableCell>
       <TableCell align="center">
         <Label variant="soft" color={labelColor} sx={{ textTransform: 'capitalize' }}>

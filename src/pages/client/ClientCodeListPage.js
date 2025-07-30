@@ -52,7 +52,7 @@ import Label from '../../components/label';
 
 const TABLE_HEAD = [
   { id: 'code_label', label: 'Code Label', align: 'center' },
-  { id: 'client_code', label: 'User Code', align: 'center' },
+  { id: 'client_code', label: 'Client Code', align: 'center' },
   { id: 'status', label: 'Status', align: 'center' },
   { id: 'updated_at', label: 'Update Date', align: 'center' },
   { id: '', label: 'Actions', align: 'center' },
@@ -156,7 +156,7 @@ export default function ClientCodeListPage() {
             },
           },
         });
-        enqueueSnackbar('User Code updated successfully', { variant: 'success' });
+        enqueueSnackbar('Client Code updated successfully', { variant: 'success' });
       } else {
         await createClientCode({
           variables: {
@@ -167,7 +167,7 @@ export default function ClientCodeListPage() {
             },
           },
         });
-        enqueueSnackbar('User Code created successfully', { variant: 'success' });
+        enqueueSnackbar('Client Code created successfully', { variant: 'success' });
       }
       handleCloseDialog();
       refetch();
@@ -186,7 +186,7 @@ export default function ClientCodeListPage() {
           id: currentClientCode.id,
         },
       });
-      enqueueSnackbar('User Code deleted successfully', { variant: 'success' });
+      enqueueSnackbar('Client Code deleted successfully', { variant: 'success' });
       handleCloseDeleteDialog();
       refetch();
     } catch (err) {
@@ -207,18 +207,18 @@ export default function ClientCodeListPage() {
   return (
     <>
       <Helmet>
-        <title> User Code List | Telephone Mediation App</title>
+        <title> Client Code List | Telephone Mediation App</title>
       </Helmet>
 
       <Container maxWidth={themeStretch ? false : 'xl'}>
         <CustomBreadcrumbs
-          heading="User Code List"
+          heading="Client Code List"
           links={[
             {
               name: 'Dashboard',
               href: PATH_DASHBOARD.mediatorDashboard,
             },
-            { name: 'User Codes' },
+            { name: 'Client Codes' },
           ]}
           action={
             <Stack direction="row" spacing={2} alignItems="center">
@@ -240,7 +240,7 @@ export default function ClientCodeListPage() {
                 startIcon={<Iconify icon="ic:round-plus" />}
                 onClick={() => handleOpenDialog()}
               >
-                New User Code
+                New Client Code
               </Button>
             </Stack>
           }
@@ -295,7 +295,7 @@ export default function ClientCodeListPage() {
           </TableContainer>
 
           <TablePaginationCustom
-            count={data?.ClientCodesPaginated?.filteredCount || 0}
+            count={data?.clientCodesPaginated?.filteredCount || 0}
             page={page}
             rowsPerPage={rowsPerPage}
             onPageChange={onChangePage}
@@ -308,7 +308,7 @@ export default function ClientCodeListPage() {
 
       {/* Create/Edit Dialog */}
       <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="xs" fullWidth>
-        <DialogTitle>{isEditing ? 'Edit User Code' : 'New User Code'}</DialogTitle>
+        <DialogTitle>{isEditing ? 'Edit Client Code' : 'New Client Code'}</DialogTitle>
 
         <DialogContent>
           <Typography sx={{ pb: 3 }}>
@@ -322,7 +322,7 @@ export default function ClientCodeListPage() {
             type="number"
             margin="dense"
             name="client_code"
-            label="User Code"
+            label="Client Code"
             fullWidth
             variant="outlined"
             value={currentClientCode.client_code}

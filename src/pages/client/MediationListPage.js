@@ -28,13 +28,12 @@ import { PHONE_MEDIATION_PAGINATED_LIST } from '../../graphQL/queries';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: '', label: 'Request ID', align: 'center' },
+  { id: '', label: 'ID', align: 'center' },
   { id: 'language', label: 'Language', align: 'center' },
-  { id: '', label: 'Duration (Min)', align: 'center' },
-  { id: '', label: 'Mediator', align: 'center' },
+  { id: '', label: 'Duration', align: 'center' },
+  { id: '', label: 'Interpreter', align: 'center' },
   { id: 'created_at', label: 'Created At', align: 'center' },
-  { id: 'deliveryDate', label: 'Mediation Date', align: 'center' },
-  { id: 'amount', label: 'Amount', align: 'center' },
+  { id: 'amount', label: 'Price', align: 'center' },
   { id: 'status', label: 'Status', align: 'center' },
   // { id: '' },
 ];
@@ -87,18 +86,18 @@ export default function MediationListPage() {
   return (
     <>
       <Helmet>
-        <title> Phone Mediation List | Telephone Mediation App</title>
+        <title> Call Reports List | Telephone Mediation App</title>
       </Helmet>
 
       <Container maxWidth={themeStretch ? false : 'xl'}>
         <CustomBreadcrumbs
-          heading="Phone Mediation"
+          heading="Call Reports"
           links={[
             {
               name: 'Dashboard',
               href: PATH_DASHBOARD.clientDashboard,
             },
-            { name: 'Mediation List' },
+            { name: 'Call List' },
           ]}
         />
 
@@ -111,7 +110,7 @@ export default function MediationListPage() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={data?.phoneMediationPaginatedList?.phoneMediation?.length || 0}
+                  rowCount={data?.phoneMediationPaginatedList?.callReports?.length || 0}
                   onSort={onSort}
                 />
 
@@ -128,7 +127,7 @@ export default function MediationListPage() {
                   {data &&
                     !error &&
                     !loading &&
-                    data?.phoneMediationPaginatedList?.phoneMediation?.map((row) => (
+                    data?.phoneMediationPaginatedList?.callReports?.map((row) => (
                       <BookingTableRow
                         key={row.id}
                         row={row}

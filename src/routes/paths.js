@@ -25,18 +25,18 @@ export const PATH_DASHBOARD = {
   // client paths
   clientDashboard: path(CLIENT_DASHBOARD, '/app'),
   clientProfile: path(CLIENT_DASHBOARD, '/profile'),
-  mediator: {
-    root: path(CLIENT_DASHBOARD, '/mediator'),
-    new: path(CLIENT_DASHBOARD, '/mediator/new'),
-    list: path(CLIENT_DASHBOARD, '/mediator/list'),
-    group: path(CLIENT_DASHBOARD, '/mediator/group'),
-    groupDetail: (id) => path(CLIENT_DASHBOARD, `/mediator/group/${id}`),
-    edit: (id) => path(CLIENT_DASHBOARD, `/mediator/${id}/edit`),
-    view: (id) => path(CLIENT_DASHBOARD, `/mediator/${id}`),
+  interpreter: {
+    root: path(CLIENT_DASHBOARD, '/interpreter'),
+    new: path(CLIENT_DASHBOARD, '/interpreter/new'),
+    list: path(CLIENT_DASHBOARD, '/interpreter/list'),
+    group: path(CLIENT_DASHBOARD, '/interpreter/group'),
+    groupDetail: (id) => path(CLIENT_DASHBOARD, `/interpreter/group/${id}`),
+    edit: (id) => path(CLIENT_DASHBOARD, `/interpreter/${id}/edit`),
+    view: (id) => path(CLIENT_DASHBOARD, `/interpreter/${id}`),
   },
   languageList: path(CLIENT_DASHBOARD, '/language'),
   clientCodeList: path(CLIENT_DASHBOARD, '/user-code'),
-  phoneMediation: path(CLIENT_DASHBOARD, '/mediations'),
+  callReports: path(CLIENT_DASHBOARD, '/call-reports'),
 
   // admin paths
   adminDashboard: path(ADMIN_DASHBOARD, '/app'),

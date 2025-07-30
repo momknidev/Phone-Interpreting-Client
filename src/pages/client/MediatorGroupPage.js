@@ -52,7 +52,7 @@ import Label from '../../components/label';
 
 const TABLE_HEAD = [
   { id: 'group', label: 'Group', align: 'left' },
-  { id: 'mediatorCount', label: 'Mediator Counts', align: 'center' },
+  { id: 'mediatorCount', label: 'Interpreter Counts', align: 'center' },
   { id: 'status', label: 'Status', align: 'left' },
   { id: '', label: 'Action', align: 'left' },
 ];
@@ -194,13 +194,13 @@ export default function MediatorGroupPage() {
   return (
     <>
       <Helmet>
-        <title> Mediator Groups | Phone Mediation Application</title>
+        <title> Interpreter Groups | Telephone Mediation App</title>
       </Helmet>
 
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Mediator Groups"
-          links={[{ name: 'Dashboard', href: PATH_DASHBOARD.root }, { name: 'Mediator Groups' }]}
+          heading="Interpreter Groups"
+          links={[{ name: 'Dashboard', href: PATH_DASHBOARD.root }, { name: 'Interpreter Groups' }]}
           action={
             <Stack direction="row" spacing={2} alignItems="center">
               <UserTableToolbar
@@ -248,7 +248,7 @@ export default function MediatorGroupPage() {
                         <TableCell sx={{ px: 1 }}>
                           <Link
                             component={RouterLink}
-                            to={PATH_DASHBOARD.mediator.groupDetail(row?.id)}
+                            to={PATH_DASHBOARD.interpreter.groupDetail(row?.id)}
                             sx={{
                               color: 'text.primary',
                               textDecoration: 'none',

@@ -11,7 +11,7 @@ import { PATH_DASHBOARD } from '../../routes/paths';
 import { useSettingsContext } from '../../components/settings';
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 // sections
-import MediatorNewEditForm from '../../sections/@dashboard/client/mediator/MediatorNewEditForm';
+import MediatorNewEditForm from '../../sections/@dashboard/client/interpreter/MediatorNewEditForm';
 import { MEDIATOR_BY_ID } from '../../graphQL/queries';
 
 // ----------------------------------------------------------------------
@@ -29,7 +29,7 @@ export default function MediatorEditPage() {
   return (
     <>
       <Helmet>
-        <title> Mediators: Edit Mediators | Telephone Mediator App</title>
+        <title> Mediators: Edit Mediators | Telephone Mediation App</title>
       </Helmet>
 
       <Container maxWidth={themeStretch ? false : 'lg'}>
@@ -42,7 +42,7 @@ export default function MediatorEditPage() {
             },
             {
               name: 'Mediators',
-              href: PATH_DASHBOARD.mediator.list,
+              href: PATH_DASHBOARD.interpreter.list,
             },
             { name: data?.mediatorById?.first_name },
           ]}

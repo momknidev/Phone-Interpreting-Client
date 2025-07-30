@@ -297,7 +297,7 @@ export const CREATE_PHONE_MEDIATION = gql`
       id
       client_id
       mediator_id
-      mediator
+      interpreter
       caller_phone
       caller_code
       source_language_id
@@ -305,8 +305,8 @@ export const CREATE_PHONE_MEDIATION = gql`
       sourceLanguage
       targetLanguage
       status
-      mediation_date
-      mediation_duration
+      call_date
+      call_duration
       amount
       created_at
       updated_at
@@ -319,7 +319,7 @@ export const UPDATE_PHONE_MEDIATION = gql`
       id
       client_id
       mediator_id
-      mediator
+      interpreter
       caller_phone
       caller_code
       source_language_id
@@ -327,8 +327,8 @@ export const UPDATE_PHONE_MEDIATION = gql`
       sourceLanguage
       targetLanguage
       status
-      mediation_date
-      mediation_duration
+      call_date
+      call_duration
       amount
       created_at
       updated_at

@@ -7,7 +7,7 @@ import { PATH_DASHBOARD } from '../../routes/paths';
 import { useSettingsContext } from '../../components/settings';
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 // sections
-import MediatorNewEditForm from '../../sections/@dashboard/client/mediator/MediatorNewEditForm';
+import MediatorNewEditForm from '../../sections/@dashboard/client/interpreter/MediatorNewEditForm';
 
 // ----------------------------------------------------------------------
 
@@ -17,12 +17,12 @@ export default function MediatorCreatePage() {
   return (
     <>
       <Helmet>
-        <title> Mediator: Register New Mediator | Telephone Mediation App</title>
+        <title> Interpreter: Register New Interpreter | Telephone Mediation App</title>
       </Helmet>
 
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="New Mediator Account"
+          heading="New Interpreter Account"
           links={[
             {
               name: 'Dashboard',
@@ -30,7 +30,7 @@ export default function MediatorCreatePage() {
             },
             {
               name: 'Mediators',
-              href: PATH_DASHBOARD.mediator.list,
+              href: PATH_DASHBOARD.interpreter.list,
             },
             { name: 'New' },
           ]}

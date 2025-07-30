@@ -49,8 +49,8 @@ const navConfig = [
         type: 'client',
       },
       {
-        title: 'Mediations',
-        path: PATH_DASHBOARD.phoneMediation,
+        title: 'Reports',
+        path: PATH_DASHBOARD.callReports,
         icon: ICONS.booking,
         roles: ['client'],
         type: 'client',
@@ -70,16 +70,21 @@ const navConfig = [
         type: 'client',
       },
       {
-        title: 'Mediator',
-        path: PATH_DASHBOARD.mediator.root,
+        title: 'Interpreter',
+        path: PATH_DASHBOARD.interpreter.root,
         icon: ICONS.user,
         roles: ['client'],
         type: 'client',
         children: [
-          { title: 'list', path: PATH_DASHBOARD.mediator.list, roles: ['client'], type: 'client' },
+          {
+            title: 'list',
+            path: PATH_DASHBOARD.interpreter.list,
+            roles: ['client'],
+            type: 'client',
+          },
           {
             title: 'group',
-            path: PATH_DASHBOARD.mediator.group,
+            path: PATH_DASHBOARD.interpreter.group,
             roles: ['client'],
             type: 'client',
           },
