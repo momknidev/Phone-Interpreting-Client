@@ -29,7 +29,7 @@ export default function MediatorCreatePage() {
               href: PATH_DASHBOARD.clientDashboard,
             },
             {
-              name: 'Mediators',
+              name: 'Interpreters',
               href: PATH_DASHBOARD.interpreter.list,
             },
             { name: 'New' },

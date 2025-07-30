@@ -115,7 +115,7 @@ export default function MediatorGroupDetailPage() {
         </Card>
         <Card>
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ p: 2 }}>
-            <Typography variant="h6">Mediators</Typography>
+            <Typography variant="h6">Interpreters</Typography>
             <Button
               variant="contained"
               startIcon={<Iconify icon="eva:plus-fill" />}

@@ -45,7 +45,7 @@ import { DELETE_MEDIATOR, UPLOAD_MEDIATOR_FILE } from '../../graphQL/mutations';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'first_name', label: 'Interpreter', align: 'left' },
+  { id: 'first_name', label: 'Name', align: 'left' },
   { id: 'email', label: 'Email', align: 'left' },
   { id: 'phone', label: 'Phone No.', align: 'left' },
   { id: '', label: 'Groups', align: 'left' },
@@ -178,7 +178,7 @@ export default function MediatorListPage() {
 
     const ws = XLSX.utils.json_to_sheet(tableData);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Mediators');
+    XLSX.utils.book_append_sheet(wb, ws, 'Interpreters');
 
     // Save the file
     XLSX.writeFile(wb, 'Mediators_List.xlsx');
@@ -196,7 +196,7 @@ export default function MediatorListPage() {
 
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Mediators List"
+          heading="Interpreters List"
           links={[{ name: 'Dashboard', href: PATH_DASHBOARD.clientDashboard }, { name: 'List' }]}
           action={
             <Stack spacing={1} direction="row" flexShrink={0} justifyContent="flex-end">

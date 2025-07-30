@@ -29,19 +29,19 @@ export default function MediatorEditPage() {
   return (
     <>
       <Helmet>
-        <title> Mediators: Edit Mediators | Telephone Mediation App</title>
+        <title> Interpreters: Edit Interpreters | Telephone Mediation App</title>
       </Helmet>
 
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Edit Mediators"
+          heading="Edit Interpreters"
           links={[
             {
               name: 'Dashboard',
               href: PATH_DASHBOARD.clientDashboard,
             },
             {
-              name: 'Mediators',
+              name: 'Interpreters',
               href: PATH_DASHBOARD.interpreter.list,
             },
             { name: data?.mediatorById?.first_name },

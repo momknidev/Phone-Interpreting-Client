@@ -71,7 +71,9 @@ export default function MediatorGroupPage() {
     onChangeDense,
     onChangePage,
     onChangeRowsPerPage,
-  } = useTable();
+  } = useTable({
+    defaultRowsPerPage: 25,
+  });
   const { themeStretch } = useSettingsContext();
 
   const [filterName, setFilterName] = useState('');

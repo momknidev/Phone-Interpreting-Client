@@ -258,7 +258,7 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
       .max(4, 'Maximum 4 language pairs'),
     availableOnHolidays: Yup.boolean(),
     availableForEmergencies: Yup.boolean(),
-    group: Yup.array().required('Group is required').min(1, 'At least one group is required'),
+    group: Yup.array(),
     priority: Yup.number().nullable().required('Priority is required'),
   });
 

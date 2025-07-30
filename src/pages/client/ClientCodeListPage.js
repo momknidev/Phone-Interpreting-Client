@@ -75,7 +75,7 @@ export default function ClientCodeListPage() {
   } = useTable({
     defaultOrderBy: 'client_code',
     defaultOrder: 'asc',
-    defaultRowsPerPage: 20,
+    defaultRowsPerPage: 25,
     defaultDense: false,
   });
 
