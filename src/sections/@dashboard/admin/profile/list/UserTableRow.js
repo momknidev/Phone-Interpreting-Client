@@ -27,7 +27,6 @@ import { useMutation } from '@apollo/client';
 // components
 import Iconify from '../../../../../components/iconify';
 import { PATH_DASHBOARD } from '../../../../../routes/paths';
-import { useAuthContext } from '../../../../../auth/useAuthContext';
 
 import { UPDATE_USER_PASSWORD } from '../../../../../graphQL/mutations';
 import FormProvider, { RHFTextField } from '../../../../../components/hook-form';
@@ -106,7 +105,6 @@ export default function UserTableRow({ row, onViewRow, onEditRow, onResetPasswor
 }
 
 function AccountChangePassword({ onClose, id }) {
-  const { user } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const [updatePassword] = useMutation(UPDATE_USER_PASSWORD);
   const ChangePassWordSchema = Yup.object().shape({

@@ -27,7 +27,7 @@ UserTableRow.propTypes = {
 };
 
 export default function UserTableRow({ row, onViewRow, onEditRow }) {
-  const { id, displayName, email, avatar_url, role } = row;
+  const { id, displayName, email, avatar_url } = row;
 
   const [openPopover, setOpenPopover] = useState(null);
 

@@ -12,14 +12,9 @@ import { useMutation } from '@apollo/client';
 
 import { Box, Card, Grid, Stack, Typography } from '@mui/material';
 // components
-import FormProvider, {
-  RHFTextField,
-  RHFUploadAvatar,
-  RHFAutocomplete,
-} from '../../../../components/hook-form';
+import FormProvider, { RHFTextField, RHFUploadAvatar } from '../../../../components/hook-form';
 import { ADD_CLIENT, EDIT_CLIENT } from '../../../../graphQL/mutations';
 import { PATH_DASHBOARD } from '../../../../routes/paths';
-import { data as dataList } from '../../../../_mock/data';
 // ----------------------------------------------------------------------
 
 UserNewEditForm.propTypes = {
@@ -208,16 +203,6 @@ export default function UserNewEditForm({ isEdit = false, currentUser }) {
 
               <RHFTextField name="password" label="Password" type="password" />
 
-              {!values?.isAdmin && (
-                <RHFAutocomplete
-                  multiple
-                  name="customer"
-                  label="Cliente"
-                  freeSolo
-                  options={Object.keys(dataList)?.map((option) => option)}
-                  ChipProps={{ size: 'small' }}
-                />
-              )}
               {/* <Controller
                 name="isAdmin"
                 control={methods.control}
