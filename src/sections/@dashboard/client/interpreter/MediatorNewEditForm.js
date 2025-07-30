@@ -1,10 +1,10 @@
 /* eslint-disable no-shadow */
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // form
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
 import { LoadingButton } from '@mui/lab';
@@ -77,9 +77,6 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
   const [editMediator] = useMutation(UPDATE_MEDIATOR);
   const [addMediator] = useMutation(ADD_MEDIATOR);
   const { data: languagesData, loading: languagesLoading } = useQuery(ALL_LANGUAGES);
-
-  const [languageOptions, setLanguageOptions] = useState([]);
-  const [languageMap, setLanguageMap] = useState({});
 
   // New state for custom time slots
   const [timeSlots, setTimeSlots] = useState({
@@ -185,61 +182,6 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
     Sunday: 'sunday',
   };
 
-  useEffect(() => {
-    if (languagesData && languagesData.allLanguages) {
-      const options = languagesData.allLanguages.map((lang) => ({
-        id: lang.id,
-        name: lang.language_name,
-      }));
-
-      // Create a mapping of language IDs to objects for later use
-      const mapping = {};
-      languagesData.allLanguages.forEach((lang) => {
-        mapping[lang.id] = {
-          id: lang.id,
-          name: lang.language_name,
-        };
-      });
-
-      setLanguageOptions(options);
-      setLanguageMap(mapping);
-    }
-  }, [languagesData]);
-
-  useEffect(() => {
-    if (data?.allGroups) {
-      const groupIDs = currentMediator?.groups?.map((item) => item?.id) || [];
-      const groups = Array.isArray(data.allGroups) ? data.allGroups : [];
-      const groupValue = groups.filter((group) => groupIDs.includes(group.id));
-      setValue('group', groupValue);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
-
-  // Helper to get language object by id
-  // const getLanguageObjById = (id) => languageMap[id] || null;
-
-  // Prepare default language pairs for edit mode
-  const getDefaultLanguagePairs = () => {
-    if (!isEdit || !currentMediator) return [];
-    const pairs = [];
-    const languages = currentMediator?.languages;
-    languages.forEach((item) => {
-      pairs.push({
-        sourceLanguage: {
-          id: item?.source_language_id,
-          name: item?.sourceLanguageName || '',
-        },
-        targetLanguage: {
-          id: item?.target_language_id,
-          name: item?.targetLanguageName || '',
-        },
-      });
-    });
-
-    return pairs.length > 0 ? pairs : [{ sourceLanguage: null, targetLanguage: null }];
-  };
-
   const NewUserSchema = Yup.object().shape({
     avatar_url: Yup.mixed().nullable(),
     first_name: Yup.string().required('First name is required'),
@@ -247,15 +189,8 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
     email: Yup.string().email('Email must be a valid email address').nullable(),
     phone: Yup.string().required('Phone number is required'),
     iban: Yup.string(),
-    languagePairs: Yup.array()
-      .of(
-        Yup.object().shape({
-          sourceLanguage: Yup.object().nullable().required('Source language required'),
-          targetLanguage: Yup.object().nullable().required('Target language required'),
-        })
-      )
-      .min(1, 'At least one language pair is required')
-      .max(4, 'Maximum 4 language pairs'),
+    sourceLanguages: Yup.array().of(Yup.object()).min(1, 'Select at least one source language'),
+    targetLanguages: Yup.array().of(Yup.object()).min(1, 'Select at least one target language'),
     availableOnHolidays: Yup.boolean(),
     availableForEmergencies: Yup.boolean(),
     group: Yup.array(),
@@ -270,14 +205,15 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
       email: currentMediator?.email || '',
       phone: currentMediator?.phone || '',
       iban: currentMediator?.iban || '',
-      group: [],
-      languagePairs: getDefaultLanguagePairs(),
+      group: currentMediator?.groups?.map((item) => item?.group) || [],
+      sourceLanguages: currentMediator?.sourceLanguages?.map((item) => item?.sourceLanguage) || [],
+      targetLanguages: currentMediator?.targetLanguages?.map((item) => item?.targetLanguage) || [],
       availableOnHolidays: currentMediator?.availableOnHolidays || false,
       availableForEmergencies: currentMediator?.availableForEmergencies || false,
       priority: currentMediator?.priority || 1,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentMediator, languageMap]
+    [currentMediator]
   );
 
   const methods = useForm({
@@ -290,43 +226,11 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
     setValue,
     handleSubmit,
     watch,
-    control,
+    // control,
     formState: { isSubmitting, errors },
   } = methods;
   const values = watch();
   console.log({ values, errors });
-  // Field array for language pairs
-  const {
-    fields: languagePairFields,
-    append: appendLanguagePair,
-    remove: removeLanguagePair,
-  } = useFieldArray({
-    control,
-    name: 'languagePairs',
-  });
-
-  useEffect(() => {
-    if (isEdit && currentMediator && Object.keys(languageMap).length > 0) {
-      reset({
-        ...values,
-        languagePairs: getDefaultLanguagePairs(),
-      });
-    }
-    if (!isEdit && Object.keys(languageMap).length > 0) {
-      reset(values);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEdit, currentMediator, reset, defaultValues, languageMap]);
-
-  // Prepare language pairs for mutation
-  const getLanguagePairsForMutation = () => {
-    const pairs = values?.languagePairs?.map((pair) => ({
-      source_language_id: pair?.sourceLanguage?.id,
-      target_language_id: pair?.targetLanguage?.id,
-    }));
-    console.log('Language Pairs for Mutation:', pairs);
-    return pairs;
-  };
 
   const onSubmit = async (data) => {
     try {
@@ -344,7 +248,6 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
         availableOnHolidays: data.availableOnHolidays,
         availableForEmergencies: data.availableForEmergencies,
       };
-      const languagePairsData = getLanguagePairsForMutation();
       let updatedRecord = null;
       if (isEdit) {
         updatedRecord = await editMediator({
@@ -359,8 +262,9 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
               groupIDs: data?.group?.map((item) => item.id),
               priority: data?.priority,
               status: 'active',
+              sourceLanguages: data?.sourceLanguages?.map((item) => item.id),
+              targetLanguages: data?.targetLanguages?.map((item) => item.id),
               ...availabilityData,
-              languages: languagePairsData,
               ...formattedTimeSlots,
             },
           },
@@ -376,8 +280,10 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
               groupIDs: data?.group?.map((item) => item.id),
               iban: data?.iban,
               priority: data?.priority,
+              sourceLanguages: data?.sourceLanguages?.map((item) => item.id),
+              targetLanguages: data?.targetLanguages?.map((item) => item.id),
               ...availabilityData,
-              languages: languagePairsData,
+
               ...formattedTimeSlots,
             },
           },
@@ -472,54 +378,33 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
               <Typography variant="subtitle2">Professional Information</Typography>
             </Box>
             <Box sx={{ py: 2 }}>
-              <Typography variant="subtitle2">Language Pairs</Typography>
-              <Typography variant="caption" color="text.secondary">
-                Add source/target language pairs
-              </Typography>
+              <Typography variant="subtitle2">Languages</Typography>
             </Box>
-            {languagePairFields.map((field, idx) => (
-              <Stack key={field.id} direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
-                <RHFAutocomplete
-                  name={`languagePairs.${idx}.sourceLanguage`}
-                  label="Source Language"
-                  options={languageOptions}
-                  isOptionEqualToValue={(option, value) => option?.id === value?.id}
-                  getOptionLabel={(option) => option?.name || ''}
-                  loading={languagesLoading}
-                  ChipProps={{ size: 'small' }}
-                  sx={{ minWidth: 200 }}
-                />
-                <Typography variant="body2">→</Typography>
-                <RHFAutocomplete
-                  name={`languagePairs.${idx}.targetLanguage`}
-                  label="Target Language"
-                  options={languageOptions}
-                  isOptionEqualToValue={(option, value) => option?.id === value?.id}
-                  getOptionLabel={(option) => option?.name || ''}
-                  loading={languagesLoading}
-                  ChipProps={{ size: 'small' }}
-                  sx={{ minWidth: 200 }}
-                />
-                <IconButton
-                  edge="end"
-                  aria-label="delete"
-                  color="error"
-                  disabled={languagePairFields.length === 1}
-                  onClick={() => removeLanguagePair(idx)}
-                >
-                  <Iconify icon="mdi:trash-outline" />
-                </IconButton>
-              </Stack>
-            ))}
-            <Button
-              variant="outlined"
-              startIcon={<Iconify icon="ic:twotone-plus" />}
-              sx={{ mb: 2 }}
-              disabled={languagePairFields.length >= 4}
-              onClick={() => appendLanguagePair({ sourceLanguage: null, targetLanguage: null })}
-            >
-              Add Language Pair
-            </Button>
+            <Stack direction="column" spacing={2} alignItems="flex-start" sx={{ mb: 2 }}>
+              <RHFAutocomplete
+                name="sourceLanguages"
+                label="Source Language"
+                options={languagesData?.allLanguages || []}
+                isOptionEqualToValue={(option, value) => option?.id === value?.id}
+                getOptionLabel={(option) => option?.language_name || ''}
+                loading={languagesLoading}
+                ChipProps={{ size: 'small' }}
+                multiple
+                sx={{ minWidth: 300 }}
+              />
+
+              <RHFAutocomplete
+                name="targetLanguages"
+                label="Target Language"
+                options={languagesData?.allLanguages || []}
+                multiple
+                isOptionEqualToValue={(option, value) => option?.id === value?.id}
+                getOptionLabel={(option) => option?.language_name || ''}
+                loading={languagesLoading}
+                ChipProps={{ size: 'small' }}
+                sx={{ minWidth: 300 }}
+              />
+            </Stack>
             <Box sx={{ py: 2 }}>
               <Typography variant="subtitle2">Availability</Typography>
               <Typography variant="caption" color="text.secondary">

@@ -40,16 +40,7 @@ export default function MediatorTableToolbar({
   onDeleteRow,
   loadingDelete,
 }) {
-  const {
-    id,
-    first_name,
-    last_name,
-    email,
-    phone,
-    languages,
-
-    groups,
-  } = row;
+  const { id, first_name, last_name, email, phone, sourceLanguages, targetLanguages, groups } = row;
 
   const [openPopover, setOpenPopover] = useState(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -106,12 +97,13 @@ export default function MediatorTableToolbar({
           {phone}
         </TableCell>
         <TableCell sx={{ px: 1 }} align="left">
-          {groups?.map((item) => item?.group_name)?.join(', ') || 'No Groups'}
+          {groups?.map((item) => item?.group?.group_name)?.join(', ') || 'No Groups'}
         </TableCell>
         <TableCell align="left" sx={{ textTransform: 'capitalize', px: 1 }}>
           <Typography>
-            {languages?.map((item) => item?.sourceLanguageName)?.join(',')}
-            {'<>'} {languages?.map((item) => item?.targetLanguageName)?.join(',')}
+            {sourceLanguages?.map((item) => item?.sourceLanguage?.language_name)?.join(',')}
+            {targetLanguages?.length > 0 && <>&hArr;</>}
+            {targetLanguages?.map((item) => item?.targetLanguage?.language_name)?.join(',')}
           </Typography>
         </TableCell>
 

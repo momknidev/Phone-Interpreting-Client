@@ -106,12 +106,10 @@ export const MEDIATOR_BY_ID = gql`
       last_name
       email
       phone
-      languages {
-        sourceLanguageName
-        targetLanguageName
-        source_language_id
-        target_language_id
-      }
+
+      sourceLanguages
+      targetLanguages
+
       created_at
       updated_at
       status
@@ -125,10 +123,7 @@ export const MEDIATOR_BY_ID = gql`
       availableForEmergencies
       availableOnHolidays
       priority
-      groups {
-        id
-        group_name
-      }
+      groups
     }
   }
 `;
@@ -185,11 +180,10 @@ export const MEDIATORS_PAGINATED_LIST = gql`
         last_name
         email
         phone
-        languages {
-          sourceLanguageName
+        sourceLanguages
 
-          targetLanguageName
-        }
+        targetLanguages
+
         created_at
         updated_at
         status
@@ -203,9 +197,7 @@ export const MEDIATORS_PAGINATED_LIST = gql`
         availableForEmergencies
         availableOnHolidays
         priority
-        groups {
-          group_name
-        }
+        groups
       }
     }
   }
