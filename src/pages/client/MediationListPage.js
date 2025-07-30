@@ -32,7 +32,7 @@ const TABLE_HEAD = [
   { id: 'language', label: 'Language', align: 'center' },
   { id: '', label: 'Duration', align: 'center' },
   { id: '', label: 'Interpreter', align: 'center' },
-  { id: 'created_at', label: 'Created At', align: 'center' },
+  { id: 'created_at', label: 'Date', align: 'center' },
   { id: 'amount', label: 'Price', align: 'center' },
   { id: 'status', label: 'Status', align: 'center' },
   // { id: '' },

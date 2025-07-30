@@ -39,15 +39,9 @@ export default function BookingTableRow({ row, onEditRow, onViewRow }) {
 
   return (
     <TableRow hover>
+      <TableCell align="center">{phone_mediation_no}</TableCell>
       <TableCell align="center">
-        <Link onClick={() => onViewRow()} color="primary" sx={{ cursor: 'pointer' }}>
-          {phone_mediation_no}
-        </Link>
-      </TableCell>
-      <TableCell align="center">
-        {source_language}
-        {'<=>'}
-        {target_language}
+        {source_language} &hArr; {target_language}
       </TableCell>
       <TableCell align="center">{call_duration} Min</TableCell>
 
