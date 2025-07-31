@@ -161,9 +161,13 @@ export default function MediatorListPage() {
       email: row.email,
       phone: row.phone,
       iban: row.iban,
-      sourceLanguages: row.languages?.map((item) => item.sourceLanguageName).join(','),
-      targetLanguages: row.languages?.map((item) => item.targetLanguageName).join(','),
-      groups: row?.groups?.map((g) => g.group_name).join(', '),
+      sourceLanguages: row.sourceLanguages
+        ?.map((item) => item?.sourceLanguage?.language_name)
+        ?.join(','),
+      targetLanguages: row.targetLanguages
+        ?.map((item) => item?.targetLanguage?.language_name)
+        ?.join(','),
+      groups: row?.groups?.map((item) => item?.group?.group_name)?.join(','),
       monday_time_slots: row.monday_time_slots,
       tuesday_time_slots: row.tuesday_time_slots,
       wednesday_time_slots: row.wednesday_time_slots,
@@ -304,7 +308,12 @@ export default function MediatorListPage() {
           <Button onClick={() => setOpenUploadDialog(false)} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleUploadFile} color="primary" disabled={loadingUpload}>
+          <Button
+            variant="contained"
+            onClick={handleUploadFile}
+            color="primary"
+            disabled={loadingUpload}
+          >
             Upload
           </Button>
         </DialogActions>

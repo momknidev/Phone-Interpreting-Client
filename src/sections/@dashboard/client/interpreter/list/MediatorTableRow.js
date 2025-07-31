@@ -97,7 +97,7 @@ export default function MediatorTableToolbar({
           {phone}
         </TableCell>
         <TableCell sx={{ px: 1 }} align="left">
-          {groups?.map((item) => item?.group?.group_name)?.join(', ') || 'No Groups'}
+          {groups?.map((item) => item?.group?.group_name)?.join(',') || 'No Groups'}
         </TableCell>
         <TableCell align="left" sx={{ textTransform: 'capitalize', px: 1 }}>
           <Typography>
