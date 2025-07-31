@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Card,
   Table,
@@ -11,16 +11,11 @@ import {
   TableRow,
   TableCell,
   Typography,
-  IconButton,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  FormControl,
-  InputLabel,
-  DialogContentText,
-  Autocomplete,
-  TextField,
+  Checkbox,
   Skeleton,
 } from '@mui/material';
 import { useQuery, useMutation } from '@apollo/client';
@@ -30,62 +25,55 @@ import { PATH_DASHBOARD } from '../../routes/paths';
 import Iconify from '../../components/iconify';
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 import { useSettingsContext } from '../../components/settings';
-import { TableHeadCustom, TableSkeleton } from '../../components/table';
+import {
+  TableHeadCustom,
+  TablePaginationCustom,
+  TableSkeleton,
+  useTable,
+} from '../../components/table';
 import { GROUP_BY_ID, MEDIATOR_LIST_BASIC } from '../../graphQL/queries';
-import { ADD_MEDIATOR_TO_GROUP, REMOVE_MEDIATOR_FROM_GROUP } from '../../graphQL/mutations';
+import { ADD_MEDIATOR_TO_GROUP } from '../../graphQL/mutations';
 import Label from '../../components/label';
 import { fDate } from '../../utils/formatTime';
 
 export default function MediatorGroupDetailPage() {
+  const { page, rowsPerPage, onChangePage, onChangeRowsPerPage } = useTable({});
   const { themeStretch } = useSettingsContext();
   const { id } = useParams();
-
+  const [selectedMediators, setSelectedMediators] = useState([]);
   const { loading, data, error, refetch } = useQuery(GROUP_BY_ID, {
     variables: { groupByIdId: id },
     fetchPolicy: 'no-cache',
   });
+  useEffect(() => {
+    if (data?.groupByID) {
+      setSelectedMediators(data.groupByID.mediators.map((mediator) => mediator.id));
+    }
+  }, [data]);
+  console.log('selectedMediators:', selectedMediators);
 
-  // For Add Interpreter Dialog
   const [openAdd, setOpenAdd] = useState(false);
-  const [selectedMediator, setSelectedMediator] = useState('');
   const { data: allMediatorsData } = useQuery(MEDIATOR_LIST_BASIC);
 
-  // For Remove Interpreter Dialog
-  const [openRemove, setOpenRemove] = useState(false);
-  const [mediatorToRemove, setMediatorToRemove] = useState(null);
-
-  // Mutations
   const [addMediatorToGroup, { loading: addLoading }] = useMutation(ADD_MEDIATOR_TO_GROUP);
-  const [removeMediatorFromGroup, { loading: removeLoading }] = useMutation(
-    REMOVE_MEDIATOR_FROM_GROUP
-  );
-
-  if (error) {
-    return `Error: ${error?.message}`;
-  }
 
   const group = data?.groupByID;
 
   const handleAddMediator = async () => {
-    await addMediatorToGroup({
-      variables: { groupId: id, mediator_id: selectedMediator },
-    });
+    addMediatorToGroup({ variables: { groupId: id, mediator_ids: selectedMediators } });
     setOpenAdd(false);
-    setSelectedMediator('');
+    setSelectedMediators([]);
     refetch();
   };
 
-  const handleRemoveMediator = async () => {
-    await removeMediatorFromGroup({
-      variables: { groupId: id, mediator_id: mediatorToRemove.id },
-    });
-    setOpenRemove(false);
-    setMediatorToRemove(null);
-    refetch();
-  };
+  const paginatedInterpreters =
+    allMediatorsData?.mediatorList?.slice(page * rowsPerPage, (page + 1) * rowsPerPage) || [];
 
   if (loading) {
     return <Skeleton width="100%" height={300} />;
+  }
+  if (error) {
+    return `Error: ${error?.message}`;
   }
   return (
     <>
@@ -128,7 +116,6 @@ export default function MediatorGroupDetailPage() {
                 headLabel={[
                   { id: 'name', label: 'Name' },
                   { id: 'email', label: 'Email' },
-                  { id: 'actions', label: 'Actions' },
                 ]}
               />
               <TableBody>
@@ -141,17 +128,6 @@ export default function MediatorGroupDetailPage() {
                         {interpreter.first_name} {interpreter.last_name}
                       </TableCell>
                       <TableCell>{interpreter.email}</TableCell>
-                      <TableCell>
-                        <IconButton
-                          color="error"
-                          onClick={() => {
-                            setMediatorToRemove(interpreter);
-                            setOpenRemove(true);
-                          }}
-                        >
-                          <Iconify icon="eva:trash-2-outline" />
-                        </IconButton>
-                      </TableCell>
                     </TableRow>
                   ))
                 )}
@@ -161,57 +137,102 @@ export default function MediatorGroupDetailPage() {
         </Card>
       </Container>
 
-      {/* Remove Interpreter Dialog */}
-      <Dialog open={openRemove} onClose={() => setOpenRemove(false)}>
-        <DialogTitle>Remove Interpreter</DialogTitle>
+      <Dialog open={openAdd} onClose={() => setOpenAdd(false)} maxWidth="md" fullWidth>
+        <DialogTitle>Add Interpreters to Group</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            Are you sure you want to remove interpreter{' '}
-            <b>
-              {mediatorToRemove?.first_name} {mediatorToRemove?.last_name}
-            </b>{' '}
-            from this group?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenRemove(false)}>Cancel</Button>
-          <LoadingButton
-            variant="contained"
-            color="error"
-            loading={removeLoading}
-            onClick={handleRemoveMediator}
-          >
-            Remove
-          </LoadingButton>
-        </DialogActions>
-      </Dialog>
+          <Typography variant="subtitle2" sx={{ mb: 2 }}>
+            Select interpreters to add:
+          </Typography>
 
-      {/* Add Interpreter Dialog with Autocomplete */}
-      <Dialog open={openAdd} onClose={() => setOpenAdd(false)}>
-        <DialogTitle>Add Interpreter to Group</DialogTitle>
-        <DialogContent>
-          <FormControl fullWidth sx={{ mt: 2, minWidth: 300 }}>
-            {/* Replace Select with Autocomplete */}
-            <InputLabel shrink>Select Interpreter</InputLabel>
-            <Stack sx={{ mt: 2 }}>
-              <Autocomplete
-                options={allMediatorsData?.mediatorList || []}
-                getOptionLabel={(option) =>
-                  `${option.first_name} ${option.last_name} (${option.email})`
-                }
-                value={
-                  allMediatorsData?.mediatorList?.find((m) => m.id === selectedMediator) || null
-                }
-                onChange={(_, newValue) => {
-                  setSelectedMediator(newValue ? newValue.id : '');
-                }}
-                renderInput={(params) => (
-                  <TextField {...params} label="Select Interpreter" variant="outlined" />
-                )}
-                isOptionEqualToValue={(option, value) => option.id === value.id}
+          <TableContainer sx={{ maxHeight: 400 }}>
+            <Table stickyHeader>
+              <TableHeadCustom
+                headLabel={[
+                  {
+                    id: 'select',
+                    label: (
+                      <Checkbox
+                        indeterminate={
+                          selectedMediators.length > 0 &&
+                          selectedMediators.length < paginatedInterpreters.length
+                        }
+                        checked={
+                          paginatedInterpreters.length > 0 &&
+                          selectedMediators.length === paginatedInterpreters.length
+                        }
+                        onChange={(e) => {
+                          const newSelected = e.target.checked
+                            ? [
+                                ...new Set([
+                                  ...selectedMediators,
+                                  ...paginatedInterpreters.map((i) => i.id),
+                                ]),
+                              ]
+                            : selectedMediators.filter(
+                                // eslint-disable-next-line no-shadow
+                                (id) => !paginatedInterpreters.some((i) => i.id === id)
+                              );
+                          setSelectedMediators(newSelected);
+                        }}
+                      />
+                    ),
+                  },
+                  { id: 'name', label: 'Name' },
+                  { id: 'language', label: 'Languages' },
+                  { id: 'group', label: 'Groups' },
+                  { id: 'email', label: 'Email' },
+                ]}
               />
-            </Stack>
-          </FormControl>
+              <TableBody>
+                {paginatedInterpreters.map((interpreter) => {
+                  const isSelected = selectedMediators.includes(interpreter.id);
+                  return (
+                    <TableRow
+                      key={interpreter.id}
+                      hover
+                      onClick={() => {
+                        setSelectedMediators((prev) =>
+                          isSelected
+                            ? // eslint-disable-next-line no-shadow
+                              prev.filter((id) => id !== interpreter.id)
+                            : [...prev, interpreter.id]
+                        );
+                      }}
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox checked={isSelected} />
+                      </TableCell>
+                      <TableCell>
+                        {interpreter.first_name} {interpreter.last_name}
+                      </TableCell>
+                      <Typography>
+                        {interpreter?.sourceLanguages
+                          ?.map((item) => item?.sourceLanguage?.language_name)
+                          ?.join(',')}
+                        {interpreter?.targetLanguages?.length > 0 && <>&hArr;</>}
+                        {interpreter?.targetLanguages
+                          ?.map((item) => item?.targetLanguage?.language_name)
+                          ?.join(',')}
+                      </Typography>
+                      <TableCell>
+                        {' '}
+                        {interpreter?.groups?.map((item) => item?.group?.group_name)?.join(', ') ||
+                          'No Groups'}
+                      </TableCell>
+                      <TableCell>{interpreter.email}</TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePaginationCustom
+            count={allMediatorsData?.mediatorList?.length || 0}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            onPageChange={onChangePage}
+            onRowsPerPageChange={onChangeRowsPerPage}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenAdd(false)}>Cancel</Button>
@@ -219,9 +240,9 @@ export default function MediatorGroupDetailPage() {
             variant="contained"
             loading={addLoading}
             onClick={handleAddMediator}
-            disabled={!selectedMediator}
+            disabled={selectedMediators.length === 0}
           >
-            Add
+            Add Selected ({selectedMediators.length})
           </LoadingButton>
         </DialogActions>
       </Dialog>

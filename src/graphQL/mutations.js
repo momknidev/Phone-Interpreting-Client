@@ -261,18 +261,8 @@ export const UPDATE_CLIENT_CODE = gql`
 `;
 
 export const ADD_MEDIATOR_TO_GROUP = gql`
-  mutation AddMediatorToGroup($groupId: ID!, $mediator_id: ID!) {
-    addMediatorToGroup(groupID: $groupId, mediatorID: $mediator_id) {
-      id
-      group_name
-      status
-      user
-      client_id
-      created_at
-      updated_at
-      mediatorCount
-      mediators
-    }
+  mutation AddMediatorToGroup($groupId: ID!, $mediator_ids: [ID!]!) {
+    addMediatorToGroup(groupID: $groupId, mediatorIDs: $mediator_ids)
   }
 `;
 export const REMOVE_MEDIATOR_FROM_GROUP = gql`

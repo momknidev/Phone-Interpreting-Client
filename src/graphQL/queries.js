@@ -328,6 +328,9 @@ export const MEDIATOR_LIST_BASIC = gql`
       id
       email
       phone
+      sourceLanguages
+      targetLanguages
+      groups
     }
   }
 `;
