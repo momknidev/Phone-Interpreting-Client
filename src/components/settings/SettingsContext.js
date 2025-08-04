@@ -33,6 +33,7 @@ const initialState = {
   onToggleStretch: () => {},
   // Reset
   onResetSetting: () => {},
+  onChangePhone: () => {},
 };
 
 // ----------------------------------------------------------------------
@@ -147,6 +148,12 @@ export function SettingsProvider({ children }) {
     const themeStretch = !settings.themeStretch;
     setSettings({ ...settings, themeStretch });
   }, [setSettings, settings]);
+  const onChangePhone = useCallback(
+    (phone) => {
+      setSettings({ ...settings, phone });
+    },
+    [setSettings, settings]
+  );
 
   // Reset
   const onResetSetting = useCallback(() => {
@@ -173,6 +180,8 @@ export function SettingsProvider({ children }) {
       onToggleStretch,
       // Color
       onChangeColorPresets,
+      // Phone
+      onChangePhone,
       presetsOption,
       presetsColor: getPresets(settings.themeColorPresets),
       // Reset
@@ -195,6 +204,7 @@ export function SettingsProvider({ children }) {
       onToggleContrast,
       // Stretch
       onToggleStretch,
+      onChangePhone,
       // Color
       onChangeColorPresets,
       // Reset

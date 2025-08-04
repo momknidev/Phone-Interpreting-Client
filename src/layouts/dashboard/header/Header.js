@@ -16,7 +16,7 @@ import { useSettingsContext } from '../../../components/settings';
 //
 // import Searchbar from './Searchbar';
 import AccountPopover from './AccountPopover';
-// import LanguagePopover from './LanguagePopover';
+import PhonePopover from './PhonePopover';
 
 // ----------------------------------------------------------------------
 
@@ -47,7 +47,7 @@ export default function Header({ onOpenNav }) {
         </IconButton>
       )}
 
-      {/* <Searchbar /> */}
+      <PhonePopover />
 
       <Stack
         flexGrow={1}
@@ -56,8 +56,6 @@ export default function Header({ onOpenNav }) {
         justifyContent="flex-end"
         spacing={{ xs: 0.5, sm: 1.5 }}
       >
-        {/* <LanguagePopover /> */}
-
         <AccountPopover />
       </Stack>
     </>

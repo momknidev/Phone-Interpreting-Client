@@ -8,4 +8,5 @@ export const defaultSettings = {
   themeLayout: 'vertical',
   themeColorPresets: 'default',
   themeStretch: false,
+  phone: null,
 };
