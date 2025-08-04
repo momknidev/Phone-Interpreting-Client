@@ -56,3 +56,8 @@
 .ant-picker .ant-picker-input>input::placeholder {
     color: #96a2af;
 }
+
+.react-international-phone-country-selector-button {
+    height: 56px !important;
+    width: 56px !important;
+}

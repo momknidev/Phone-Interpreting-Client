@@ -9,7 +9,7 @@ import 'simplebar-react/dist/simplebar.min.css';
 import 'yet-another-react-lightbox/styles.css';
 import 'yet-another-react-lightbox/plugins/captions.css';
 import 'yet-another-react-lightbox/plugins/thumbnails.css';
-
+import 'react-international-phone/style.css';
 // map
 // import './utils/mapboxgl';
 // import 'mapbox-gl/dist/mapbox-gl.css';
