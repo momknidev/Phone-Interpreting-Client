@@ -17,6 +17,7 @@ import { useSettingsContext } from '../../../components/settings';
 // import Searchbar from './Searchbar';
 import AccountPopover from './AccountPopover';
 import PhonePopover from './PhonePopover';
+import { useAuthContext } from '../../../auth/useAuthContext';
 
 // ----------------------------------------------------------------------
 
@@ -26,7 +27,7 @@ Header.propTypes = {
 
 export default function Header({ onOpenNav }) {
   const theme = useTheme();
-
+  const { user } = useAuthContext();
   const { themeLayout } = useSettingsContext();
 
   const isNavHorizontal = themeLayout === 'horizontal';
@@ -47,7 +48,7 @@ export default function Header({ onOpenNav }) {
         </IconButton>
       )}
 
-      <PhonePopover />
+      {user?.role === 'client' && <PhonePopover />}
 
       <Stack
         flexGrow={1}
