@@ -14,7 +14,9 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Link,
 } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { useMutation } from '@apollo/client';
 import { LoadingButton } from '@mui/lab';
@@ -23,6 +25,7 @@ import { LoadingButton } from '@mui/lab';
 import Iconify from '../../../../../components/iconify';
 import { CHANGE_STATUS } from '../../../../../graphQL/mutations';
 import Label from '../../../../../components/label';
+import { PATH_DASHBOARD } from '../../../../../routes/paths';
 
 // ----------------------------------------------------------------------
 
@@ -32,7 +35,7 @@ UserTableRow.propTypes = {
   onChangeStatus: PropTypes.func,
 };
 
-export default function UserTableRow({ row, onEditRow, onChangeStatus }) {
+export default function UserTableRow({ row, onEditRow, onViewRow, onChangeStatus }) {
   const { enqueueSnackbar } = useSnackbar();
   const [changeStatus, { loading }] = useMutation(CHANGE_STATUS);
   const [openDialog, setOpenDialog] = useState(false);
@@ -78,18 +81,17 @@ export default function UserTableRow({ row, onEditRow, onChangeStatus }) {
     handleCloseDialog();
   };
 
-  const { email, avatar_url, phone, first_name, last_name, status } = row;
+  const { email, avatar_url, phone, first_name, last_name, status, id } = row;
 
   return (
     <TableRow hover>
       <TableCell sx={{ px: 1 }}>
-        <Stack direction="row" alignItems="center" spacing={2}>
-          <Avatar alt={first_name} src={avatar_url} />
-
-          <Typography variant="subtitle2" noWrap>
-            {`${first_name} ${last_name}`}
-          </Typography>
-        </Stack>
+        <Link component={RouterLink} to={PATH_DASHBOARD.adminClients.detail(id)}>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <Avatar alt={first_name} src={avatar_url} />
+            <Typography variant="subtitle2">{`${first_name} ${last_name}`}</Typography>
+          </Stack>
+        </Link>
       </TableCell>
 
       <TableCell sx={{ px: 1 }} align="left">

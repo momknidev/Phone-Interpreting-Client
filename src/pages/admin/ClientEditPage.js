@@ -20,33 +20,23 @@ export default function ClientEditPage() {
     fetchPolicy: 'no-cache',
   });
 
-  const renderContent = () => {
-    if (loading) {
-      return (
-        <Stack spacing={3}>
-          <Skeleton variant="rectangular" height={300} />
-        </Stack>
-      );
-    }
+  if (loading) {
+    return (
+      <Stack spacing={3}>
+        <Skeleton variant="rectangular" height={300} />
+      </Stack>
+    );
+  }
 
-    if (error) {
-      return <Alert severity="error">Error loading client data: {error.message}</Alert>;
-    }
-
-    if (data) {
-      return <ClientCreateEditForm isEdit currentUser={data.clientByID} />;
-    }
-
-    return <Alert severity="warning">No client data found</Alert>;
-  };
-
+  if (error) {
+    return <Alert severity="error">Error loading client data: {error.message}</Alert>;
+  }
   return (
     <>
       <Helmet>
         <title> Client Edit Page | Telephone Mediation App</title>
       </Helmet>
-
-      <Container maxWidth={themeStretch ? false : 'xl'}>
+      <Container maxWidth={themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
           heading="Account"
           links={[
@@ -55,7 +45,7 @@ export default function ClientEditPage() {
             { name: 'Edit Client' },
           ]}
         />
-        {renderContent()}
+        <ClientCreateEditForm isEdit currentUser={data.clientByID} />
       </Container>
     </>
   );

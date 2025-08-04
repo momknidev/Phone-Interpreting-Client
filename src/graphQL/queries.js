@@ -19,7 +19,7 @@ export const LOGIN = gql`
   }
 `;
 export const CLIENT_BY_ID = gql`
-  query ClientByID($id: String) {
+  query ($id: String) {
     clientByID(id: $id) {
       id
       first_name
@@ -29,9 +29,11 @@ export const CLIENT_BY_ID = gql`
       phone
       role
       type
-      status
+      token
       created_at
       updated_at
+      client_phones
+      status
     }
   }
 `;
