@@ -302,11 +302,13 @@ export default function ClientCreateEditForm({ isEdit = false, currentUser }) {
                                 trigger(`phone_list.${index}.phone`);
                               }}
                             />
-                            {errors?.phone_list[index]?.phone && (
-                              <Typography variant="caption" color="error">
-                                {errors?.phone_list[index]?.phone.message}
-                              </Typography>
-                            )}
+                            {Array.isArray(errors.phone_list) &&
+                              errors.phone_list[index] &&
+                              errors.phone_list[index].phone && (
+                                <Typography variant="caption" color="error">
+                                  {errors.phone_list[index].phone.message}
+                                </Typography>
+                              )}
                           </div>
                         </Stack>
                         <Stack direction="row" spacing={2} flexGrow={1}>
