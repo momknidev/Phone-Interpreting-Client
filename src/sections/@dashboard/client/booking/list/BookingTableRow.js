@@ -22,7 +22,7 @@ export default function BookingTableRow({ row, onEditRow, onViewRow }) {
     // caller_code,
     source_language,
     target_language,
-    phone_mediation_no,
+    serial_no,
     status,
     // call_date,
     call_duration,
@@ -39,7 +39,7 @@ export default function BookingTableRow({ row, onEditRow, onViewRow }) {
 
   return (
     <TableRow hover>
-      <TableCell align="center">{phone_mediation_no}</TableCell>
+      <TableCell align="center">{serial_no}</TableCell>
       <TableCell align="center">
         {source_language} &hArr; {target_language}
       </TableCell>

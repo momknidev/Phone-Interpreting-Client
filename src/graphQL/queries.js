@@ -350,7 +350,7 @@ export const ALL_PHONE_MEDIATION = gql`
       target_language_id
       sourceLanguage
       targetLanguage
-      phone_mediation_no
+      serial_no
       status
       call_date
       call_duration
@@ -386,7 +386,7 @@ export const PHONE_MEDIATION_PAGINATED_LIST = gql`
         source_language_id
         target_language_id
         source_language
-        phone_mediation_no
+        serial_no
         target_language
         status
         call_date
