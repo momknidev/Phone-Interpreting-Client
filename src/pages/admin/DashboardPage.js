@@ -8,7 +8,7 @@ import { useAuthContext } from '../../auth/useAuthContext';
 // components
 import { useSettingsContext } from '../../components/settings';
 // sections
-import { AppWelcome } from '../../sections/@dashboard/client/dashboard';
+import { AppWelcome } from '../../sections/@dashboard/admin/dashboard';
 // assets
 import { SeoIllustration } from '../../assets/illustrations';
 

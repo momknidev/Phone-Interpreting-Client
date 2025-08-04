@@ -64,7 +64,7 @@ export default function PhonePopover() {
           sx={{ width: 16, height: 16, mr: 1, color: 'text.primary' }}
         />
         <Typography variant="subtitle2" sx={{ mr: 1, color: 'text.primary' }}>
-          {user?.client_phones.find((p) => p.phone === phone)?.label || 'Select Phone'}
+          {user?.client_phones?.find((p) => p.phone === phone)?.label || 'Select Phone'}
         </Typography>
 
         <Box
