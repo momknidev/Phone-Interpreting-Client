@@ -45,6 +45,7 @@ export default function PhonePopover() {
     <>
       <ButtonBase
         onClick={handleOpenPopover}
+        disabled={!user?.client_phones?.length}
         sx={{
           display: 'flex',
           alignItems: 'center',
@@ -82,18 +83,6 @@ export default function PhonePopover() {
 
       <MenuPopover open={openPopover} onClose={handleClosePopover} anchorEl={openPopover}>
         <Stack spacing={0.75} minWidth={140}>
-          {/* {user?.client_phones.map((option) => (
-            <MenuItem
-              key={option.phone}
-              selected={option.phone === phone}
-              onClick={() => handleChangePhone(option.phone)}
-            >
-              <SvgColor src="/assets/icons/navbar/ic_phone.svg" sx={{ width: 16, height: 16 }} />
-              <Typography variant="body2" sx={{ ml: 1 }}>
-                {option.label} ({option.phone})
-              </Typography>
-            </MenuItem>
-          ))} */}
           <List dense disablePadding>
             {user?.client_phones?.map((item) => (
               <ListItem
