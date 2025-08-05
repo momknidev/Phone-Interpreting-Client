@@ -30,6 +30,7 @@ import {
   ClientCodeListPage,
   MediatorGroupDetailPage,
   PhoneMediationList,
+  CallRoutingSetting,
 } from './elements';
 import RoleBasedGuard from '../auth/RoleBasedGuard';
 
@@ -151,6 +152,14 @@ export default function Router() {
           element: (
             <RoleBasedGuard hasContent roles={['client']}>
               <ClientCodeListPage />
+            </RoleBasedGuard>
+          ),
+        },
+        {
+          path: 'call-routing',
+          element: (
+            <RoleBasedGuard hasContent roles={['client']}>
+              <CallRoutingSetting />
             </RoleBasedGuard>
           ),
         },

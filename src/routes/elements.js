@@ -42,6 +42,9 @@ export const ClientCodeListPage = Loadable(
   lazy(() => import('../pages/client/ClientCodeListPage'))
 );
 export const PhoneMediationList = Loadable(lazy(() => import('../pages/client/CallReportPage')));
+export const CallRoutingSetting = Loadable(
+  lazy(() => import('../pages/client/CallRoutingSetting'))
+);
 // DASHBOARD: COMMON
 
 // MAIN

@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 // @mui
-import { Button, Container } from '@mui/material';
+import { Button, Container, Typography } from '@mui/material';
 // import { useQuery } from '@apollo/client';
 // import { useNavigate, useParams } from 'react-router';
 // routes
@@ -36,15 +36,6 @@ export default function CallRoutingSetting() {
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
           heading="Interpreter Profile"
-          // action={
-          // <Button
-          //   variant="contained"
-          //   startIcon={<i className="fas fa-edit" />}
-          //   onClick={() => navigate(PATH_DASHBOARD.interpreter.edit(data?.mediatorById?.id))}
-          // >
-          //   Edit
-          // </Button>
-          // }
           links={[
             {
               name: 'Dashboard',
@@ -56,6 +47,7 @@ export default function CallRoutingSetting() {
             },
           ]}
         />
+        <Typography>Call Routing</Typography>
       </Container>
     </>
   );

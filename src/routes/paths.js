@@ -35,6 +35,7 @@ export const PATH_DASHBOARD = {
     view: (id) => path(CLIENT_DASHBOARD, `/interpreter/${id}`),
   },
   languageList: path(CLIENT_DASHBOARD, '/language'),
+  callRouting: path(CLIENT_DASHBOARD, '/call-routing'),
   clientCodeList: path(CLIENT_DASHBOARD, '/user-code'),
   callReports: path(CLIENT_DASHBOARD, '/call-reports'),
 

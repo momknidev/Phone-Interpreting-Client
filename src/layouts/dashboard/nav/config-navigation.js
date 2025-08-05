@@ -18,6 +18,7 @@ const ICONS = {
   calendar: icon('ic_calendar'),
   language: icon('ic_language'),
   phone: icon('ic_phone'),
+  setting: icon('ic_setting'),
 };
 
 const navConfig = [
@@ -89,6 +90,13 @@ const navConfig = [
             type: 'client',
           },
         ],
+      },
+      {
+        title: 'Call Routing',
+        path: PATH_DASHBOARD.callRouting,
+        icon: ICONS.setting,
+        roles: ['client'],
+        type: 'client',
       },
     ],
   },
