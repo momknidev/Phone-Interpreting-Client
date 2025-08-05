@@ -47,17 +47,19 @@ export default function MediatorGroupDetailPage() {
   const { themeStretch, phone } = useSettingsContext();
   const { id } = useParams();
   const [selectedMediators, setSelectedMediators] = useState([]);
+  const [openAdd, setOpenAdd] = useState(false);
+
   const { loading, data, error, refetch } = useQuery(GROUP_BY_ID, {
     variables: { groupByIdId: id, phone_number: phone },
     fetchPolicy: 'no-cache',
   });
 
-  const [openAdd, setOpenAdd] = useState(false);
   useEffect(() => {
     if (data?.groupByID) {
       setSelectedMediators(data.groupByID.mediators.map((mediator) => mediator.id));
     }
   }, [data, openAdd]);
+
   const { data: allMediatorsData, refetch: refetchMediators } = useQuery(MEDIATOR_LIST_BASIC, {
     variables: {
       phone_number: phone,
@@ -68,13 +70,15 @@ export default function MediatorGroupDetailPage() {
   const [addMediatorToGroup, { loading: addLoading }] = useMutation(ADD_MEDIATOR_TO_GROUP);
 
   const group = data?.groupByID;
-
   const handleAddMediator = async () => {
-    addMediatorToGroup({ variables: { groupId: id, mediator_ids: selectedMediators } });
-    setOpenAdd(false);
-    setSelectedMediators([]);
-    refetch();
-    refetchMediators();
+    await addMediatorToGroup({ variables: { groupId: id, mediator_ids: selectedMediators } }).then(
+      () => {
+        setOpenAdd(false);
+        setSelectedMediators([]);
+        refetch();
+        refetchMediators();
+      }
+    );
   };
 
   const paginatedInterpreters =
