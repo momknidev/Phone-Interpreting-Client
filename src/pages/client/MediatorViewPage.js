@@ -16,13 +16,13 @@ import { Profile } from '../../sections/@dashboard/client/interpreter/profile';
 // ----------------------------------------------------------------------
 
 export default function MediatorViewPage() {
-  const { themeStretch } = useSettingsContext();
+  const { themeStretch, phone } = useSettingsContext();
   const navigate = useNavigate();
 
   const { id } = useParams();
   console.log({ id });
   const { data, loading, error } = useQuery(MEDIATOR_BY_ID, {
-    variables: { id },
+    variables: { id, phone_number: phone },
     fetchPolicy: 'no-cache',
   });
 

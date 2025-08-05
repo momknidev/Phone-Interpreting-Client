@@ -72,7 +72,7 @@ export default function MediatorListPage() {
     defaultOrderBy: 'first_name',
     defaultOrder: 'asc',
   });
-  const { themeStretch } = useSettingsContext();
+  const { themeStretch, phone } = useSettingsContext();
 
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
@@ -90,6 +90,7 @@ export default function MediatorListPage() {
       order,
       orderBy,
       name: filterName,
+      phone_number: phone,
     },
     fetchPolicy: 'no-cache',
   });
@@ -120,7 +121,7 @@ export default function MediatorListPage() {
     try {
       // Call the uploadMediatorFile mutation to upload the file
       await uploadMediatorFile({
-        variables: { file: selectedFile },
+        variables: { file: selectedFile, phone_number: phone },
       });
       enqueueSnackbar('File uploaded successfully!', { variant: 'success' });
       refetch();

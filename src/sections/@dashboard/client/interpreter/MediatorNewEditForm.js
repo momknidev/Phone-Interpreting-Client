@@ -39,6 +39,7 @@ import { ADD_MEDIATOR, UPDATE_MEDIATOR } from '../../../../graphQL/mutations';
 import { ALL_GROUPS, ALL_LANGUAGES } from '../../../../graphQL/queries';
 import { PATH_DASHBOARD } from '../../../../routes/paths';
 import Iconify from '../../../../components/iconify';
+import { useSettingsContext } from '../../../../components/settings';
 
 // ----------------------------------------------------------------------
 
@@ -72,11 +73,20 @@ const marks = [
 
 export default function MediatorNewEditForm({ isEdit = false, currentMediator }) {
   const navigate = useNavigate();
+  const { phone } = useSettingsContext();
   const { enqueueSnackbar } = useSnackbar();
-  const { data, loading } = useQuery(ALL_GROUPS);
+  const { data, loading } = useQuery(ALL_GROUPS, {
+    variables: {
+      phone_number: phone,
+    },
+  });
   const [editMediator] = useMutation(UPDATE_MEDIATOR);
   const [addMediator] = useMutation(ADD_MEDIATOR);
-  const { data: languagesData, loading: languagesLoading } = useQuery(ALL_LANGUAGES);
+  const { data: languagesData, loading: languagesLoading } = useQuery(ALL_LANGUAGES, {
+    variables: {
+      phone_number: phone,
+    },
+  });
 
   // New state for custom time slots
   const [timeSlots, setTimeSlots] = useState({
@@ -262,6 +272,7 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
               groupIDs: data?.group?.map((item) => item.id),
               priority: data?.priority,
               status: 'active',
+              phone_number: phone,
               sourceLanguages: data?.sourceLanguages?.map((item) => item.id),
               targetLanguages: data?.targetLanguages?.map((item) => item.id),
               ...availabilityData,
@@ -276,6 +287,7 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
               first_name: data?.first_name,
               last_name: data?.last_name,
               email: data?.email,
+              phone_number: phone,
               phone: data?.phone,
               groupIDs: data?.group?.map((item) => item.id),
               iban: data?.iban,

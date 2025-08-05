@@ -226,8 +226,8 @@ export const DELETE_MEDIATOR_GROUP = gql`
 `;
 
 export const UPLOAD_MEDIATOR_FILE = gql`
-  mutation UploadMediatorFile($file: Upload!) {
-    uploadMediatorFile(file: $file)
+  mutation UploadMediatorFile($file: Upload!, $phone_number: String!) {
+    uploadMediatorFile(file: $file, phone_number: $phone_number)
   }
 `;
 export const DELETE_CLIENT_CODE = gql`
