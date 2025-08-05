@@ -10,6 +10,7 @@ import { Stack, Alert, IconButton, InputAdornment } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // graphQL
 import { useLazyQuery } from '@apollo/client';
+import jwtDecode from 'jwt-decode';
 
 // routes
 // auth
@@ -18,10 +19,12 @@ import { useAuthContext } from '../../auth/useAuthContext';
 import Iconify from '../../components/iconify';
 import FormProvider, { RHFTextField } from '../../components/hook-form';
 import { LOGIN } from '../../graphQL/queries';
+import { useSettingsContext } from '../../components/settings';
 
 // ----------------------------------------------------------------------
 
 export default function AuthLoginForm() {
+  const { onChangePhone } = useSettingsContext();
   const { login } = useAuthContext();
   const [loginPortal, { loading }] = useLazyQuery(LOGIN);
   const [showPassword, setShowPassword] = useState(false);
@@ -67,6 +70,9 @@ export default function AuthLoginForm() {
 
       if (token) {
         await login(token);
+        const user = jwtDecode(token);
+        console.log('User:', user);
+        onChangePhone(user?.client_phones[0]?.phone);
         reset();
       } else {
         setError('afterSubmit', {
