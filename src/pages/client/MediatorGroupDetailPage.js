@@ -1,5 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { useEffect, useState } from 'react';
+import { m } from 'framer-motion';
+
 import {
   Card,
   Table,
@@ -20,7 +22,7 @@ import {
 } from '@mui/material';
 import { useQuery, useMutation } from '@apollo/client';
 import { LoadingButton } from '@mui/lab';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { PATH_DASHBOARD } from '../../routes/paths';
 import Iconify from '../../components/iconify';
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
@@ -35,8 +37,12 @@ import { GROUP_BY_ID, MEDIATOR_LIST_BASIC } from '../../graphQL/queries';
 import { ADD_MEDIATOR_TO_GROUP } from '../../graphQL/mutations';
 import Label from '../../components/label';
 import { fDate } from '../../utils/formatTime';
+import { MotionContainer, varBounce } from '../../components/animate';
+import { PageNotFoundIllustration } from '../../assets/illustrations';
 
 export default function MediatorGroupDetailPage() {
+  const navigate = useNavigate();
+
   const { page, rowsPerPage, onChangePage, onChangeRowsPerPage } = useTable({});
   const { themeStretch, phone } = useSettingsContext();
   const { id } = useParams();
@@ -53,7 +59,12 @@ export default function MediatorGroupDetailPage() {
   console.log('selectedMediators:', selectedMediators);
 
   const [openAdd, setOpenAdd] = useState(false);
-  const { data: allMediatorsData } = useQuery(MEDIATOR_LIST_BASIC);
+  const { data: allMediatorsData } = useQuery(MEDIATOR_LIST_BASIC, {
+    variables: {
+      phone_number: phone,
+    },
+    fetchPolicy: 'no-cache',
+  });
 
   const [addMediatorToGroup, { loading: addLoading }] = useMutation(ADD_MEDIATOR_TO_GROUP);
 
@@ -73,7 +84,32 @@ export default function MediatorGroupDetailPage() {
     return <Skeleton width="100%" height={300} />;
   }
   if (error) {
-    return `Error: ${error?.message}`;
+    return (
+      <Container maxWidth={themeStretch ? false : 'lg'} sx={{ alignContent: 'center' }}>
+        <Stack alignItems="center">
+          <MotionContainer>
+            <m.div variants={varBounce().in}>
+              <PageNotFoundIllustration
+                sx={{
+                  height: 260,
+                  my: { xs: 5, sm: 10 },
+                }}
+              />
+              <Stack direction="column" alignItems="center">
+                <m.div variants={varBounce().in}>
+                  <Typography variant="h3" paragraph>
+                    {error?.message}
+                  </Typography>
+                </m.div>
+                <Button onClick={() => navigate(-1)} size="large" variant="contained">
+                  Go Back
+                </Button>
+              </Stack>
+            </m.div>
+          </MotionContainer>
+        </Stack>
+      </Container>
+    );
   }
   return (
     <>
@@ -205,17 +241,18 @@ export default function MediatorGroupDetailPage() {
                       <TableCell>
                         {interpreter.first_name} {interpreter.last_name}
                       </TableCell>
-                      <Typography>
-                        {interpreter?.sourceLanguages
-                          ?.map((item) => item?.sourceLanguage?.language_name)
-                          ?.join(',')}
-                        {interpreter?.targetLanguages?.length > 0 && <>&hArr;</>}
-                        {interpreter?.targetLanguages
-                          ?.map((item) => item?.targetLanguage?.language_name)
-                          ?.join(',')}
-                      </Typography>
                       <TableCell>
-                        {' '}
+                        <Typography>
+                          {interpreter?.sourceLanguages
+                            ?.map((item) => item?.sourceLanguage?.language_name)
+                            ?.join(',')}
+                          {interpreter?.targetLanguages?.length > 0 && <>&hArr;</>}
+                          {interpreter?.targetLanguages
+                            ?.map((item) => item?.targetLanguage?.language_name)
+                            ?.join(',')}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
                         {interpreter?.groups?.map((item) => item?.group?.group_name)?.join(', ') ||
                           'No Groups'}
                       </TableCell>

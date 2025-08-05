@@ -343,8 +343,8 @@ export const GROUP_BY_ID = gql`
   }
 `;
 export const MEDIATOR_LIST_BASIC = gql`
-  query MediatorList {
-    mediatorList {
+  query MediatorList($phone_number: String!) {
+    mediatorList(phone_number: $phone_number) {
       first_name
       last_name
       id
