@@ -51,15 +51,14 @@ export default function MediatorGroupDetailPage() {
     variables: { groupByIdId: id, phone_number: phone },
     fetchPolicy: 'no-cache',
   });
+
+  const [openAdd, setOpenAdd] = useState(false);
   useEffect(() => {
     if (data?.groupByID) {
       setSelectedMediators(data.groupByID.mediators.map((mediator) => mediator.id));
     }
-  }, [data]);
-  console.log('selectedMediators:', selectedMediators);
-
-  const [openAdd, setOpenAdd] = useState(false);
-  const { data: allMediatorsData } = useQuery(MEDIATOR_LIST_BASIC, {
+  }, [data, openAdd]);
+  const { data: allMediatorsData, refetch: refetchMediators } = useQuery(MEDIATOR_LIST_BASIC, {
     variables: {
       phone_number: phone,
     },
@@ -75,6 +74,7 @@ export default function MediatorGroupDetailPage() {
     setOpenAdd(false);
     setSelectedMediators([]);
     refetch();
+    refetchMediators();
   };
 
   const paginatedInterpreters =
