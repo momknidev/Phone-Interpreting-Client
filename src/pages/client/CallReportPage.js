@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // @mui
-import { Card, Table, TableBody, Container, TableContainer } from '@mui/material';
+import { Card, Table, TableBody, Container, TableContainer, Typography } from '@mui/material';
 import { useQuery } from '@apollo/client';
 
 // routes
@@ -40,7 +40,7 @@ const TABLE_HEAD = [
 
 // ----------------------------------------------------------------------
 
-export default function MediationListPage() {
+export default function CallReportPage() {
   const {
     dense,
     page,
@@ -57,7 +57,7 @@ export default function MediationListPage() {
     defaultOrder: 'desc',
   });
 
-  const { themeStretch } = useSettingsContext();
+  const { themeStretch, phone } = useSettingsContext();
   const navigate = useNavigate();
 
   const [requestID, setFilterName] = useState('');
@@ -67,6 +67,7 @@ export default function MediationListPage() {
       limit: rowsPerPage,
       order,
       orderBy,
+      phone_number: phone || '',
     },
     fetchPolicy: 'no-cache',
   });
@@ -79,10 +80,27 @@ export default function MediationListPage() {
   const handleViewRow = (id) => {
     navigate(PATH_DASHBOARD.mediatorBookingsView(id));
   };
+  if (!phone) {
+    return (
+      <Container maxWidth={themeStretch ? false : 'xl'}>
+        <CustomBreadcrumbs
+          heading="Call Reports"
+          links={[
+            { name: 'Dashboard', href: PATH_DASHBOARD.clientDashboard },
+            { name: 'Call List' },
+          ]}
+        />
+        <Card>
+          <Typography>Please select a phone number to view call reports.</Typography>
+        </Card>
+      </Container>
+    );
+  }
 
   if (error) {
     return `Error: ${error?.message}`;
   }
+
   return (
     <>
       <Helmet>

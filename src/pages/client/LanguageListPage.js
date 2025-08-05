@@ -75,7 +75,7 @@ export default function LanguageListPage() {
     defaultDense: false,
   });
 
-  const { themeStretch } = useSettingsContext();
+  const { themeStretch, phone } = useSettingsContext();
   const [search, setSearch] = useState('');
   const { enqueueSnackbar } = useSnackbar();
   const [openDialog, setOpenDialog] = useState(false);
@@ -94,6 +94,7 @@ export default function LanguageListPage() {
       order,
       orderBy,
       search,
+      phone_number: phone || '',
     },
     fetchPolicy: 'no-cache',
   });
@@ -146,6 +147,7 @@ export default function LanguageListPage() {
           variables: {
             id: currentLanguage.id,
             input: {
+              phone_number: phone,
               language_code: Number(currentLanguage.language_code),
               language_name: currentLanguage.language_name,
             },
@@ -156,6 +158,8 @@ export default function LanguageListPage() {
         await createLanguage({
           variables: {
             input: {
+              phone_number: phone,
+
               language_code: Number(currentLanguage.language_code),
               language_name: currentLanguage.language_name,
             },

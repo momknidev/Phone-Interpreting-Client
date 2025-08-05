@@ -38,11 +38,11 @@ import { fDate } from '../../utils/formatTime';
 
 export default function MediatorGroupDetailPage() {
   const { page, rowsPerPage, onChangePage, onChangeRowsPerPage } = useTable({});
-  const { themeStretch } = useSettingsContext();
+  const { themeStretch, phone } = useSettingsContext();
   const { id } = useParams();
   const [selectedMediators, setSelectedMediators] = useState([]);
   const { loading, data, error, refetch } = useQuery(GROUP_BY_ID, {
-    variables: { groupByIdId: id },
+    variables: { groupByIdId: id, phone_number: phone },
     fetchPolicy: 'no-cache',
   });
   useEffect(() => {

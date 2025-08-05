@@ -74,7 +74,7 @@ export default function MediatorGroupPage() {
   } = useTable({
     defaultRowsPerPage: 25,
   });
-  const { themeStretch } = useSettingsContext();
+  const { themeStretch, phone } = useSettingsContext();
 
   const [filterName, setFilterName] = useState('');
   const [openAddDialog, setOpenAddDialog] = useState(false);
@@ -92,6 +92,7 @@ export default function MediatorGroupPage() {
       orderBy,
       name: filterName,
       type: 'client',
+      phone_number: phone,
     },
     fetchPolicy: 'no-cache',
   });
@@ -164,6 +165,7 @@ export default function MediatorGroupPage() {
         groupInput: {
           group_name,
           status: groupStatus,
+          phone_number: phone,
         },
       },
     });
@@ -176,6 +178,7 @@ export default function MediatorGroupPage() {
         groupInput: {
           group_name,
           status: groupStatus,
+          phone_number: phone,
         },
       },
     });

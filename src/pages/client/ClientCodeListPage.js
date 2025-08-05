@@ -79,7 +79,7 @@ export default function ClientCodeListPage() {
     defaultDense: false,
   });
 
-  const { themeStretch } = useSettingsContext();
+  const { themeStretch, phone } = useSettingsContext();
   const [search, setSearch] = useState('');
   const { enqueueSnackbar } = useSnackbar();
   const [openDialog, setOpenDialog] = useState(false);
@@ -102,6 +102,7 @@ export default function ClientCodeListPage() {
       order,
       orderBy,
       search,
+      phone_number: phone || '',
     },
     fetchPolicy: 'no-cache',
   });
@@ -145,6 +146,10 @@ export default function ClientCodeListPage() {
 
   const handleSaveClientCode = async () => {
     try {
+      if (!currentClientCode.client_code || !currentClientCode.code_label) {
+        enqueueSnackbar('Please input data in fields', { variant: 'error' });
+        return;
+      }
       if (isEditing) {
         await updateClientCode({
           variables: {
@@ -153,6 +158,7 @@ export default function ClientCodeListPage() {
               client_code: Number(currentClientCode.client_code),
               code_label: currentClientCode.code_label,
               status: currentClientCode.status,
+              phone_number: phone,
             },
           },
         });
@@ -164,6 +170,7 @@ export default function ClientCodeListPage() {
               client_code: Number(currentClientCode.client_code),
               code_label: currentClientCode.code_label,
               status: currentClientCode.status,
+              phone_number: phone,
             },
           },
         });
@@ -207,12 +214,12 @@ export default function ClientCodeListPage() {
   return (
     <>
       <Helmet>
-        <title> Client Code List | Telephone Mediation App</title>
+        <title> Client Codes | Telephone Mediation App</title>
       </Helmet>
 
       <Container maxWidth={themeStretch ? false : 'xl'}>
         <CustomBreadcrumbs
-          heading="Client Code List"
+          heading="Client Codes"
           links={[
             {
               name: 'Dashboard',

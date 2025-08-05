@@ -41,7 +41,7 @@ export const LanguageListPage = Loadable(lazy(() => import('../pages/client/Lang
 export const ClientCodeListPage = Loadable(
   lazy(() => import('../pages/client/ClientCodeListPage'))
 );
-export const PhoneMediationList = Loadable(lazy(() => import('../pages/client/MediationListPage')));
+export const PhoneMediationList = Loadable(lazy(() => import('../pages/client/CallReportPage')));
 // DASHBOARD: COMMON
 
 // MAIN

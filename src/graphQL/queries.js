@@ -76,6 +76,7 @@ export const GROUPS_PAGINATED_LIST = gql`
     $order: String
     $orderBy: String
     $name: String
+    $phone_number: String!
   ) {
     groupsPaginatedList(
       offset: $offset
@@ -83,6 +84,7 @@ export const GROUPS_PAGINATED_LIST = gql`
       order: $order
       orderBy: $orderBy
       name: $name
+      phone_number: $phone_number
     ) {
       filteredCount
       groups {
@@ -216,8 +218,22 @@ export const ALL_LANGUAGES = gql`
   }
 `;
 export const LANGUAGES = gql`
-  query Languages($offset: Int, $limit: Int, $order: String, $orderBy: String, $search: String) {
-    languages(offset: $offset, limit: $limit, order: $order, orderBy: $orderBy, search: $search) {
+  query Languages(
+    $offset: Int
+    $limit: Int
+    $order: String
+    $orderBy: String
+    $search: String
+    $phone_number: String!
+  ) {
+    languages(
+      offset: $offset
+      limit: $limit
+      order: $order
+      orderBy: $orderBy
+      search: $search
+      phone_number: $phone_number
+    ) {
       filteredCount
       languages {
         id
@@ -275,6 +291,7 @@ export const PAGINATED_CLIENT_CODES = gql`
     $order: String
     $orderBy: String
     $search: String
+    $phone_number: String!
   ) {
     clientCodesPaginated(
       offset: $offset
@@ -282,6 +299,7 @@ export const PAGINATED_CLIENT_CODES = gql`
       order: $order
       orderBy: $orderBy
       search: $search
+      phone_number: $phone_number
     ) {
       filteredCount
       clientCodes {
@@ -309,8 +327,8 @@ export const ALL_CLIENT_CODES = gql`
   }
 `;
 export const GROUP_BY_ID = gql`
-  query GroupByID($groupByIdId: String) {
-    groupByID(id: $groupByIdId) {
+  query GroupByID($groupByIdId: String, $phone_number: String!) {
+    groupByID(id: $groupByIdId, phone_number: $phone_number) {
       id
       group_name
       status
@@ -367,6 +385,7 @@ export const PHONE_MEDIATION_PAGINATED_LIST = gql`
     $order: String
     $orderBy: String
     $search: String
+    $phone_number: String!
   ) {
     phoneMediationPaginatedList(
       offset: $offset
@@ -374,6 +393,7 @@ export const PHONE_MEDIATION_PAGINATED_LIST = gql`
       order: $order
       orderBy: $orderBy
       search: $search
+      phone_number: $phone_number
     ) {
       filteredCount
       callReports {
