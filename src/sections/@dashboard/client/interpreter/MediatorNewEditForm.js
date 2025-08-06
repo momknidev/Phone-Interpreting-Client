@@ -28,6 +28,9 @@ import {
   List,
   ListItem,
 } from '@mui/material';
+import { PhoneInput } from 'react-international-phone';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { PhoneNumberUtil } from 'google-libphonenumber';
 // components
 import FormProvider, {
   RHFAutocomplete,
@@ -74,6 +77,7 @@ const marks = [
     label: 'Very Low',
   },
 ];
+const phoneUtil = PhoneNumberUtil.getInstance();
 
 export default function MediatorNewEditForm({ isEdit = false, currentMediator }) {
   const navigate = useNavigate();
@@ -87,6 +91,14 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
   });
   const [editMediator] = useMutation(UPDATE_MEDIATOR);
   const [addMediator] = useMutation(ADD_MEDIATOR);
+  const isPhoneValid = (phone) => {
+    try {
+      const number = phoneUtil.parseAndKeepRawInput(phone); // Use 'IT' for Italy or dynamically detect
+      return phoneUtil.isValidNumber(number);
+    } catch (error) {
+      return false;
+    }
+  };
   const { data: languagesData, loading: languagesLoading } = useQuery(ALL_SOURCE_LANGUAGES, {
     variables: {
       phone_number: phone,
@@ -209,7 +221,13 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
     first_name: Yup.string().required('First name is required'),
     last_name: Yup.string(),
     email: Yup.string().email('Email must be a valid email address').nullable(),
-    phone: Yup.string().required('Phone number is required'),
+    phone: Yup.string()
+      .required('Phone number is required')
+      .required('Phone is required')
+      .test('phone-validation', 'Phone number must be valid', (value) => {
+        if (!value) return false;
+        return isPhoneValid(value);
+      }),
     iban: Yup.string(),
     sourceLanguages: Yup.array().of(Yup.object()).min(1, 'Select at least one source language'),
     targetLanguages: Yup.array().of(Yup.object()).min(1, 'Select at least one target language'),
@@ -248,6 +266,7 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
     setValue,
     handleSubmit,
     watch,
+    trigger,
     // control,
     formState: { isSubmitting, errors },
   } = methods;
@@ -380,7 +399,36 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
               <RHFTextField name="first_name" label="First Name" />
               <RHFTextField name="last_name" label="Last Name" />
               <RHFTextField name="email" label="Email Address" />
-              <RHFTextField name="phone" label="Phone Number" />
+              {/* <RHFTextField name="phone" label="Phone Number" /> */}
+              <div>
+                <PhoneInput
+                  defaultCountry="it"
+                  inputStyle={{
+                    width: '100%',
+                    height: '56px',
+                    borderRadius: '4px',
+                    border: '1px solid #ced4da',
+                    padding: '10px 12px',
+                    fontSize: '16px',
+                    boxSizing: 'border-box',
+                  }}
+                  buttonStyle={{
+                    height: '56px',
+                  }}
+                  value={values?.phone ?? ''}
+                  onChange={(phone) => {
+                    setValue('phone', phone, { shouldDirty: true });
+                  }}
+                  onBlur={() => {
+                    trigger('phone');
+                  }}
+                />
+                {errors.phone && (
+                  <Typography variant="caption" color="error">
+                    {errors.phone.message}
+                  </Typography>
+                )}
+              </div>
               <RHFTextField name="iban" label="IBAN" />
               <RHFAutocomplete
                 name="group"
