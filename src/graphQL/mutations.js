@@ -365,3 +365,28 @@ export const SYNC_SOURCE_LANGUAGES = gql`
     syncSourceLanguagesData(phone_number: $phoneNumber)
   }
 `;
+export const CREATE_UPDATED_ROUTING_SETTING = gql`
+  mutation CreateOrUpdateCallRoutingSettings($input: CallRoutingSettingsInput!) {
+    createOrUpdateCallRoutingSettings(input: $input) {
+      id
+      client_id
+      phone_number
+      enable_code
+      callingCodePrompt
+      callingCodePromptURL
+      askSourceLanguage
+      askTargetLanguage
+      sourceLanguagePrompt
+      sourceLanguagePromptURL
+      targetLanguagePrompt
+      targetLanguagePromptURL
+      interpreterCallType
+      retryAttempts
+      enableFallback
+      fallbackNumber
+      fallbackPrompt
+      createdAt
+      updatedAt
+    }
+  }
+`;

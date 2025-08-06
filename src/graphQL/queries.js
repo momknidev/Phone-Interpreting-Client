@@ -460,3 +460,28 @@ export const PHONE_MEDIATION_PAGINATED_LIST = gql`
     }
   }
 `;
+export const GET_CALL_ROUTING_SETTING = gql`
+  query GetCallRoutingSettings($phone_number: String!) {
+    getCallRoutingSettings(phone_number: $phone_number) {
+      id
+      client_id
+      phone_number
+      enable_code
+      callingCodePrompt
+      callingCodePromptURL
+      askSourceLanguage
+      askTargetLanguage
+      sourceLanguagePrompt
+      sourceLanguagePromptURL
+      targetLanguagePrompt
+      targetLanguagePromptURL
+      interpreterCallType
+      retryAttempts
+      enableFallback
+      fallbackNumber
+      fallbackPrompt
+      createdAt
+      updatedAt
+    }
+  }
+`;
