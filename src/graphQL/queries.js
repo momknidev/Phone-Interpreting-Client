@@ -208,9 +208,20 @@ export const MEDIATORS_PAGINATED_LIST = gql`
     }
   }
 `;
-export const ALL_LANGUAGES = gql`
+export const ALL_SOURCE_LANGUAGES = gql`
   query AllLanguages($phone_number: String!) {
-    allLanguages(phone_number: $phone_number) {
+    allSourceLanguages(phone_number: $phone_number) {
+      id
+      language_code
+      language_name
+      created_at
+      updated_at
+    }
+  }
+`;
+export const ALL_TARGET_LANGUAGES = gql`
+  query AllLanguages($phone_number: String!) {
+    allTargetLanguages(phone_number: $phone_number) {
       id
       language_code
       language_name

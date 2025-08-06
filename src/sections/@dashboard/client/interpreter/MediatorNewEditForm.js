@@ -36,7 +36,11 @@ import FormProvider, {
   RHFCheckbox,
 } from '../../../../components/hook-form';
 import { ADD_MEDIATOR, UPDATE_MEDIATOR } from '../../../../graphQL/mutations';
-import { ALL_GROUPS, ALL_LANGUAGES } from '../../../../graphQL/queries';
+import {
+  ALL_GROUPS,
+  ALL_SOURCE_LANGUAGES,
+  ALL_TARGET_LANGUAGES,
+} from '../../../../graphQL/queries';
 import { PATH_DASHBOARD } from '../../../../routes/paths';
 import Iconify from '../../../../components/iconify';
 import { useSettingsContext } from '../../../../components/settings';
@@ -79,13 +83,21 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
     variables: {
       phone_number: phone,
     },
+    fetchPolicy: 'no-cache',
   });
   const [editMediator] = useMutation(UPDATE_MEDIATOR);
   const [addMediator] = useMutation(ADD_MEDIATOR);
-  const { data: languagesData, loading: languagesLoading } = useQuery(ALL_LANGUAGES, {
+  const { data: languagesData, loading: languagesLoading } = useQuery(ALL_SOURCE_LANGUAGES, {
     variables: {
       phone_number: phone,
     },
+    fetchPolicy: 'no-cache',
+  });
+  const { data: targetLanguage, loading: targetLanguagesLoading } = useQuery(ALL_TARGET_LANGUAGES, {
+    variables: {
+      phone_number: phone,
+    },
+    fetchPolicy: 'no-cache',
   });
 
   // New state for custom time slots
@@ -396,7 +408,7 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
               <RHFAutocomplete
                 name="sourceLanguages"
                 label="Source Language"
-                options={languagesData?.allLanguages || []}
+                options={languagesData?.allSourceLanguages || []}
                 isOptionEqualToValue={(option, value) => option?.id === value?.id}
                 getOptionLabel={(option) => option?.language_name || ''}
                 loading={languagesLoading}
@@ -408,11 +420,11 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
               <RHFAutocomplete
                 name="targetLanguages"
                 label="Target Language"
-                options={languagesData?.allLanguages || []}
+                options={targetLanguage?.allTargetLanguages || []}
                 multiple
                 isOptionEqualToValue={(option, value) => option?.id === value?.id}
                 getOptionLabel={(option) => option?.language_name || ''}
-                loading={languagesLoading}
+                loading={targetLanguagesLoading}
                 ChipProps={{ size: 'small' }}
                 sx={{ minWidth: 300 }}
               />

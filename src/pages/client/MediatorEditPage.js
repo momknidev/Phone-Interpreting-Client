@@ -17,10 +17,10 @@ import { MEDIATOR_BY_ID } from '../../graphQL/queries';
 // ----------------------------------------------------------------------
 
 export default function MediatorEditPage() {
-  const { themeStretch } = useSettingsContext();
+  const { themeStretch, phone } = useSettingsContext();
   const { id } = useParams();
   const { data, loading, error } = useQuery(MEDIATOR_BY_ID, {
-    variables: { id },
+    variables: { id, phone_number: phone },
     fetchPolicy: 'no-cache',
   });
   if (error) {
