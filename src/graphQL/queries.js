@@ -228,7 +228,36 @@ export const LANGUAGES = gql`
     $search: String
     $phone_number: String!
   ) {
-    languages(
+    sourceLanguages(
+      offset: $offset
+      limit: $limit
+      order: $order
+      orderBy: $orderBy
+      search: $search
+      phone_number: $phone_number
+    ) {
+      filteredCount
+      languages {
+        id
+        language_code
+        client_id
+        language_name
+        created_at
+        updated_at
+      }
+    }
+  }
+`;
+export const TARGET_LANGUAGES = gql`
+  query Languages(
+    $offset: Int
+    $limit: Int
+    $order: String
+    $orderBy: String
+    $search: String
+    $phone_number: String!
+  ) {
+    targetLanguages(
       offset: $offset
       limit: $limit
       order: $order

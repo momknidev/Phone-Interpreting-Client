@@ -189,9 +189,9 @@ export const UPDATE_MEDIATOR_STATUS = gql`
   }
 `;
 
-export const CREATE_LANGUAGE = gql`
+export const CREATE_SOURCE_LANGUAGE = gql`
   mutation CreateLanguage($input: LanguageInput!) {
-    createLanguage(input: $input) {
+    createSourceLanguage(input: $input) {
       id
       language_code
       client_id
@@ -201,9 +201,9 @@ export const CREATE_LANGUAGE = gql`
     }
   }
 `;
-export const UPDATE_LANGUAGE = gql`
+export const UPDATE_SOURCE_LANGUAGE = gql`
   mutation UpdateLanguage($input: LanguageInput!, $id: ID!) {
-    updateLanguage(input: $input, id: $id) {
+    updateSourceLanguage(input: $input, id: $id) {
       id
       language_code
       client_id
@@ -213,9 +213,38 @@ export const UPDATE_LANGUAGE = gql`
     }
   }
 `;
-export const DELETE_LANGUAGE = gql`
+export const DELETE_SOURCE_LANGUAGE = gql`
   mutation DeleteLanguage($id: ID!) {
-    deleteLanguage(id: $id)
+    deleteSourceLanguage(id: $id)
+  }
+`;
+export const CREATE_TARGET_LANGUAGE = gql`
+  mutation CreateLanguage($input: LanguageInput!) {
+    createTargetLanguage(input: $input) {
+      id
+      language_code
+      client_id
+      language_name
+      created_at
+      updated_at
+    }
+  }
+`;
+export const UPDATE_TARGET_LANGUAGE = gql`
+  mutation UpdateLanguage($input: LanguageInput!, $id: ID!) {
+    updateTargetLanguage(input: $input, id: $id) {
+      id
+      language_code
+      client_id
+      language_name
+      created_at
+      updated_at
+    }
+  }
+`;
+export const DELETE_TARGET_LANGUAGE = gql`
+  mutation DeleteLanguage($id: ID!) {
+    deleteTargetLanguage(id: $id)
   }
 `;
 
@@ -323,5 +352,16 @@ export const UPDATE_PHONE_MEDIATION = gql`
       created_at
       updated_at
     }
+  }
+`;
+
+export const SYNC_TARGET_LANGUAGES = gql`
+  mutation SyncLanguagesData($phoneNumber: String!) {
+    syncTargetLanguagesData(phone_number: $phoneNumber)
+  }
+`;
+export const SYNC_SOURCE_LANGUAGES = gql`
+  mutation SyncLanguagesData($phoneNumber: String!) {
+    syncSourceLanguagesData(phone_number: $phoneNumber)
   }
 `;
