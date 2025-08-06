@@ -279,7 +279,7 @@ export default function ClientCreateEditForm({ isEdit = false, currentUser }) {
                         <Stack direction="row" spacing={2} flexGrow={1}>
                           <RHFTextField name={`phone_list.${index}.label`} label="Label" />
 
-                          <div>
+                          <div style={{ minWidth: 300 }}>
                             <PhoneInput
                               defaultCountry="it"
                               inputStyle={{
