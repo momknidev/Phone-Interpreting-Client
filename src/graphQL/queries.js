@@ -482,6 +482,11 @@ export const GET_CALL_ROUTING_SETTING = gql`
       fallbackPrompt
       createdAt
       updatedAt
+      callingCodeError
+      sourceLanguageError
+      targetLanguageError
+      fallbackMessage
+      fallbackType
     }
   }
 `;

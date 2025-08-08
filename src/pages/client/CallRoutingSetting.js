@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 import { useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import {
@@ -17,6 +18,9 @@ import {
   Typography,
 } from '@mui/material';
 import { useForm, Controller, useWatch } from 'react-hook-form';
+import { PhoneInput } from 'react-international-phone';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { PhoneNumberUtil } from 'google-libphonenumber';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQuery } from '@apollo/client';
@@ -27,13 +31,10 @@ import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 import { useSettingsContext } from '../../components/settings';
 import { PATH_DASHBOARD } from '../../routes/paths';
 import { GET_CALL_ROUTING_SETTING } from '../../graphQL/queries';
-import FormProvider, {
-  RHFAutocomplete,
-  RHFTextField,
-  RHFUploadAvatar,
-  RHFCheckbox,
-} from '../../components/hook-form';
+import FormProvider from '../../components/hook-form';
 import { CREATE_UPDATED_ROUTING_SETTING } from '../../graphQL/mutations';
+
+const phoneUtil = PhoneNumberUtil.getInstance();
 
 export default function CallRoutingSetting() {
   const { themeStretch, phone } = useSettingsContext();
@@ -46,36 +47,68 @@ export default function CallRoutingSetting() {
     fetchPolicy: 'no-cache',
   });
 
+  const isPhoneValid = (phone) => {
+    try {
+      const number = phoneUtil.parseAndKeepRawInput(phone, 'IT'); // Use 'IT' for Italy or dynamically detect
+      return phoneUtil.isValidNumber(number);
+    } catch (error) {
+      return false;
+    }
+  };
+  //   "targetLanguageError": null,
+  // "sourceLanguageError": null,
+  // "callingCodeError": null
   const NewUserSchema = yup.object().shape({
     enableCode: yup.boolean(),
     callingCodePrompt: yup.string().when('enableCode', {
       is: true,
-      then: (schema) => schema.required('Voice message is required'),
-      otherwise: (schema) => schema.notRequired(),
+      then: (schema) => schema.required('Voice message for code prompt is required'),
+    }),
+    callingCodeError: yup.string().when('enableCode', {
+      is: true,
+      then: (schema) => schema.required('Error message for code prompt is required'),
     }),
     askSourceLanguage: yup.boolean(),
     sourceLanguagePrompt: yup.string().when('askSourceLanguage', {
       is: true,
       then: (schema) => schema.required('Source language message is required'),
-      otherwise: (schema) => schema.notRequired(),
+    }),
+    sourceLanguageError: yup.string().when('askSourceLanguage', {
+      is: true,
+      then: (schema) => schema.required('Error message for source language is required'),
     }),
     askTargetLanguage: yup.boolean(),
     targetLanguagePrompt: yup.string().when('askTargetLanguage', {
       is: true,
       then: (schema) => schema.required('Target language message is required'),
-      otherwise: (schema) => schema.notRequired(),
+    }),
+    targetLanguageError: yup.string().when('askTargetLanguage', {
+      is: true,
+      then: (schema) => schema.required('Error message for target language is required'),
     }),
     interpreterCallType: yup.string().oneOf(['simultaneous', 'sequential']).required(),
     enableFallback: yup.boolean(),
-
-    fallbackNumber: yup.string(),
+    fallbackType: yup.string().oneOf(['number', 'message']).nullable(),
+    fallbackNumber: yup.string().when(['enableFallback', 'fallbackType'], {
+      is: (enableFallback, fallbackType) => enableFallback && fallbackType === 'number',
+      then: (schema) =>
+        schema
+          .required('Fallback number is required')
+          .test('phone-validation', 'Phone number must be valid', (value) => {
+            if (!value) return false;
+            return isPhoneValid(value);
+          }),
+    }),
+    fallbackMessage: yup.string().when(['enableFallback', 'fallbackType'], {
+      is: (enableFallback, fallbackType) => enableFallback && fallbackType === 'message',
+      then: (schema) => schema.required('Fallback message is required'),
+    }),
     retryAttempts: yup
       .number()
-      .min(0, 'O or more ')
+      .min(0, '0 or more')
       .when('enableFallback', {
         is: true,
         then: (schema) => schema.required('Retry attempts required'),
-        otherwise: (schema) => schema.notRequired(),
       }),
   });
 
@@ -83,17 +116,18 @@ export default function CallRoutingSetting() {
     () => ({
       enableCode: data?.getCallRoutingSettings?.enable_code ?? false,
       callingCodePrompt: data?.getCallRoutingSettings?.callingCodePrompt ?? '',
-
+      callingCodeError: data?.getCallRoutingSettings?.callingCodeError ?? '',
       askSourceLanguage: data?.getCallRoutingSettings?.askSourceLanguage ?? false,
       sourceLanguagePrompt: data?.getCallRoutingSettings?.sourceLanguagePrompt ?? '',
-
+      sourceLanguageError: data?.getCallRoutingSettings?.sourceLanguageError ?? '',
       askTargetLanguage: data?.getCallRoutingSettings?.askTargetLanguage ?? false,
       targetLanguagePrompt: data?.getCallRoutingSettings?.targetLanguagePrompt ?? '',
-
+      targetLanguageError: data?.getCallRoutingSettings?.targetLanguageError ?? '',
       interpreterCallType: data?.getCallRoutingSettings?.interpreterCallType ?? 'sequential',
-
       enableFallback: data?.getCallRoutingSettings?.enableFallback ?? false,
+      fallbackType: data?.getCallRoutingSettings?.fallbackType ?? null,
       fallbackNumber: data?.getCallRoutingSettings?.fallbackNumber ?? '',
+      fallbackMessage: data?.getCallRoutingSettings?.fallbackMessage ?? '',
       retryAttempts: data?.getCallRoutingSettings?.retryAttempts ?? 1,
     }),
     [data]
@@ -108,15 +142,20 @@ export default function CallRoutingSetting() {
     reset,
     handleSubmit,
     watch,
+    trigger,
+    setValue,
     control,
     formState: { errors },
   } = methods;
 
+  const values = watch();
+  console.log({ values, errors });
   // Watchers for conditional rendering
   const enableCode = watch('enableCode');
   const askSourceLanguage = watch('askSourceLanguage');
   const askTargetLanguage = watch('askTargetLanguage');
   const enableFallback = watch('enableFallback');
+  const fallbackType = watch('fallbackType');
 
   useEffect(() => {
     if (data?.getCallRoutingSettings) {
@@ -135,7 +174,7 @@ export default function CallRoutingSetting() {
         phone_number: phone,
       };
 
-      delete payload.enableCode; // remove temporary form-specific field
+      delete payload.enableCode;
 
       await updateRoutingSettings({
         variables: {
@@ -143,7 +182,6 @@ export default function CallRoutingSetting() {
         },
       });
 
-      console.log('Settings saved successfully.');
       enqueueSnackbar('Settings saved successfully.', { variant: 'success' });
     } catch (err) {
       console.error('Failed to save settings:', err);
@@ -173,166 +211,290 @@ export default function CallRoutingSetting() {
           <Stack spacing={4}>
             {/* Section 1: Code Prompt */}
             <Card sx={{ p: 3 }}>
-              <Typography variant="h6">Code Prompt Settings</Typography>
-              <Controller
-                name="enableCode"
-                control={control}
-                render={({ field }) => (
-                  <FormControlLabel
-                    control={<Switch {...field} checked={field.value} />}
-                    label="Enable Code Prompt"
-                  />
-                )}
-              />
-              {enableCode && (
+              <Stack direction="column" spacing={2}>
+                <Typography variant="h6">Code Prompt Settings</Typography>
                 <Controller
-                  name="callingCodePrompt"
+                  name="enableCode"
                   control={control}
                   render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      label="Voice Message for Code Prompt"
-                      multiline
-                      error={!!errors.callingCodePrompt}
-                      helperText={errors.callingCodePrompt?.message}
-                      sx={{ mt: 2 }}
+                    <FormControlLabel
+                      control={<Switch {...field} checked={field.value} />}
+                      label="Enable Code Prompt"
                     />
                   )}
                 />
-              )}
-            </Card>
-
-            {/* Section 2: Language Prompts */}
-            <Card sx={{ p: 3 }}>
-              <Typography variant="h6">Language Prompt Settings</Typography>
-
-              <Controller
-                name="askSourceLanguage"
-                control={control}
-                render={({ field }) => (
-                  <FormControlLabel
-                    control={<Switch {...field} checked={field.value} />}
-                    label="Enable Source Language Prompt"
-                  />
-                )}
-              />
-              {askSourceLanguage && (
+                {enableCode && (
+                  <>
+                    <Controller
+                      name="callingCodePrompt"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          fullWidth
+                          label="Voice Message for Code Prompt"
+                          multiline
+                          error={!!errors.callingCodePrompt}
+                          helperText={errors.callingCodePrompt?.message}
+                          sx={{ mt: 2 }}
+                        />
+                      )}
+                    />
+                    <Controller
+                      name="callingCodeError"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          fullWidth
+                          label="Error Message for Code Prompt"
+                          multiline
+                          error={!!errors.callingCodeError}
+                          helperText={errors.callingCodeError?.message}
+                          sx={{ mt: 2 }}
+                        />
+                      )}
+                    />
+                  </>
+                )}{' '}
+              </Stack>
+              {/* Section 2: Language Prompts */}
+              <Typography variant="h6" sx={{ mt: 3 }}>
+                Language Prompt Settings
+              </Typography>
+              <Stack direction="column" spacing={2}>
                 <Controller
-                  name="sourceLanguagePrompt"
+                  name="askSourceLanguage"
                   control={control}
                   render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      multiline
-                      label="Voice Message for Source Language"
-                      error={!!errors.sourceLanguagePrompt}
-                      helperText={errors.sourceLanguagePrompt?.message}
-                      sx={{ mt: 2 }}
+                    <FormControlLabel
+                      control={<Switch {...field} checked={field.value} />}
+                      label="Enable Source Language Prompt"
                     />
                   )}
                 />
-              )}
-
-              <Controller
-                name="askTargetLanguage"
-                control={control}
-                render={({ field }) => (
-                  <FormControlLabel
-                    control={<Switch {...field} checked={field.value} />}
-                    label="Enable Target Language Prompt"
-                  />
-                )}
-              />
-              {askTargetLanguage && (
-                <Controller
-                  name="targetLanguagePrompt"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      multiline
-                      label="Voice Message for Target Language"
-                      error={!!errors.targetLanguagePrompt}
-                      helperText={errors.targetLanguagePrompt?.message}
-                      sx={{ mt: 2 }}
-                    />
-                  )}
-                />
-              )}
-            </Card>
-
-            {/* Section 3: Call Algorithm */}
-            <Card sx={{ p: 3 }}>
-              <Typography variant="h6">Call Algorithm Settings</Typography>
-              <Controller
-                name="interpreterCallType"
-                control={control}
-                render={({ field }) => (
-                  <FormControl>
-                    <FormLabel>Call Algorithm</FormLabel>
-                    <RadioGroup row {...field}>
-                      <FormControlLabel
-                        value="simultaneous"
-                        control={<Radio />}
-                        label="Simultaneous"
-                      />
-                      <FormControlLabel value="sequential" control={<Radio />} label="Sequential" />
-                    </RadioGroup>
-                  </FormControl>
-                )}
-              />
-            </Card>
-
-            {/* Section 4: Fallback */}
-            <Card sx={{ p: 3 }}>
-              <Typography variant="h6">Fallback Settings</Typography>
-
-              <Controller
-                name="enableFallback"
-                control={control}
-                render={({ field }) => (
-                  <FormControlLabel
-                    control={<Switch {...field} checked={field.value} />}
-                    label="Enable Fallback"
-                  />
-                )}
-              />
-
-              {enableFallback && (
-                <Stack spacing={2} mt={2}>
+                {askSourceLanguage && (
                   <Controller
-                    name="fallbackNumber"
+                    name="sourceLanguagePrompt"
                     control={control}
                     render={({ field }) => (
                       <TextField
                         {...field}
                         fullWidth
-                        label="Fallback Number"
-                        error={!!errors.fallbackNumber}
-                        helperText={errors.fallbackNumber?.message}
+                        multiline
+                        label="Voice Message for Source Language"
+                        error={!!errors.sourceLanguagePrompt}
+                        helperText={errors.sourceLanguagePrompt?.message}
+                        sx={{ mt: 2 }}
                       />
                     )}
                   />
-
+                )}{' '}
+                {askSourceLanguage && (
                   <Controller
-                    name="retryAttempts"
+                    name="sourceLanguageError"
                     control={control}
                     render={({ field }) => (
                       <TextField
                         {...field}
                         fullWidth
-                        type="number"
-                        label="Retry Attempts"
-                        error={!!errors.retryAttempts}
-                        helperText={errors.retryAttempts?.message}
+                        multiline
+                        label="Error Message for Source Language"
+                        error={!!errors.sourceLanguageError}
+                        helperText={errors.sourceLanguageError?.message}
+                        sx={{ mt: 2 }}
                       />
                     )}
                   />
-                </Stack>
-              )}
+                )}
+                <Controller
+                  name="askTargetLanguage"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControlLabel
+                      control={<Switch {...field} checked={field.value} />}
+                      label="Enable Target Language Prompt"
+                    />
+                  )}
+                />
+                {askTargetLanguage && (
+                  <Controller
+                    name="targetLanguagePrompt"
+                    control={control}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        fullWidth
+                        multiline
+                        label="Voice Message for Target Language"
+                        error={!!errors.targetLanguagePrompt}
+                        helperText={errors.targetLanguagePrompt?.message}
+                        sx={{ mt: 2 }}
+                      />
+                    )}
+                  />
+                )}{' '}
+                {askTargetLanguage && (
+                  <Controller
+                    name="targetLanguageError"
+                    control={control}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        fullWidth
+                        multiline
+                        label="Error Message for Target Language"
+                        error={!!errors.targetLanguageError}
+                        helperText={errors.targetLanguageError?.message}
+                        sx={{ mt: 2 }}
+                      />
+                    )}
+                  />
+                )}
+              </Stack>
+              {/* Section 3: Call Algorithm */}
+              <Typography variant="h6" sx={{ mt: 3 }}>
+                Call Settings
+              </Typography>
+              <Stack direction="column" spacing={3}>
+                <Controller
+                  name="interpreterCallType"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControl>
+                      <FormLabel>Call Type</FormLabel>
+                      <RadioGroup row {...field}>
+                        <FormControlLabel
+                          value="simultaneous"
+                          control={<Radio />}
+                          label="Simultaneous"
+                        />
+                        <FormControlLabel
+                          value="sequential"
+                          control={<Radio />}
+                          label="Sequential"
+                        />
+                      </RadioGroup>
+                    </FormControl>
+                  )}
+                />
+                <Controller
+                  name="retryAttempts"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      type="number"
+                      label="Retry Attempts"
+                      error={!!errors.retryAttempts}
+                      helperText={errors.retryAttempts?.message}
+                    />
+                  )}
+                />
+              </Stack>
+              {/* Section 4: Fallback */}
+              <Typography variant="h6" sx={{ mt: 3 }}>
+                Fallback Settings
+              </Typography>
+              <Stack direction="column">
+                <Controller
+                  name="enableFallback"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControlLabel
+                      control={<Switch {...field} checked={field.value} />}
+                      label="Enable Fallback"
+                    />
+                  )}
+                />
+
+                {enableFallback && (
+                  <>
+                    {/* Fallback Type Selector */}
+                    <Controller
+                      name="fallbackType"
+                      control={control}
+                      render={({ field }) => (
+                        <FormControl sx={{ mt: 2 }}>
+                          <FormLabel>Fallback Option</FormLabel>
+                          <RadioGroup
+                            row
+                            {...field}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              // Reset the other field when switching
+                              if (e.target.value === 'number') {
+                                setValue('fallbackMessage', '');
+                              } else {
+                                setValue('fallbackNumber', '');
+                              }
+                            }}
+                          >
+                            <FormControlLabel value="number" control={<Radio />} label="Number" />
+                            <FormControlLabel value="message" control={<Radio />} label="Message" />
+                          </RadioGroup>
+                        </FormControl>
+                      )}
+                    />
+
+                    {/* Conditional Inputs */}
+                    {fallbackType === 'number' && (
+                      <Controller
+                        name="fallbackNumber"
+                        control={control}
+                        render={({ field }) => (
+                          <Stack spacing={1} mt={2}>
+                            <PhoneInput
+                              defaultCountry="it"
+                              inputStyle={{
+                                width: '100%',
+                                height: '56px',
+                                borderRadius: '4px',
+                                border: '1px solid #ced4da',
+                                padding: '10px 12px',
+                                fontSize: '16px',
+                                boxSizing: 'border-box',
+                              }}
+                              buttonStyle={{
+                                height: '56px',
+                              }}
+                              value={field.value}
+                              onChange={(val) =>
+                                setValue('fallbackNumber', val, { shouldDirty: true })
+                              }
+                              onBlur={() => trigger('fallbackNumber')}
+                            />
+                            {errors.fallbackNumber && (
+                              <Typography variant="caption" color="error">
+                                {errors.fallbackNumber.message}
+                              </Typography>
+                            )}
+                          </Stack>
+                        )}
+                      />
+                    )}
+
+                    {fallbackType === 'message' && (
+                      <Controller
+                        name="fallbackMessage"
+                        control={control}
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            fullWidth
+                            label="Fallback Message"
+                            multiline
+                            error={!!errors.fallbackMessage}
+                            helperText={errors.fallbackMessage?.message}
+                            sx={{ mt: 2 }}
+                          />
+                        )}
+                      />
+                    )}
+                  </>
+                )}
+              </Stack>
             </Card>
 
             <LoadingButton type="submit" variant="contained" size="large" loading={saving}>
