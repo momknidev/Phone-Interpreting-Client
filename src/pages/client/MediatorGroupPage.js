@@ -47,6 +47,7 @@ import { UserTableToolbar } from '../../sections/@dashboard/admin/client/list';
 import { GROUPS_PAGINATED_LIST } from '../../graphQL/queries';
 import { ADD_GROUP, EDIT_GROUP, DELETE_MEDIATOR_GROUP } from '../../graphQL/mutations';
 import Label from '../../components/label';
+import { NoPhoneSelected } from './CallReportPage';
 
 // ----------------------------------------------------------------------
 
@@ -191,7 +192,9 @@ export default function MediatorGroupPage() {
       },
     });
   };
-
+  if (!phone) {
+    return <NoPhoneSelected />;
+  }
   if (error) {
     return `Error: ${error?.message}`;
   }

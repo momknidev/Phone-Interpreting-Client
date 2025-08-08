@@ -33,6 +33,7 @@ import { PATH_DASHBOARD } from '../../routes/paths';
 import { GET_CALL_ROUTING_SETTING } from '../../graphQL/queries';
 import FormProvider from '../../components/hook-form';
 import { CREATE_UPDATED_ROUTING_SETTING } from '../../graphQL/mutations';
+import { NoPhoneSelected } from './CallReportPage';
 
 const phoneUtil = PhoneNumberUtil.getInstance();
 
@@ -188,7 +189,9 @@ export default function CallRoutingSetting() {
       enqueueSnackbar('Error in saving settings.', { variant: 'error' });
     }
   };
-
+  if (!phone) {
+    return <NoPhoneSelected />;
+  }
   if (loading) return <Skeleton width="100%" height={300} />;
   if (error) return `Error: ${error?.message}`;
 

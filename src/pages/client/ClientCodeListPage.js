@@ -47,6 +47,7 @@ import {
 import Iconify from '../../components/iconify';
 import { fDateTime } from '../../utils/formatTime';
 import Label from '../../components/label';
+import { NoPhoneSelected } from './CallReportPage';
 
 // ----------------------------------------------------------------------
 
@@ -210,7 +211,9 @@ export default function ClientCodeListPage() {
 
   const ClientCodes = data?.clientCodesPaginated?.clientCodes || [];
   const isNotFound = !ClientCodes.length && !loading;
-
+  if (!phone) {
+    return <NoPhoneSelected />;
+  }
   return (
     <>
       <Helmet>

@@ -8,7 +8,7 @@ import { bgGradient } from '../../../../utils/cssStyles';
 // ----------------------------------------------------------------------
 
 const StyledRoot = styled('div')(({ theme }) => ({
-  height: '100%',
+  height: '300px',
   display: 'flex',
   overflow: 'hidden',
   position: 'relative',
@@ -81,11 +81,9 @@ export default function AppWelcome({ title, description, action, img, ...other }
         >
           {description}
         </Typography>
-
-        {action && action}
       </Stack>
 
-      {img && img}
+      {action && action}
 
       <StyledBg />
     </StyledRoot>

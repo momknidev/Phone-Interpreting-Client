@@ -41,6 +41,7 @@ import {
 } from '../../sections/@dashboard/client/interpreter/list';
 import { MEDIATORS_PAGINATED_LIST } from '../../graphQL/queries';
 import { DELETE_MEDIATOR, UPLOAD_MEDIATOR_FILE } from '../../graphQL/mutations';
+import { NoPhoneSelected } from './CallReportPage';
 
 // ----------------------------------------------------------------------
 
@@ -188,7 +189,9 @@ export default function MediatorListPage() {
     // Save the file
     XLSX.writeFile(wb, 'Mediators_List.xlsx');
   };
-
+  if (!phone) {
+    return <NoPhoneSelected />;
+  }
   if (error) {
     return `Error: ${error?.message}`;
   }

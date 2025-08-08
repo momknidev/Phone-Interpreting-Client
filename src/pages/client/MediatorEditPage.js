@@ -13,6 +13,7 @@ import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 // sections
 import MediatorNewEditForm from '../../sections/@dashboard/client/interpreter/MediatorNewEditForm';
 import { MEDIATOR_BY_ID } from '../../graphQL/queries';
+import { NoPhoneSelected } from './CallReportPage';
 
 // ----------------------------------------------------------------------
 
@@ -23,6 +24,9 @@ export default function MediatorEditPage() {
     variables: { id, phone_number: phone },
     fetchPolicy: 'no-cache',
   });
+  if (!phone) {
+    return <NoPhoneSelected />;
+  }
   if (error) {
     return `Error: ${error?.message}`;
   }

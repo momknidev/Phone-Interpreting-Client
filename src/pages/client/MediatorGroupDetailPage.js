@@ -39,6 +39,7 @@ import Label from '../../components/label';
 import { fDate } from '../../utils/formatTime';
 import { MotionContainer, varBounce } from '../../components/animate';
 import { PageNotFoundIllustration } from '../../assets/illustrations';
+import { NoPhoneSelected } from './CallReportPage';
 
 export default function MediatorGroupDetailPage() {
   const navigate = useNavigate();
@@ -83,10 +84,13 @@ export default function MediatorGroupDetailPage() {
 
   const paginatedInterpreters =
     allMediatorsData?.mediatorList?.slice(page * rowsPerPage, (page + 1) * rowsPerPage) || [];
-
+  if (!phone) {
+    return <NoPhoneSelected />;
+  }
   if (loading) {
     return <Skeleton width="100%" height={300} />;
   }
+
   if (error) {
     return (
       <Container maxWidth={themeStretch ? false : 'lg'} sx={{ alignContent: 'center' }}>

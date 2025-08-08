@@ -23,6 +23,7 @@ import Iconify from '../../components/iconify';
 import SourceLanguages from '../../sections/@dashboard/client/languages/sourceLanguages';
 import TargetLanguages from '../../sections/@dashboard/client/languages/targetLanguages';
 import { SYNC_TARGET_LANGUAGES, SYNC_SOURCE_LANGUAGES } from '../../graphQL/mutations';
+import { NoPhoneSelected } from './CallReportPage';
 
 export default function LanguageListPage() {
   const { themeStretch, phone } = useSettingsContext();
@@ -69,31 +70,34 @@ export default function LanguageListPage() {
             { name: 'Languages' },
           ]}
         />
+        {!phone ? (
+          <NoPhoneSelected />
+        ) : (
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={5.5}>
+              <SourceLanguages refreshKey={refreshKey} />
+            </Grid>
 
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={5.5}>
-            <SourceLanguages refreshKey={refreshKey} />
-          </Grid>
+            <Grid item xs={12} md={1}>
+              <Stack alignItems="center" justifyContent="center" height="100%">
+                <Tooltip title="Sync target languages with source language table">
+                  <IconButton onClick={() => handleOpenDialog('target')}>
+                    <Iconify icon="mdi:arrow-right-bold" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Sync source languages with target language table">
+                  <IconButton onClick={() => handleOpenDialog('source')}>
+                    <Iconify icon="mdi:arrow-left-bold" />
+                  </IconButton>
+                </Tooltip>
+              </Stack>
+            </Grid>
 
-          <Grid item xs={12} md={1}>
-            <Stack alignItems="center" justifyContent="center" height="100%">
-              <Tooltip title="Sync target languages with source language table">
-                <IconButton onClick={() => handleOpenDialog('target')}>
-                  <Iconify icon="mdi:arrow-right-bold" />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Sync source languages with target language table">
-                <IconButton onClick={() => handleOpenDialog('source')}>
-                  <Iconify icon="mdi:arrow-left-bold" />
-                </IconButton>
-              </Tooltip>
-            </Stack>
+            <Grid item xs={12} md={5.5}>
+              <TargetLanguages refreshKey={refreshKey} />
+            </Grid>
           </Grid>
-
-          <Grid item xs={12} md={5.5}>
-            <TargetLanguages refreshKey={refreshKey} />
-          </Grid>
-        </Grid>
+        )}
       </Container>
 
       {/* MUI Confirmation Dialog */}

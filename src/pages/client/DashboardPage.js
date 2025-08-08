@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 // @mui
-import { Container, Grid, Button } from '@mui/material';
+import { Container, Grid, Stack } from '@mui/material';
 // auth
 import { useAuthContext } from '../../auth/useAuthContext';
 
@@ -9,14 +9,18 @@ import { useSettingsContext } from '../../components/settings';
 // sections
 import { AppWelcome } from '../../sections/@dashboard/client/dashboard';
 // assets
-import { SeoIllustration } from '../../assets/illustrations';
+import PhonePopover from '../../layouts/dashboard/header/PhonePopover';
+import { NoPhoneSelected } from './CallReportPage';
 
 // ----------------------------------------------------------------------
 
 export default function DashboardPage() {
   const { user } = useAuthContext();
 
-  const { themeStretch } = useSettingsContext();
+  const { themeStretch, phone } = useSettingsContext();
+  if (!phone) {
+    return <NoPhoneSelected />;
+  }
   return (
     <>
       <Helmet>
@@ -28,17 +32,11 @@ export default function DashboardPage() {
           <Grid item xs={12} md={12} lg={12}>
             <AppWelcome
               title={`Welcome! \n ${user?.first_name || ' '} ${user?.last_name || ''}`}
-              description="Hello! to"
-              img={
-                <SeoIllustration
-                  sx={{
-                    p: 3,
-                    width: 360,
-                    margin: { xs: 'auto', md: 'inherit' },
-                  }}
-                />
+              action={
+                <Stack sx={{ height: 40, py: 4, px: 3 }}>
+                  <PhonePopover />
+                </Stack>
               }
-              action={<Button variant="contained">Hello</Button>}
             />
           </Grid>
         </Grid>

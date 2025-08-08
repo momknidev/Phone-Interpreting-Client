@@ -24,6 +24,7 @@ import {
   BookingTableRow,
 } from '../../sections/@dashboard/client/booking/list';
 import { PHONE_MEDIATION_PAGINATED_LIST } from '../../graphQL/queries';
+import PhonePopover from '../../layouts/dashboard/header/PhonePopover';
 
 // ----------------------------------------------------------------------
 
@@ -90,9 +91,7 @@ export default function CallReportPage() {
             { name: 'Call List' },
           ]}
         />
-        <Card>
-          <Typography>Please select a phone number to view call reports.</Typography>
-        </Card>
+        <NoPhoneSelected />
       </Container>
     );
   }
@@ -169,5 +168,26 @@ export default function CallReportPage() {
         </Card>
       </Container>
     </>
+  );
+}
+
+export function NoPhoneSelected() {
+  return (
+    <Card
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        p: 4,
+        minWidth: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        rowGap: 4,
+      }}
+    >
+      <Typography textAlign="center" variant="h6" color="error">
+        Please select a phone number to view call reports.
+      </Typography>
+      <PhonePopover />
+    </Card>
   );
 }

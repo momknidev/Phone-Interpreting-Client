@@ -8,12 +8,15 @@ import { useSettingsContext } from '../../components/settings';
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 // sections
 import MediatorNewEditForm from '../../sections/@dashboard/client/interpreter/MediatorNewEditForm';
+import { NoPhoneSelected } from './CallReportPage';
 
 // ----------------------------------------------------------------------
 
 export default function MediatorCreatePage() {
-  const { themeStretch } = useSettingsContext();
-
+  const { themeStretch, phone } = useSettingsContext();
+  if (!phone) {
+    return <NoPhoneSelected />;
+  }
   return (
     <>
       <Helmet>
