@@ -8,7 +8,7 @@ import { bgGradient } from '../../../../utils/cssStyles';
 // ----------------------------------------------------------------------
 
 const StyledRoot = styled('div')(({ theme }) => ({
-  height: '300px',
+  height: '100%',
   display: 'flex',
   overflow: 'hidden',
   position: 'relative',
@@ -63,7 +63,7 @@ export default function AppWelcome({ title, description, action, img, ...other }
         alignItems={{ xs: 'center', md: 'flex-start' }}
         sx={{
           pl: 5,
-          py: { xs: 5, md: 0 },
+          py: { xs: 5, md: 1 },
           pr: { xs: 5, md: 0 },
           textAlign: { xs: 'center', md: 'left' },
         }}
@@ -81,9 +81,11 @@ export default function AppWelcome({ title, description, action, img, ...other }
         >
           {description}
         </Typography>
+
+        {action && action}
       </Stack>
 
-      {action && action}
+      {img && img}
 
       <StyledBg />
     </StyledRoot>
