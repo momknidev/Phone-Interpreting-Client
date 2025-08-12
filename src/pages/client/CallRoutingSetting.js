@@ -263,7 +263,7 @@ export default function CallRoutingSetting() {
               <Typography variant="h6" sx={{ mt: 3 }}>
                 Language Prompt Settings
               </Typography>
-              <Stack direction="column" spacing={2}>
+              <Stack direction="column" alignItems="baseline" spacing={2}>
                 <Controller
                   name="askSourceLanguage"
                   control={control}
