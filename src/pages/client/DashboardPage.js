@@ -70,7 +70,6 @@ export function PhonePopover() {
   const { phone, onChangePhone } = useSettingsContext();
   console.log({ phone });
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 
   const handlePhoneChange = (event, newPhoneValue) => {
@@ -82,12 +81,10 @@ export function PhonePopover() {
   const handleRequestSubmit = async () => {
     await submitRequest({
       variables: {
-        title,
         description,
       },
     });
     setDialogOpen(false);
-    setTitle('');
     setDescription('');
   };
 
@@ -174,12 +171,6 @@ export function PhonePopover() {
         <DialogContent>
           <Stack spacing={2} sx={{ mt: 1 }}>
             <TextField
-              label="Title"
-              fullWidth
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-            <TextField
               label="Description"
               fullWidth
               multiline
@@ -197,7 +188,7 @@ export function PhonePopover() {
             variant="contained"
             onClick={handleRequestSubmit}
             loading={loading}
-            disabled={!title || !description}
+            disabled={!description}
           >
             Submit Request
           </LoadingButton>

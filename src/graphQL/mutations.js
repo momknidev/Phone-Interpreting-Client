@@ -391,7 +391,7 @@ export const CREATE_UPDATED_ROUTING_SETTING = gql`
   }
 `;
 export const REQUEST_NUMBER = gql`
-  mutation RequestNewPhone($title: String, $description: String) {
-    requestNewPhone(title: $title, description: $description)
+  mutation RequestNewPhone($description: String) {
+    requestNewPhone(description: $description)
   }
 `;
