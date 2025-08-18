@@ -10,9 +10,6 @@ import 'yet-another-react-lightbox/styles.css';
 import 'yet-another-react-lightbox/plugins/captions.css';
 import 'yet-another-react-lightbox/plugins/thumbnails.css';
 import 'react-international-phone/style.css';
-// map
-// import './utils/mapboxgl';
-// import 'mapbox-gl/dist/mapbox-gl.css';
 
 // editor
 import 'react-quill/dist/quill.snow.css';
@@ -31,9 +28,7 @@ import { HelmetProvider } from 'react-helmet-async';
 // @mui
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers';
-import { WebSocketLink } from '@apollo/client/link/ws';
-import { getMainDefinition } from '@apollo/client/utilities';
-import { ApolloClient, InMemoryCache, ApolloProvider, split } from '@apollo/client';
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 // routes
 import Router from './routes';
@@ -51,17 +46,10 @@ import { AuthProvider } from './auth/JwtContext';
 
 // ----------------------------------------------------------------------
 
-const wsLink = new WebSocketLink({
-  uri: process.env.REACT_APP_APOLLO_WEBSOCKET_URL,
-
-  options: {
-    reconnect: true,
-  },
-});
-
 let httpLink = createUploadLink({
   uri: process.env.REACT_APP_APOLLO_SERVER_URL,
 });
+
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem('accessToken');
   return {
@@ -71,20 +59,12 @@ const authLink = setContext((_, { headers }) => {
     },
   };
 });
-httpLink = authLink.concat(httpLink);
 
-const splitLink = split(
-  ({ query }) => {
-    const definition = getMainDefinition(query);
-    return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
-  },
-  wsLink,
-  httpLink
-);
+httpLink = authLink.concat(httpLink);
 
 const client = new ApolloClient({
   cache: new InMemoryCache({ addTypename: false }),
-  link: splitLink,
+  link: httpLink,
 });
 
 export default function App() {
