@@ -6,6 +6,7 @@ import Logo from '../../components/logo';
 //
 import { StyledRoot, StyledContent } from './styles';
 import Image from '../../components/image';
+import { width } from '@mui/system';
 
 // ----------------------------------------------------------------------
 
@@ -38,8 +39,9 @@ export default function LoginLayout({ children }) {
             disabledEffect
             alt="empty content"
             src="/logo/logo_full.svg"
-            sx={{ height: 100, mb: 0 }}
+            style={{ height: '64%', mb: 0, width: '100%', objectFit: 'contain' }}
           />
+
           <Stack sx={{ width: 1 }}> {children} </Stack>
         </Stack>
       </StyledContent>
