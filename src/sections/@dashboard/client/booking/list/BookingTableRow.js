@@ -19,7 +19,7 @@ export default function BookingTableRow({ row, onEditRow, onViewRow }) {
     // id,
     interpreter,
     // caller_phone,
-    // caller_code,
+    // client_code,
     source_language,
     target_language,
     serial_no,
