@@ -54,42 +54,30 @@ export default function CallRoutingSetting() {
       return false;
     }
   };
-  //   "targetLanguageError": null,
-  // "sourceLanguageError": null,
-  // "callingCodeError": null
+
   const NewUserSchema = yup.object().shape({
     enableCode: yup.boolean(),
     callingCodePrompt: yup.string().when('enableCode', {
       is: true,
       then: (schema) => schema.required('Voice message for code prompt is required'),
     }),
-    callingCodeError: yup.string().when('enableCode', {
-      is: true,
-      then: (schema) => schema.required('Error message for code prompt is required'),
-    }),
+
     askSourceLanguage: yup.boolean(),
     sourceLanguagePrompt: yup.string().when('askSourceLanguage', {
       is: true,
       then: (schema) => schema.required('Source language message is required'),
     }),
-    sourceLanguageError: yup.string().when('askSourceLanguage', {
-      is: true,
-      then: (schema) => schema.required('Error message for source language is required'),
-    }),
+
     askTargetLanguage: yup.boolean(),
     targetLanguagePrompt: yup.string().when('askTargetLanguage', {
       is: true,
       then: (schema) => schema.required('Target language message is required'),
     }),
-    targetLanguageError: yup.string().when('askTargetLanguage', {
-      is: true,
-      then: (schema) => schema.required('Error message for target language is required'),
-    }),
+
     interpreterCallType: yup.string().oneOf(['simultaneous', 'sequential']).required(),
     enableFallback: yup.boolean(),
-    fallbackType: yup.string().oneOf(['number', 'message']).nullable(),
-    fallbackNumber: yup.string().when(['enableFallback', 'fallbackType'], {
-      is: (enableFallback, fallbackType) => enableFallback && fallbackType === 'number',
+    fallbackNumber: yup.string().when('enableFallback', {
+      is: true,
       then: (schema) =>
         schema
           .required('Fallback number is required')
@@ -98,10 +86,7 @@ export default function CallRoutingSetting() {
             return isPhoneValid(value);
           }),
     }),
-    fallbackMessage: yup.string().when(['enableFallback', 'fallbackType'], {
-      is: (enableFallback, fallbackType) => enableFallback && fallbackType === 'message',
-      then: (schema) => schema.required('Fallback message is required'),
-    }),
+
     retryAttempts: yup
       .number()
       .min(0, '0 or more')
@@ -115,16 +100,12 @@ export default function CallRoutingSetting() {
     () => ({
       enableCode: data?.getCallRoutingSettings?.enable_code ?? false,
       callingCodePrompt: data?.getCallRoutingSettings?.callingCodePrompt ?? '',
-      callingCodeError: data?.getCallRoutingSettings?.callingCodeError ?? '',
       askSourceLanguage: data?.getCallRoutingSettings?.askSourceLanguage ?? false,
       sourceLanguagePrompt: data?.getCallRoutingSettings?.sourceLanguagePrompt ?? '',
-      sourceLanguageError: data?.getCallRoutingSettings?.sourceLanguageError ?? '',
       askTargetLanguage: data?.getCallRoutingSettings?.askTargetLanguage ?? false,
       targetLanguagePrompt: data?.getCallRoutingSettings?.targetLanguagePrompt ?? '',
-      targetLanguageError: data?.getCallRoutingSettings?.targetLanguageError ?? '',
       interpreterCallType: data?.getCallRoutingSettings?.interpreterCallType ?? 'sequential',
       enableFallback: data?.getCallRoutingSettings?.enableFallback ?? false,
-      fallbackType: data?.getCallRoutingSettings?.fallbackType ?? null,
       fallbackNumber: data?.getCallRoutingSettings?.fallbackNumber ?? '',
       fallbackMessage: data?.getCallRoutingSettings?.fallbackMessage ?? '',
       retryAttempts: data?.getCallRoutingSettings?.retryAttempts ?? 1,
@@ -148,13 +129,12 @@ export default function CallRoutingSetting() {
   } = methods;
 
   const values = watch();
-  console.log({ values, errors });
+  // console.log({ values, errors });
   // Watchers for conditional rendering
   const enableCode = watch('enableCode');
   const askSourceLanguage = watch('askSourceLanguage');
   const askTargetLanguage = watch('askTargetLanguage');
   const enableFallback = watch('enableFallback');
-  const fallbackType = watch('fallbackType');
 
   useEffect(() => {
     if (data?.getCallRoutingSettings) {
@@ -241,21 +221,6 @@ export default function CallRoutingSetting() {
                         />
                       )}
                     />
-                    <Controller
-                      name="callingCodeError"
-                      control={control}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          fullWidth
-                          label="Error Message for Code Prompt"
-                          multiline
-                          error={!!errors.callingCodeError}
-                          helperText={errors.callingCodeError?.message}
-                          sx={{ mt: 2 }}
-                        />
-                      )}
-                    />
                   </>
                 )}{' '}
               </Stack>
@@ -291,23 +256,6 @@ export default function CallRoutingSetting() {
                     )}
                   />
                 )}{' '}
-                {askSourceLanguage && (
-                  <Controller
-                    name="sourceLanguageError"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        fullWidth
-                        multiline
-                        label="Error Message for Source Language"
-                        error={!!errors.sourceLanguageError}
-                        helperText={errors.sourceLanguageError?.message}
-                        sx={{ mt: 2 }}
-                      />
-                    )}
-                  />
-                )}
                 <Controller
                   name="askTargetLanguage"
                   control={control}
@@ -335,23 +283,6 @@ export default function CallRoutingSetting() {
                     )}
                   />
                 )}{' '}
-                {askTargetLanguage && (
-                  <Controller
-                    name="targetLanguageError"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        fullWidth
-                        multiline
-                        label="Error Message for Target Language"
-                        error={!!errors.targetLanguageError}
-                        helperText={errors.targetLanguageError?.message}
-                        sx={{ mt: 2 }}
-                      />
-                    )}
-                  />
-                )}
               </Stack>
               {/* Section 3: Call Algorithm */}
               <Typography variant="h6" sx={{ mt: 3 }}>
@@ -405,94 +336,46 @@ export default function CallRoutingSetting() {
                   render={({ field }) => (
                     <FormControlLabel
                       control={<Switch {...field} checked={field.value} />}
-                      label="Enable Fallback"
+                      label="Enable Fallback No."
                     />
                   )}
                 />
 
                 {enableFallback && (
                   <>
-                    {/* Fallback Type Selector */}
                     <Controller
-                      name="fallbackType"
+                      name="fallbackNumber"
                       control={control}
                       render={({ field }) => (
-                        <FormControl sx={{ mt: 2 }}>
-                          <FormLabel>Fallback Option</FormLabel>
-                          <RadioGroup
-                            row
-                            {...field}
-                            onChange={(e) => {
-                              field.onChange(e);
-                              // Reset the other field when switching
-                              if (e.target.value === 'number') {
-                                setValue('fallbackMessage', '');
-                              } else {
-                                setValue('fallbackNumber', '');
-                              }
+                        <Stack spacing={1} mt={2}>
+                          <PhoneInput
+                            defaultCountry="it"
+                            inputStyle={{
+                              width: '100%',
+                              height: '56px',
+                              borderRadius: '4px',
+                              border: '1px solid #ced4da',
+                              padding: '10px 12px',
+                              fontSize: '16px',
+                              boxSizing: 'border-box',
                             }}
-                          >
-                            <FormControlLabel value="number" control={<Radio />} label="Number" />
-                            <FormControlLabel value="message" control={<Radio />} label="Message" />
-                          </RadioGroup>
-                        </FormControl>
+                            buttonStyle={{
+                              height: '56px',
+                            }}
+                            value={field.value}
+                            onChange={(val) =>
+                              setValue('fallbackNumber', val, { shouldDirty: true })
+                            }
+                            onBlur={() => trigger('fallbackNumber')}
+                          />
+                          {errors.fallbackNumber && (
+                            <Typography variant="caption" color="error">
+                              {errors.fallbackNumber.message}
+                            </Typography>
+                          )}
+                        </Stack>
                       )}
                     />
-
-                    {/* Conditional Inputs */}
-                    {fallbackType === 'number' && (
-                      <Controller
-                        name="fallbackNumber"
-                        control={control}
-                        render={({ field }) => (
-                          <Stack spacing={1} mt={2}>
-                            <PhoneInput
-                              defaultCountry="it"
-                              inputStyle={{
-                                width: '100%',
-                                height: '56px',
-                                borderRadius: '4px',
-                                border: '1px solid #ced4da',
-                                padding: '10px 12px',
-                                fontSize: '16px',
-                                boxSizing: 'border-box',
-                              }}
-                              buttonStyle={{
-                                height: '56px',
-                              }}
-                              value={field.value}
-                              onChange={(val) =>
-                                setValue('fallbackNumber', val, { shouldDirty: true })
-                              }
-                              onBlur={() => trigger('fallbackNumber')}
-                            />
-                            {errors.fallbackNumber && (
-                              <Typography variant="caption" color="error">
-                                {errors.fallbackNumber.message}
-                              </Typography>
-                            )}
-                          </Stack>
-                        )}
-                      />
-                    )}
-
-                    {fallbackType === 'message' && (
-                      <Controller
-                        name="fallbackMessage"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
-                            fullWidth
-                            label="Fallback Message"
-                            multiline
-                            error={!!errors.fallbackMessage}
-                            helperText={errors.fallbackMessage?.message}
-                            sx={{ mt: 2 }}
-                          />
-                        )}
-                      />
-                    )}
                   </>
                 )}
               </Stack>
