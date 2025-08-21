@@ -402,7 +402,7 @@ export const ALL_PHONE_MEDIATION = gql`
     allPhoneMediation {
       id
       client_id
-      mediator_id
+      interpreter_id
       interpreter
       caller_phone
       client_code
@@ -441,7 +441,7 @@ export const PHONE_MEDIATION_PAGINATED_LIST = gql`
       callReports {
         id
         client_id
-        mediator_id
+        interpreter_id
         interpreter
         caller_phone
         client_code

@@ -295,8 +295,8 @@ export const ADD_MEDIATOR_TO_GROUP = gql`
   }
 `;
 export const REMOVE_MEDIATOR_FROM_GROUP = gql`
-  mutation RemoveMediatorFromGroup($groupId: ID!, $mediator_id: ID!) {
-    removeMediatorFromGroup(groupID: $groupId, mediatorID: $mediator_id) {
+  mutation RemoveMediatorFromGroup($groupId: ID!, $interpreter_id: ID!) {
+    removeMediatorFromGroup(groupID: $groupId, mediatorID: $interpreter_id) {
       id
       group_name
       status
@@ -315,7 +315,7 @@ export const CREATE_PHONE_MEDIATION = gql`
     createPhoneMediation(input: $input) {
       id
       client_id
-      mediator_id
+      interpreter_id
       interpreter
       caller_phone
       client_code
@@ -337,7 +337,7 @@ export const UPDATE_PHONE_MEDIATION = gql`
     updatePhoneMediation(input: $input, id: $id) {
       id
       client_id
-      mediator_id
+      interpreter_id
       interpreter
       caller_phone
       client_code
