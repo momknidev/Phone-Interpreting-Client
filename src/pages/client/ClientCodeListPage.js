@@ -52,8 +52,9 @@ import { NoPhoneSelected } from './CallReportPage';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'code_label', label: 'Code Label', align: 'center' },
   { id: 'client_code', label: 'Client Code', align: 'center' },
+  { id: 'code_label', label: 'Code Label', align: 'center' },
+
   { id: 'status', label: 'Status', align: 'center' },
   { id: 'updated_at', label: 'Update Date', align: 'center' },
   { id: '', label: 'Actions', align: 'center' },
