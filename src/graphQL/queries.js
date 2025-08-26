@@ -351,6 +351,7 @@ export const PAGINATED_CLIENT_CODES = gql`
         client_id
         code_label
         created_at
+        credits
         updated_at
       }
     }

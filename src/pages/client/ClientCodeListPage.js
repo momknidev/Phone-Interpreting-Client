@@ -54,9 +54,12 @@ import { NoPhoneSelected } from './CallReportPage';
 const TABLE_HEAD = [
   { id: 'client_code', label: 'Client Code', align: 'center' },
   { id: 'code_label', label: 'Code Label', align: 'center' },
+  { id: 'created_at', label: 'Created At', align: 'center' },
+
+  { id: 'credits', label: 'Credits', align: 'center' },
 
   { id: 'status', label: 'Status', align: 'center' },
-  { id: 'updated_at', label: 'Update Date', align: 'center' },
+  // { id: 'updated_at', label: 'Update Date', align: 'center' },
   { id: '', label: 'Actions', align: 'center' },
 ];
 
@@ -89,6 +92,7 @@ export default function ClientCodeListPage() {
   const [currentClientCode, setCurrentClientCode] = useState({
     client_code: '',
     code_label: '',
+    credits: '0',
     status: 'active',
   });
   const [isEditing, setIsEditing] = useState(false);
@@ -165,6 +169,7 @@ export default function ClientCodeListPage() {
               code_label: currentClientCode.code_label,
               status: currentClientCode.status,
               phone_number: phone,
+              credits: currentClientCode.credits,
             },
           },
         });
@@ -177,6 +182,7 @@ export default function ClientCodeListPage() {
               code_label: currentClientCode.code_label,
               status: currentClientCode.status,
               phone_number: phone,
+              credits: currentClientCode.credits,
             },
           },
         });
@@ -281,13 +287,15 @@ export default function ClientCodeListPage() {
                         <TableCell align="center">{row.client_code}</TableCell>
                         <TableCell align="center">{row.code_label}</TableCell>
                         <TableCell align="center">
+                          {fDateTime(new Date(Number(row.created_at)))}
+                        </TableCell>
+                        <TableCell align="center">{row.credits}</TableCell>
+                        <TableCell align="center">
                           <Label color={row?.status === 'active' ? 'success' : 'error'}>
                             {row.status === 'active' ? 'Active' : 'Inactive'}
                           </Label>
                         </TableCell>
-                        <TableCell align="center">
-                          {fDateTime(new Date(Number(row.updated_at)))}
-                        </TableCell>
+
                         <TableCell align="center">
                           <IconButton onClick={() => handleOpenDialog(row)} sx={{ mr: 1 }}>
                             <Iconify icon="ri:pencil-fill" />
@@ -352,6 +360,17 @@ export default function ClientCodeListPage() {
             fullWidth
             variant="outlined"
             value={currentClientCode.code_label}
+            onChange={handleInputChange}
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            margin="dense"
+            type="number"
+            name="credits"
+            label="Credits"
+            fullWidth
+            variant="outlined"
+            value={currentClientCode.credits}
             onChange={handleInputChange}
             sx={{ mb: 2 }}
           />
