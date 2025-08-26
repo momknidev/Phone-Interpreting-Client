@@ -39,15 +39,12 @@ import {
 } from '../../components/table';
 // GraphQL
 import { PAGINATED_CLIENT_CODES } from '../../graphQL/queries';
-import {
-  CREATE_CLIENT_CODE,
-  UPDATE_CLIENT_CODE,
-  DELETE_CLIENT_CODE,
-} from '../../graphQL/mutations';
+import { DELETE_CLIENT_CODE } from '../../graphQL/mutations';
 import Iconify from '../../components/iconify';
 import { fDateTime } from '../../utils/formatTime';
 import Label from '../../components/label';
 import { NoPhoneSelected } from './CallReportPage';
+import CreateEditCodeForm from '../../sections/@dashboard/client/clientCode/CreateEditCodeForm';
 
 // ----------------------------------------------------------------------
 
@@ -97,8 +94,6 @@ export default function ClientCodeListPage() {
   });
   const [isEditing, setIsEditing] = useState(false);
 
-  const [createClientCode, { loading: createLoading }] = useMutation(CREATE_CLIENT_CODE);
-  const [updateClientCode, { loading: editLoading }] = useMutation(UPDATE_CLIENT_CODE);
   const [deleteClientCode, { loading: deleteLoading }] = useMutation(DELETE_CLIENT_CODE);
 
   const { loading, data, error, refetch } = useQuery(PAGINATED_CLIENT_CODES, {
@@ -148,54 +143,6 @@ export default function ClientCodeListPage() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setCurrentClientCode((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSaveClientCode = async () => {
-    try {
-      if (!currentClientCode.client_code || !currentClientCode.code_label) {
-        enqueueSnackbar('Please input data in fields', { variant: 'error' });
-        return;
-      }
-      if (isNaN(currentClientCode.client_code) || Number(currentClientCode.client_code) < 0) {
-        enqueueSnackbar('Client code must be a non-negative number', { variant: 'error' });
-        return;
-      }
-      if (isEditing) {
-        await updateClientCode({
-          variables: {
-            id: currentClientCode.id,
-            input: {
-              client_code: Number(currentClientCode.client_code),
-              code_label: currentClientCode.code_label,
-              status: currentClientCode.status,
-              phone_number: phone,
-              credits: currentClientCode.credits,
-            },
-          },
-        });
-        enqueueSnackbar('Client Code updated successfully', { variant: 'success' });
-      } else {
-        await createClientCode({
-          variables: {
-            input: {
-              client_code: Number(currentClientCode.client_code),
-              code_label: currentClientCode.code_label,
-              status: currentClientCode.status,
-              phone_number: phone,
-              credits: currentClientCode.credits,
-            },
-          },
-        });
-        enqueueSnackbar('Client Code created successfully', { variant: 'success' });
-      }
-      handleCloseDialog();
-      refetch();
-    } catch (err) {
-      console.error('Error while saving the user code:', err);
-      enqueueSnackbar('Error while saving the user code', {
-        variant: 'error',
-      });
-    }
   };
 
   const handleDeleteClientCode = async () => {
@@ -334,75 +281,13 @@ export default function ClientCodeListPage() {
         <DialogTitle>{isEditing ? 'Edit Client Code' : 'New Client Code'}</DialogTitle>
 
         <DialogContent>
-          <Typography sx={{ pb: 3 }}>
-            {isEditing
-              ? 'Edit the details of the selected user code.'
-              : 'Enter the details of the new user code.'}
-          </Typography>
-
-          <TextField
-            autoFocus
-            type="number"
-            margin="dense"
-            name="client_code"
-            label="Client Code"
-            fullWidth
-            variant="outlined"
-            value={currentClientCode.client_code}
-            onChange={handleInputChange}
-            sx={{ mb: 2 }}
+          <CreateEditCodeForm
+            isEditing={isEditing}
+            currentClientCode={currentClientCode}
+            onClose={handleCloseDialog}
+            refetchClientCodes={refetch}
           />
-
-          <TextField
-            margin="dense"
-            name="code_label"
-            label="Label"
-            fullWidth
-            variant="outlined"
-            value={currentClientCode.code_label}
-            onChange={handleInputChange}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            margin="dense"
-            type="number"
-            name="credits"
-            label="Credits"
-            fullWidth
-            variant="outlined"
-            value={currentClientCode.credits}
-            onChange={handleInputChange}
-            sx={{ mb: 2 }}
-          />
-
-          <TextField
-            select
-            margin="dense"
-            name="status"
-            label="Status"
-            fullWidth
-            variant="outlined"
-            value={currentClientCode.status}
-            onChange={handleInputChange}
-            SelectProps={{ native: true }}
-          >
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </TextField>
         </DialogContent>
-
-        <DialogActions>
-          <LoadingButton loading={createLoading || editLoading} onClick={handleCloseDialog}>
-            Cancel
-          </LoadingButton>
-          <LoadingButton
-            loading={createLoading || editLoading}
-            onClick={handleSaveClientCode}
-            variant="contained"
-          >
-            {isEditing ? 'Update' : 'Save'}
-          </LoadingButton>
-        </DialogActions>
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
