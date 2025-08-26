@@ -144,6 +144,14 @@ export default function SourceLanguages({ refreshKey }) {
   };
 
   const handleSaveLanguage = async () => {
+    if (!currentLanguage.language_code || !currentLanguage.language_name) {
+      enqueueSnackbar('Please fill in all fields', { variant: 'error' });
+      return;
+    }
+    if (isNaN(currentLanguage.language_code) || Number(currentLanguage.language_code) < 0) {
+      enqueueSnackbar('Language code must be a non-negative number', { variant: 'error' });
+      return;
+    }
     try {
       if (isEditing) {
         await updateLanguage({
@@ -289,8 +297,6 @@ export default function SourceLanguages({ refreshKey }) {
           rowsPerPage={rowsPerPage}
           onPageChange={onChangePage}
           onRowsPerPageChange={onChangeRowsPerPage}
-          //   dense={dense}
-          //   onChangeDense={onChangeDense}
         />
       </Card>
 
@@ -314,6 +320,7 @@ export default function SourceLanguages({ refreshKey }) {
             value={currentLanguage.language_code}
             onChange={handleInputChange}
             sx={{ mb: 2 }}
+            inputProps={{ min: 0 }}
           />
           <Autocomplete
             options={languagesOptions.map((option) => option.text)}

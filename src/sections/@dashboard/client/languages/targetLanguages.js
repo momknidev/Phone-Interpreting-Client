@@ -144,6 +144,15 @@ export default function SourceLanguages({ refreshKey }) {
   };
 
   const handleSaveLanguage = async () => {
+    if (!currentLanguage.language_code || !currentLanguage.language_name) {
+      enqueueSnackbar('Please fill in all fields', { variant: 'warning' });
+      return;
+    }
+    if (isNaN(currentLanguage.language_code) || Number(currentLanguage.language_code) < 0) {
+      enqueueSnackbar('Language code must be a non-negative number', { variant: 'warning' });
+      return;
+    }
+
     try {
       if (isEditing) {
         await updateLanguage({
@@ -313,6 +322,7 @@ export default function SourceLanguages({ refreshKey }) {
             variant="outlined"
             value={currentLanguage.language_code}
             onChange={handleInputChange}
+            inputProps={{ min: 0 }}
             sx={{ mb: 2 }}
           />
           <Autocomplete

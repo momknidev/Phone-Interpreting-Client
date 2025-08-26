@@ -152,6 +152,10 @@ export default function ClientCodeListPage() {
         enqueueSnackbar('Please input data in fields', { variant: 'error' });
         return;
       }
+      if (isNaN(currentClientCode.client_code) || Number(currentClientCode.client_code) < 0) {
+        enqueueSnackbar('Client code must be a non-negative number', { variant: 'error' });
+        return;
+      }
       if (isEditing) {
         await updateClientCode({
           variables: {
