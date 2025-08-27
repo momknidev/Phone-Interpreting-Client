@@ -178,7 +178,7 @@ export default function ClientCodeListPage() {
       refetch();
     } catch (err) {
       console.error('Error while deleting the user code:', err);
-      enqueueSnackbar('Error while deleting the user code', {
+      enqueueSnackbar(err?.message, {
         variant: 'error',
       });
     }
