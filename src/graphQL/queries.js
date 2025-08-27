@@ -455,6 +455,7 @@ export const PHONE_MEDIATION_PAGINATED_LIST = gql`
         call_date
         call_duration
         amount
+        used_credits
         created_at
         updated_at
       }

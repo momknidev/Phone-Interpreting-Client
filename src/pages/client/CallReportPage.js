@@ -30,13 +30,15 @@ import PhonePopover from '../../layouts/dashboard/header/PhonePopover';
 
 const TABLE_HEAD = [
   { id: '', label: 'ID', align: 'center' },
+  { id: '#', label: 'Client', align: 'center' },
+  { id: '#', label: 'Caller Number', align: 'center' },
+
   { id: 'language', label: 'Language', align: 'center' },
-  { id: '', label: 'Duration', align: 'center' },
-  { id: '', label: 'Interpreter', align: 'center' },
+  { id: '#', label: 'Duration', align: 'center' },
+  { id: '#', label: 'Interpreter', align: 'center' },
   { id: 'created_at', label: 'Date', align: 'center' },
-  { id: 'amount', label: 'Price', align: 'center' },
+  { id: 'used_credits', label: 'Credits', align: 'center' },
   { id: 'status', label: 'Status', align: 'center' },
-  // { id: '' },
 ];
 
 // ----------------------------------------------------------------------
