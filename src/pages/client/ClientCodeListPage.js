@@ -19,6 +19,7 @@ import {
   Typography,
   Stack,
   InputAdornment,
+  Tooltip,
 } from '@mui/material';
 import { useMutation, useQuery } from '@apollo/client';
 import { useSnackbar } from 'notistack';
@@ -39,24 +40,26 @@ import {
 } from '../../components/table';
 // GraphQL
 import { PAGINATED_CLIENT_CODES } from '../../graphQL/queries';
-import { DELETE_CLIENT_CODE } from '../../graphQL/mutations';
+import {
+  DELETE_CLIENT_CODE,
+  CREATE_CLIENT_CODE,
+  UPDATE_CLIENT_CODE,
+} from '../../graphQL/mutations';
 import Iconify from '../../components/iconify';
 import { fDateTime } from '../../utils/formatTime';
 import Label from '../../components/label';
 import { NoPhoneSelected } from './CallReportPage';
-import CreateEditCodeForm from '../../sections/@dashboard/client/clientCode/CreateEditCodeForm';
+import CreateEditCodeCreditForm from '../../sections/@dashboard/client/clientCode/CreateEditCodeCreditForm';
+import { fNumber } from '../../utils/formatNumber';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'client_code', label: 'Client Code', align: 'center' },
-  { id: 'code_label', label: 'Code Label', align: 'center' },
-  { id: 'created_at', label: 'Created At', align: 'center' },
-
-  { id: 'credits', label: 'Credits', align: 'center' },
-
+  { id: 'code_label', label: 'Code Label', align: 'left' },
+  { id: 'created_at', label: 'Created At', align: 'left' },
+  { id: 'credits', label: 'Credits', align: 'left' },
   { id: 'status', label: 'Status', align: 'center' },
-  // { id: 'updated_at', label: 'Update Date', align: 'center' },
   { id: '', label: 'Actions', align: 'center' },
 ];
 
@@ -80,16 +83,19 @@ export default function ClientCodeListPage() {
     defaultRowsPerPage: 25,
     defaultDense: false,
   });
+  const [createClientCode, { loading: createLoading }] = useMutation(CREATE_CLIENT_CODE);
+  const [updateClientCode, { loading: editLoading }] = useMutation(UPDATE_CLIENT_CODE);
 
   const { themeStretch, phone } = useSettingsContext();
   const [search, setSearch] = useState('');
   const { enqueueSnackbar } = useSnackbar();
   const [openDialog, setOpenDialog] = useState(false);
+  const [openCreditDialog, setOpenCreditDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [currentClientCode, setCurrentClientCode] = useState({
     client_code: '',
     code_label: '',
-    credits: '0',
+    credits: 0,
     status: 'active',
   });
   const [isEditing, setIsEditing] = useState(false);
@@ -129,7 +135,22 @@ export default function ClientCodeListPage() {
     setCurrentClientCode({ client_code: '', code_label: '', status: 'active' });
     setIsEditing(false);
   };
+  const handleOpenCreditDialog = (ClientCode = null) => {
+    if (ClientCode) {
+      setCurrentClientCode(ClientCode);
+      setIsEditing(true);
+    } else {
+      setCurrentClientCode({ client_code: '', code_label: '', status: 'active' });
+      setIsEditing(false);
+    }
+    setOpenCreditDialog(true);
+  };
 
+  const handleCloseCreditDialog = () => {
+    setOpenCreditDialog(false);
+    setCurrentClientCode({ client_code: '', code_label: '', status: 'active' });
+    setIsEditing(false);
+  };
   const handleOpenDeleteDialog = (ClientCode) => {
     setCurrentClientCode(ClientCode);
     setOpenDeleteDialog(true);
@@ -163,6 +184,54 @@ export default function ClientCodeListPage() {
     }
   };
 
+  const handleSaveClientCode = async () => {
+    try {
+      if (!currentClientCode.client_code || !currentClientCode.code_label) {
+        enqueueSnackbar('Please input data in fields', { variant: 'error' });
+        return;
+      }
+      // eslint-disable-next-line no-restricted-globals
+      if (isNaN(currentClientCode.client_code) || Number(currentClientCode.client_code) < 0) {
+        enqueueSnackbar('Client code must be a non-negative number', { variant: 'error' });
+        return;
+      }
+      if (isEditing) {
+        await updateClientCode({
+          variables: {
+            id: currentClientCode.id,
+            input: {
+              client_code: Number(currentClientCode.client_code),
+              code_label: currentClientCode.code_label,
+              status: currentClientCode.status,
+              phone_number: phone,
+              credits: Number(currentClientCode.credits),
+            },
+          },
+        });
+        enqueueSnackbar('Client Code updated successfully', { variant: 'success' });
+      } else {
+        await createClientCode({
+          variables: {
+            input: {
+              client_code: Number(currentClientCode.client_code),
+              code_label: currentClientCode.code_label,
+              status: currentClientCode.status,
+              phone_number: phone,
+              credits: 0,
+            },
+          },
+        });
+        enqueueSnackbar('Client Code created successfully', { variant: 'success' });
+      }
+      handleCloseDialog();
+      refetch();
+    } catch (err) {
+      console.error('Error while saving the user code:', err);
+      enqueueSnackbar('Error while saving the user code', {
+        variant: 'error',
+      });
+    }
+  };
   if (error) {
     return `Error: ${error?.message}`;
   }
@@ -232,11 +301,15 @@ export default function ClientCodeListPage() {
                     ClientCodes.map((row) => (
                       <TableRow key={row.id}>
                         <TableCell align="center">{row.client_code}</TableCell>
-                        <TableCell align="center">{row.code_label}</TableCell>
-                        <TableCell align="center">
+                        <TableCell align="left">{row.code_label}</TableCell>
+                        <TableCell align="left">
                           {fDateTime(new Date(Number(row.created_at)))}
                         </TableCell>
-                        <TableCell align="center">{row.credits}</TableCell>
+                        <TableCell align="left">
+                          <Typography component="span" sx={{ ml: 1, mr: 1 }}>
+                            {fNumber(row.credits)}
+                          </Typography>
+                        </TableCell>
                         <TableCell align="center">
                           <Label color={row?.status === 'active' ? 'success' : 'error'}>
                             {row.status === 'active' ? 'Active' : 'Inactive'}
@@ -244,6 +317,11 @@ export default function ClientCodeListPage() {
                         </TableCell>
 
                         <TableCell align="center">
+                          <Tooltip title="Manage Credits">
+                            <IconButton onClick={() => handleOpenCreditDialog(row)} sx={{ mr: 1 }}>
+                              <Iconify icon="akar-icons:coin" />
+                            </IconButton>
+                          </Tooltip>
                           <IconButton onClick={() => handleOpenDialog(row)} sx={{ mr: 1 }}>
                             <Iconify icon="ri:pencil-fill" />
                           </IconButton>
@@ -276,15 +354,77 @@ export default function ClientCodeListPage() {
         </Card>
       </Container>
 
-      {/* Create/Edit Dialog */}
       <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="xs" fullWidth>
         <DialogTitle>{isEditing ? 'Edit Client Code' : 'New Client Code'}</DialogTitle>
 
         <DialogContent>
-          <CreateEditCodeForm
+          <Typography sx={{ pb: 3 }}>
+            {isEditing
+              ? 'Edit the details of the selected user code.'
+              : 'Enter the details of the new user code.'}
+          </Typography>
+
+          <TextField
+            autoFocus
+            type="number"
+            margin="dense"
+            name="client_code"
+            label="Client Code"
+            fullWidth
+            variant="outlined"
+            value={currentClientCode.client_code}
+            onChange={handleInputChange}
+            sx={{ mb: 2 }}
+          />
+
+          <TextField
+            margin="dense"
+            name="code_label"
+            label="Label"
+            fullWidth
+            variant="outlined"
+            value={currentClientCode.code_label}
+            onChange={handleInputChange}
+            sx={{ mb: 2 }}
+          />
+
+          <TextField
+            select
+            margin="dense"
+            name="status"
+            label="Status"
+            fullWidth
+            variant="outlined"
+            value={currentClientCode.status}
+            onChange={handleInputChange}
+            SelectProps={{ native: true }}
+          >
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </TextField>
+        </DialogContent>
+
+        <DialogActions>
+          <LoadingButton loading={createLoading || editLoading} onClick={handleCloseDialog}>
+            Cancel
+          </LoadingButton>
+          <LoadingButton
+            loading={createLoading || editLoading}
+            onClick={handleSaveClientCode}
+            variant="contained"
+          >
+            {isEditing ? 'Update' : 'Save'}
+          </LoadingButton>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={openCreditDialog} onClose={handleCloseCreditDialog} maxWidth="xs" fullWidth>
+        <DialogTitle>Manage Client Code Credits</DialogTitle>
+
+        <DialogContent>
+          <CreateEditCodeCreditForm
             isEditing={isEditing}
             currentClientCode={currentClientCode}
-            onClose={handleCloseDialog}
+            onClose={handleCloseCreditDialog}
             refetchClientCodes={refetch}
           />
         </DialogContent>

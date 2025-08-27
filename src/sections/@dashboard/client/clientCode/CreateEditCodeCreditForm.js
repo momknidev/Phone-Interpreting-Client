@@ -7,17 +7,16 @@ import * as yup from 'yup';
 import { LoadingButton } from '@mui/lab';
 import { useSnackbar } from 'notistack';
 import { useMutation } from '@apollo/client';
-import { CREATE_CLIENT_CODE, UPDATE_CLIENT_CODE } from '../../../../graphQL/mutations';
+import { UPDATE_CLIENT_CODE } from '../../../../graphQL/mutations';
 import FormProvider, { RHFTextField } from '../../../../components/hook-form';
 import { useSettingsContext } from '../../../../components/settings';
 
-function CreateEditCodeForm({ currentClientCode, isEditing, onClose, refetchClientCodes }) {
+function CreateEditCodeCreditForm({ currentClientCode, isEditing, onClose, refetchClientCodes }) {
   const { enqueueSnackbar } = useSnackbar();
   const { phone } = useSettingsContext();
 
   const [tabIndex, setTabIndex] = useState(0);
 
-  const [createClientCode, { loading: createLoading }] = useMutation(CREATE_CLIENT_CODE);
   const [updateClientCode, { loading: editLoading }] = useMutation(UPDATE_CLIENT_CODE);
 
   // Main form schema
@@ -31,6 +30,7 @@ function CreateEditCodeForm({ currentClientCode, isEditing, onClose, refetchClie
       .number()
       .typeError('Credits must be a number')
       .required('Credits are required')
+      .integer('Credits must be an integer')
       .min(0, 'Credits cannot be negative'),
     status: yup.string().oneOf(['active', 'inactive']).required('Status is required'),
   });
@@ -40,6 +40,7 @@ function CreateEditCodeForm({ currentClientCode, isEditing, onClose, refetchClie
     amount: yup
       .number()
       .typeError('Amount must be a number')
+      .integer('Credit must be an integer')
       .required('Amount is required')
       .min(0, 'Amount must be non-negative'),
   });
@@ -60,21 +61,23 @@ function CreateEditCodeForm({ currentClientCode, isEditing, onClose, refetchClie
   // Credit change form methods
   const creditMethods = useForm({
     resolver: yupResolver(creditSchema),
-    defaultValues: { amount: '' },
+    defaultValues: { amount: 0 },
   });
 
   const {
-    reset,
+    // reset,
     setValue,
     handleSubmit,
     watch,
-    formState: { errors },
+    trigger,
+    // formState: { errors, isSubmitting },
   } = methods;
 
   const {
     handleSubmit: handleCreditSubmit,
     setValue: setCreditValue,
     watch: watchCredit,
+    trigger: triggerCredit,
     formState: { errors: creditErrors },
   } = creditMethods;
 
@@ -89,43 +92,19 @@ function CreateEditCodeForm({ currentClientCode, isEditing, onClose, refetchClie
   // Main form submit
   const onSubmit = async (data) => {
     try {
-      if (!data.client_code || !data.code_label) {
-        enqueueSnackbar('Please input data in fields', { variant: 'error' });
-        return;
-      }
-      // eslint-disable-next-line no-restricted-globals
-      if (isNaN(data.client_code) || Number(data.client_code) < 0) {
-        enqueueSnackbar('Client code must be a non-negative number', { variant: 'error' });
-        return;
-      }
-      if (isEditing) {
-        await updateClientCode({
-          variables: {
-            id: currentClientCode.id,
-            input: {
-              client_code: Number(data.client_code),
-              code_label: data.code_label,
-              status: data.status,
-              phone_number: phone,
-              credits: String(data.credits),
-            },
+      await updateClientCode({
+        variables: {
+          id: currentClientCode.id,
+          input: {
+            client_code: Number(data.client_code),
+            code_label: data.code_label,
+            status: data.status,
+            phone_number: phone,
+            credits: Number(data.credits),
           },
-        });
-        enqueueSnackbar('Client Code updated successfully', { variant: 'success' });
-      } else {
-        await createClientCode({
-          variables: {
-            input: {
-              client_code: Number(data.client_code),
-              code_label: data.code_label,
-              status: data.status,
-              phone_number: phone,
-              credits: String(data.credits),
-            },
-          },
-        });
-        enqueueSnackbar('Client Code created successfully', { variant: 'success' });
-      }
+        },
+      });
+      enqueueSnackbar('Client Code updated successfully', { variant: 'success' });
       onClose();
       refetchClientCodes();
     } catch (err) {
@@ -148,7 +127,7 @@ function CreateEditCodeForm({ currentClientCode, isEditing, onClose, refetchClie
             code_label: currentClientCode.code_label,
             status: currentClientCode.status,
             phone_number: phone,
-            credits: String(newCredits),
+            credits: Number(newCredits),
           },
         },
       });
@@ -179,7 +158,7 @@ function CreateEditCodeForm({ currentClientCode, isEditing, onClose, refetchClie
             code_label: currentClientCode.code_label,
             status: currentClientCode.status,
             phone_number: phone,
-            credits: String(newCredits),
+            credits: Number(newCredits),
           },
         },
       });
@@ -196,49 +175,25 @@ function CreateEditCodeForm({ currentClientCode, isEditing, onClose, refetchClie
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setValue(name, value);
+    trigger();
   };
   const handleCreditInputChange = (e) => {
     const { name, value } = e.target;
     setCreditValue(name, value);
+    triggerCredit();
   };
 
   return (
     <Box>
       <Tabs value={tabIndex} onChange={handleTabChange} sx={{ mb: 2 }}>
-        <Tab label="Edit Details" />
+        <Tab label="Set Credits" />
         <Tab label="Increase Credits" disabled={!isEditing} />
         <Tab label="Reduce Credits" disabled={!isEditing} />
       </Tabs>
       {tabIndex === 0 && (
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
           <Stack>
-            <Typography sx={{ pb: 3 }}>
-              {isEditing
-                ? 'Edit the details of the selected user code.'
-                : 'Enter the details of the new user code.'}
-            </Typography>
-            <RHFTextField
-              autoFocus
-              type="number"
-              margin="dense"
-              name="client_code"
-              label="Client Code"
-              fullWidth
-              variant="outlined"
-              value={values.client_code || ''}
-              onChange={handleInputChange}
-              sx={{ mb: 2 }}
-            />
-            <RHFTextField
-              margin="dense"
-              name="code_label"
-              label="Label"
-              fullWidth
-              variant="outlined"
-              value={values.code_label || ''}
-              onChange={handleInputChange}
-              sx={{ mb: 2 }}
-            />
+            <Typography sx={{ pb: 3 }}>Set credits</Typography>
             <RHFTextField
               margin="dense"
               type="number"
@@ -246,31 +201,18 @@ function CreateEditCodeForm({ currentClientCode, isEditing, onClose, refetchClie
               label="Credits"
               fullWidth
               variant="outlined"
+              onBlur={trigger}
               value={values.credits || ''}
               onChange={handleInputChange}
               sx={{ mb: 2 }}
             />
-            <RHFTextField
-              select
-              margin="dense"
-              name="status"
-              label="Status"
-              fullWidth
-              variant="outlined"
-              value={values.status || null}
-              onChange={handleInputChange}
-              SelectProps={{ native: true }}
-            >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </RHFTextField>
           </Stack>
           <DialogActions>
-            <LoadingButton loading={createLoading || editLoading} onClick={onClose}>
+            <LoadingButton loading={editLoading} onClick={onClose}>
               Cancel
             </LoadingButton>
-            <LoadingButton loading={createLoading || editLoading} variant="contained" type="submit">
-              {isEditing ? 'Update' : 'Save'}
+            <LoadingButton loading={editLoading} variant="contained" type="submit">
+              Set Credits
             </LoadingButton>
           </DialogActions>
         </FormProvider>
@@ -289,6 +231,7 @@ function CreateEditCodeForm({ currentClientCode, isEditing, onClose, refetchClie
               label="Increase Credits By"
               fullWidth
               variant="outlined"
+              onBlur={triggerCredit}
               value={creditValues.amount || ''}
               onChange={handleCreditInputChange}
               sx={{ mb: 2 }}
@@ -341,4 +284,4 @@ function CreateEditCodeForm({ currentClientCode, isEditing, onClose, refetchClie
   );
 }
 
-export default CreateEditCodeForm;
+export default CreateEditCodeCreditForm;
