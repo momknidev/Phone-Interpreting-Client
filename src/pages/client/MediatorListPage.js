@@ -69,7 +69,7 @@ export default function MediatorListPage() {
     onChangePage,
     onChangeRowsPerPage,
   } = useTable({
-    defaultRowsPerPage: 20,
+    defaultRowsPerPage: 50,
     defaultOrderBy: 'first_name',
     defaultOrder: 'asc',
   });

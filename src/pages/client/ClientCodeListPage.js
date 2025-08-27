@@ -80,7 +80,7 @@ export default function ClientCodeListPage() {
   } = useTable({
     defaultOrderBy: 'client_code',
     defaultOrder: 'asc',
-    defaultRowsPerPage: 25,
+    defaultRowsPerPage: 50,
     defaultDense: false,
   });
   const [createClientCode, { loading: createLoading }] = useMutation(CREATE_CLIENT_CODE);

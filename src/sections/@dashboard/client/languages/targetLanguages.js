@@ -71,7 +71,7 @@ export default function SourceLanguages({ refreshKey }) {
   } = useTable({
     defaultOrderBy: 'language_code',
     defaultOrder: 'asc',
-    defaultRowsPerPage: 25,
+    defaultRowsPerPage: 50,
     defaultDense: false,
   });
 
@@ -148,6 +148,7 @@ export default function SourceLanguages({ refreshKey }) {
       enqueueSnackbar('Please fill in all fields', { variant: 'warning' });
       return;
     }
+    // eslint-disable-next-line no-restricted-globals
     if (isNaN(currentLanguage.language_code) || Number(currentLanguage.language_code) < 0) {
       enqueueSnackbar('Language code must be a non-negative number', { variant: 'warning' });
       return;

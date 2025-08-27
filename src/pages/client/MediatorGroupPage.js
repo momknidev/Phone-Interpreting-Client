@@ -73,7 +73,7 @@ export default function MediatorGroupPage() {
     onChangePage,
     onChangeRowsPerPage,
   } = useTable({
-    defaultRowsPerPage: 25,
+    defaultRowsPerPage: 50,
   });
   const { themeStretch, phone } = useSettingsContext();
 
