@@ -10,8 +10,8 @@ import { fDateTime } from '../../../../../utils/formatTime';
 
 BookingTableRow.propTypes = {
   row: PropTypes.object,
-  onEditRow: PropTypes.func,
-  onViewRow: PropTypes.func,
+  // onEditRow: PropTypes.func,
+  // onViewRow: PropTypes.func,
 };
 
 export default function BookingTableRow({ row }) {
