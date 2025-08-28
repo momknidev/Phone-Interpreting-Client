@@ -489,6 +489,8 @@ export const GET_CALL_ROUTING_SETTING = gql`
       targetLanguageError
       fallbackMessage
       fallbackType
+      digitsTimeOut
+      creditError
     }
   }
 `;

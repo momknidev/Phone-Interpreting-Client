@@ -54,9 +54,7 @@ export default function CallRoutingSetting() {
       return false;
     }
   };
-  //   "targetLanguageError": null,
-  // "sourceLanguageError": null,
-  // "callingCodeError": null
+
   const NewUserSchema = yup.object().shape({
     enableCode: yup.boolean(),
     callingCodePrompt: yup.string().when('enableCode', {
@@ -98,7 +96,6 @@ export default function CallRoutingSetting() {
             return isPhoneValid(value);
           }),
     }),
-
     retryAttempts: yup
       .number()
       .min(0, '0 or more')
@@ -106,6 +103,11 @@ export default function CallRoutingSetting() {
         is: true,
         then: (schema) => schema.required('Retry attempts required'),
       }),
+    creditError: yup.string().required('Low credit error message is required'),
+    digitsTimeOut: yup
+      .number()
+      .min(1, 'Timeout must be at least 1 second')
+      .required('Timeout for digit inputs is required'),
   });
 
   const defaultValues = useMemo(
@@ -125,6 +127,8 @@ export default function CallRoutingSetting() {
       fallbackNumber: data?.getCallRoutingSettings?.fallbackNumber ?? '',
       fallbackMessage: data?.getCallRoutingSettings?.fallbackMessage ?? '',
       retryAttempts: data?.getCallRoutingSettings?.retryAttempts ?? 1,
+      creditError: data?.getCallRoutingSettings?.creditError ?? '',
+      digitsTimeOut: data?.getCallRoutingSettings?.digitsTimeOut ?? '',
     }),
     [data]
   );
@@ -151,7 +155,6 @@ export default function CallRoutingSetting() {
   const askSourceLanguage = watch('askSourceLanguage');
   const askTargetLanguage = watch('askTargetLanguage');
   const enableFallback = watch('enableFallback');
-  const fallbackType = watch('fallbackType');
 
   useEffect(() => {
     if (data?.getCallRoutingSettings) {
@@ -390,8 +393,42 @@ export default function CallRoutingSetting() {
                     />
                   )}
                 />
+                <Controller
+                  name="digitsTimeOut"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      type="number"
+                      label="Timeout for Digit Inputs (seconds)"
+                      error={!!errors.digitsTimeOut}
+                      helperText={errors.digitsTimeOut?.message}
+                    />
+                  )}
+                />
               </Stack>
-              {/* Section 4: Fallback */}
+              {/* Section 4: Error Messages */}
+              <Typography variant="h6" sx={{ mt: 3 }}>
+                Low Credit Error Messages
+              </Typography>
+              <Stack direction="column" py={1} spacing={2}>
+                <Controller
+                  name="creditError"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      multiline
+                      placeholder="Low Credit Error Message"
+                      error={!!errors.creditError}
+                      helperText={errors.creditError?.message}
+                    />
+                  )}
+                />
+              </Stack>
+              {/* Section 5: Fallback */}
               <Typography variant="h6" sx={{ mt: 3 }}>
                 Fallback Settings
               </Typography>
@@ -408,41 +445,37 @@ export default function CallRoutingSetting() {
                 />
 
                 {enableFallback && (
-                  <>
-                    <Controller
-                      name="fallbackNumber"
-                      control={control}
-                      render={({ field }) => (
-                        <Stack spacing={1} mt={2}>
-                          <PhoneInput
-                            defaultCountry="it"
-                            inputStyle={{
-                              width: '100%',
-                              height: '56px',
-                              borderRadius: '4px',
-                              border: '1px solid #ced4da',
-                              padding: '10px 12px',
-                              fontSize: '16px',
-                              boxSizing: 'border-box',
-                            }}
-                            buttonStyle={{
-                              height: '56px',
-                            }}
-                            value={field.value}
-                            onChange={(val) =>
-                              setValue('fallbackNumber', val, { shouldDirty: true })
-                            }
-                            onBlur={() => trigger('fallbackNumber')}
-                          />
-                          {errors.fallbackNumber && (
-                            <Typography variant="caption" color="error">
-                              {errors.fallbackNumber.message}
-                            </Typography>
-                          )}
-                        </Stack>
-                      )}
-                    />
-                  </>
+                  <Controller
+                    name="fallbackNumber"
+                    control={control}
+                    render={({ field }) => (
+                      <Stack spacing={1} mt={2}>
+                        <PhoneInput
+                          defaultCountry="it"
+                          inputStyle={{
+                            width: '100%',
+                            height: '56px',
+                            borderRadius: '4px',
+                            border: '1px solid #ced4da',
+                            padding: '10px 12px',
+                            fontSize: '16px',
+                            boxSizing: 'border-box',
+                          }}
+                          buttonStyle={{
+                            height: '56px',
+                          }}
+                          value={field.value}
+                          onChange={(val) => setValue('fallbackNumber', val, { shouldDirty: true })}
+                          onBlur={() => trigger('fallbackNumber')}
+                        />
+                        {errors.fallbackNumber && (
+                          <Typography variant="caption" color="error">
+                            {errors.fallbackNumber.message}
+                          </Typography>
+                        )}
+                      </Stack>
+                    )}
+                  />
                 )}
               </Stack>
             </Card>
