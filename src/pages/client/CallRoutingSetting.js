@@ -104,6 +104,7 @@ export default function CallRoutingSetting() {
         then: (schema) => schema.required('Retry attempts required'),
       }),
     creditError: yup.string().required('Low credit error message is required'),
+    noAnswerMessage: yup.string().required('No answer message is required'),
     digitsTimeOut: yup
       .number()
       .min(1, 'Timeout must be at least 1 second')
@@ -128,6 +129,7 @@ export default function CallRoutingSetting() {
       fallbackMessage: data?.getCallRoutingSettings?.fallbackMessage ?? '',
       retryAttempts: data?.getCallRoutingSettings?.retryAttempts ?? 1,
       creditError: data?.getCallRoutingSettings?.creditError ?? '',
+      noAnswerMessage: data?.getCallRoutingSettings?.noAnswerMessage ?? '',
       digitsTimeOut: data?.getCallRoutingSettings?.digitsTimeOut ?? '',
     }),
     [data]
@@ -477,6 +479,21 @@ export default function CallRoutingSetting() {
                     )}
                   />
                 )}
+                <Controller
+                  name="noAnswerMessage"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      sx={{ mt: 2 }}
+                      {...field}
+                      fullWidth
+                      multiline
+                      label="No Answer Message"
+                      error={!!errors.noAnswerMessage}
+                      helperText={errors.noAnswerMessage?.message}
+                    />
+                  )}
+                />
               </Stack>
             </Card>
 
