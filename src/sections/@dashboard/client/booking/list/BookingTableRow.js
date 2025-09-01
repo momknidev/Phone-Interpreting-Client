@@ -32,8 +32,9 @@ export default function BookingTableRow({ row }) {
 
   const statusColorMap = {
     Completed: 'success',
-    Pending: 'warning',
+    'No Answer': 'warning',
     Cancelled: 'error',
+    Error: 'info',
   };
   const labelColor = statusColorMap[status] || 'default';
 
