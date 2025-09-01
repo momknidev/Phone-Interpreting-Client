@@ -46,7 +46,9 @@ export default function BookingTableRow({ row }) {
       <TableCell align="center">
         {source_language ? <span>{`${source_language} ↔ ${target_language ?? ''}`}</span> : ''}
       </TableCell>
-      <TableCell align="center">{call_duration > 0 ? `${call_duration} Min` : '-'}</TableCell>
+      <TableCell align="center">
+        {call_duration > 0 ? `${Math.ceil(call_duration / 60)} Min` : '-'}
+      </TableCell>
 
       <TableCell align="center">{interpreter} </TableCell>
 
