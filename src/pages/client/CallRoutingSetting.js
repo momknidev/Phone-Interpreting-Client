@@ -14,6 +14,7 @@ import {
   Switch,
   TextField,
   Typography,
+  Autocomplete,
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { PhoneInput } from 'react-international-phone';
@@ -34,6 +35,62 @@ import { CREATE_UPDATED_ROUTING_SETTING } from '../../graphQL/mutations';
 import { NoPhoneSelected } from './CallReportPage';
 
 const phoneUtil = PhoneNumberUtil.getInstance();
+
+const twilioVoices = [
+  { label: 'Afrikaans (South Africa)', code: 'af-ZA' },
+  { label: 'Arabic (Standard)', code: 'ar-XA' },
+  { label: 'Basque (Spain)', code: 'eu-ES' },
+  { label: 'Bengali (India)', code: 'bn-IN' },
+  { label: 'Bulgarian (Bulgaria)', code: 'bg-BG' },
+  { label: 'Catalan (Spain)', code: 'ca-ES' },
+  { label: 'Chinese Cantonese (Hong Kong)', code: 'yue-HK' },
+  { label: 'Chinese Mandarin', code: 'cmn-CN' },
+  { label: 'Chinese Mandarin (Taiwan)', code: 'cmn-TW' },
+  { label: 'Czech (Czech Republic)', code: 'cs-CZ' },
+  { label: 'Danish (Denmark)', code: 'da-DK' },
+  { label: 'Dutch (Belgium)', code: 'nl-BE' },
+  { label: 'Dutch (Netherlands)', code: 'nl-NL' },
+  { label: 'English (Australia)', code: 'en-AU' },
+  { label: 'English (India)', code: 'en-IN' },
+  { label: 'English (UK)', code: 'en-GB' },
+  { label: 'English (US)', code: 'en-US' },
+  { label: 'Filipino (Philippines)', code: 'fil-PH' },
+  { label: 'Finnish (Finland)', code: 'fi-FI' },
+  { label: 'French (Canada)', code: 'fr-CA' },
+  { label: 'French (France)', code: 'fr-FR' },
+  { label: 'Galician (Spain)', code: 'gl-ES' },
+  { label: 'German (Germany)', code: 'de-DE' },
+  { label: 'Greek (Greece)', code: 'el-GR' },
+  { label: 'Gujarati (India)', code: 'gu-IN' },
+  { label: 'Hebrew (Israel)', code: 'he-IL' },
+  { label: 'Hindi (India)', code: 'hi-IN' },
+  { label: 'Hungarian (Hungary)', code: 'hu-HU' },
+  { label: 'Icelandic (Iceland)', code: 'is-IS' },
+  { label: 'Indonesian (Indonesia)', code: 'id-ID' },
+  { label: 'Italian (Italy)', code: 'it-IT' },
+  { label: 'Japanese (Japan)', code: 'ja-JP' },
+  { label: 'Kannada (India)', code: 'kn-IN' },
+  { label: 'Korean (South Korea)', code: 'ko-KR' },
+  { label: 'Malay (Malaysia)', code: 'ms-MY' },
+  { label: 'Malayalam (India)', code: 'ml-IN' },
+  { label: 'Marathi (India)', code: 'mr-IN' },
+  { label: 'Norwegian (Norway)', code: 'nb-NO' },
+  { label: 'Polish (Poland)', code: 'pl-PL' },
+  { label: 'Portuguese (Brazil)', code: 'pt-BR' },
+  { label: 'Portuguese (Portugal)', code: 'pt-PT' },
+  { label: 'Punjabi (India)', code: 'pa-IN' },
+  { label: 'Romanian (Romania)', code: 'ro-RO' },
+  { label: 'Russian (Russia)', code: 'ru-RU' },
+  { label: 'Slovak (Slovakia)', code: 'sk-SK' },
+  { label: 'Spanish (Spain)', code: 'es-ES' },
+  { label: 'Spanish (US)', code: 'es-US' },
+  { label: 'Swedish (Sweden)', code: 'sv-SE' },
+  { label: 'Tamil (India)', code: 'ta-IN' },
+  { label: 'Telugu (India)', code: 'te-IN' },
+  { label: 'Thai (Thailand)', code: 'th-TH' },
+  { label: 'Turkish (Turkey)', code: 'tr-TR' },
+  { label: 'Vietnamese (Vietnam)', code: 'vi-VN' },
+];
 
 export default function CallRoutingSetting() {
   const { themeStretch, phone } = useSettingsContext();
@@ -56,6 +113,8 @@ export default function CallRoutingSetting() {
   };
 
   const NewUserSchema = yup.object().shape({
+    language: yup.string().required('Primary language selection is required'),
+    welcomeMessage: yup.string().required('Welcome message is required'),
     enableCode: yup.boolean(),
     callingCodePrompt: yup.string().when('enableCode', {
       is: true,
@@ -113,6 +172,8 @@ export default function CallRoutingSetting() {
 
   const defaultValues = useMemo(
     () => ({
+      language: data?.getCallRoutingSettings?.language ?? '',
+      welcomeMessage: data?.getCallRoutingSettings?.welcomeMessage ?? '',
       enableCode: data?.getCallRoutingSettings?.enable_code ?? false,
       callingCodePrompt: data?.getCallRoutingSettings?.callingCodePrompt ?? '',
       callingCodeError: data?.getCallRoutingSettings?.callingCodeError ?? '',
@@ -212,6 +273,54 @@ export default function CallRoutingSetting() {
 
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={4}>
+            {/* Section 0: Language Selection */}
+            <Card sx={{ p: 3 }}>
+              <Stack direction="column" spacing={2}>
+                <Typography variant="h6">Language Settings</Typography>
+                <Controller
+                  name="language"
+                  control={control}
+                  render={({ field }) => (
+                    <Autocomplete
+                      {...field}
+                      options={twilioVoices}
+                      getOptionLabel={(option) => option.label || ''}
+                      value={twilioVoices.find((lang) => lang.code === field.value) || null}
+                      onChange={(_, newValue) => {
+                        field.onChange(newValue ? newValue.code : '');
+                      }}
+                      clearIcon={null}
+                      disableClearable
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Primary Language *"
+                          error={!!errors.language}
+                          helperText={errors.language?.message}
+                        />
+                      )}
+                    />
+                  )}
+                />
+                <Controller
+                  name="welcomeMessage"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label="Welcome Message *"
+                      multiline
+                      rows={3}
+                      error={!!errors.welcomeMessage}
+                      helperText={errors.welcomeMessage?.message}
+                      placeholder="Enter the welcome message that will be played to callers"
+                    />
+                  )}
+                />
+              </Stack>
+            </Card>
+
             {/* Section 1: Code Prompt */}
             <Card sx={{ p: 3 }}>
               <Stack direction="column" spacing={2}>
@@ -235,11 +344,12 @@ export default function CallRoutingSetting() {
                         <TextField
                           {...field}
                           fullWidth
-                          label="Voice Message for Code Prompt"
+                          label="Voice Message for Code Prompt *"
                           multiline
+                          rows={3}
                           error={!!errors.callingCodePrompt}
                           helperText={errors.callingCodePrompt?.message}
-                          sx={{ mt: 2 }}
+                          placeholder="Enter the voice message for code prompt"
                         />
                       )}
                     />
@@ -250,22 +360,24 @@ export default function CallRoutingSetting() {
                         <TextField
                           {...field}
                           fullWidth
-                          label="Error Message for Code Prompt"
+                          label="Error Message for Code Prompt *"
                           multiline
+                          rows={3}
                           error={!!errors.callingCodeError}
                           helperText={errors.callingCodeError?.message}
-                          sx={{ mt: 2 }}
+                          placeholder="Enter the error message for code prompt"
                         />
                       )}
                     />
                   </>
-                )}{' '}
+                )}
               </Stack>
+
               {/* Section 2: Language Prompts */}
               <Typography variant="h6" sx={{ mt: 3 }}>
                 Language Prompt Settings
               </Typography>
-              <Stack direction="column" alignItems="baseline" spacing={2}>
+              <Stack direction="column" spacing={2}>
                 <Controller
                   name="askSourceLanguage"
                   control={control}
@@ -277,38 +389,40 @@ export default function CallRoutingSetting() {
                   )}
                 />
                 {askSourceLanguage && (
-                  <Controller
-                    name="sourceLanguagePrompt"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        fullWidth
-                        multiline
-                        label="Voice Message for Source Language"
-                        error={!!errors.sourceLanguagePrompt}
-                        helperText={errors.sourceLanguagePrompt?.message}
-                        sx={{ mt: 2 }}
-                      />
-                    )}
-                  />
-                )}{' '}
-                {askSourceLanguage && (
-                  <Controller
-                    name="sourceLanguageError"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        fullWidth
-                        multiline
-                        label="Error Message for Source Language"
-                        error={!!errors.sourceLanguageError}
-                        helperText={errors.sourceLanguageError?.message}
-                        sx={{ mt: 2 }}
-                      />
-                    )}
-                  />
+                  <>
+                    <Controller
+                      name="sourceLanguagePrompt"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          fullWidth
+                          label="Voice Message for Source Language *"
+                          multiline
+                          rows={3}
+                          error={!!errors.sourceLanguagePrompt}
+                          helperText={errors.sourceLanguagePrompt?.message}
+                          placeholder="Enter the voice message for source language"
+                        />
+                      )}
+                    />
+                    <Controller
+                      name="sourceLanguageError"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          fullWidth
+                          label="Error Message for Source Language *"
+                          multiline
+                          rows={3}
+                          error={!!errors.sourceLanguageError}
+                          helperText={errors.sourceLanguageError?.message}
+                          placeholder="Enter the error message for source language"
+                        />
+                      )}
+                    />
+                  </>
                 )}
                 <Controller
                   name="askTargetLanguage"
@@ -321,45 +435,48 @@ export default function CallRoutingSetting() {
                   )}
                 />
                 {askTargetLanguage && (
-                  <Controller
-                    name="targetLanguagePrompt"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        fullWidth
-                        multiline
-                        label="Voice Message for Target Language"
-                        error={!!errors.targetLanguagePrompt}
-                        helperText={errors.targetLanguagePrompt?.message}
-                        sx={{ mt: 2 }}
-                      />
-                    )}
-                  />
-                )}{' '}
-                {askTargetLanguage && (
-                  <Controller
-                    name="targetLanguageError"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        fullWidth
-                        multiline
-                        label="Error Message for Target Language"
-                        error={!!errors.targetLanguageError}
-                        helperText={errors.targetLanguageError?.message}
-                        sx={{ mt: 2 }}
-                      />
-                    )}
-                  />
+                  <>
+                    <Controller
+                      name="targetLanguagePrompt"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          fullWidth
+                          label="Voice Message for Target Language *"
+                          multiline
+                          rows={3}
+                          error={!!errors.targetLanguagePrompt}
+                          helperText={errors.targetLanguagePrompt?.message}
+                          placeholder="Enter the voice message for target language"
+                        />
+                      )}
+                    />
+                    <Controller
+                      name="targetLanguageError"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          fullWidth
+                          label="Error Message for Target Language *"
+                          multiline
+                          rows={3}
+                          error={!!errors.targetLanguageError}
+                          helperText={errors.targetLanguageError?.message}
+                          placeholder="Enter the error message for target language"
+                        />
+                      )}
+                    />
+                  </>
                 )}
               </Stack>
+
               {/* Section 3: Call Algorithm */}
               <Typography variant="h6" sx={{ mt: 3 }}>
                 Call Settings
               </Typography>
-              <Stack direction="column" spacing={3}>
+              <Stack direction="column" spacing={2}>
                 <Controller
                   name="interpreterCallType"
                   control={control}
@@ -389,9 +506,12 @@ export default function CallRoutingSetting() {
                       {...field}
                       fullWidth
                       type="number"
-                      label="Retry Attempts"
+                      label="Retry Attempts *"
+                      multiline
+                      rows={1}
                       error={!!errors.retryAttempts}
                       helperText={errors.retryAttempts?.message}
+                      placeholder="Enter number of retry attempts"
                     />
                   )}
                 />
@@ -403,18 +523,20 @@ export default function CallRoutingSetting() {
                       {...field}
                       fullWidth
                       type="number"
-                      label="Timeout for Digit Inputs (seconds)"
+                      label="Timeout for Digit Inputs (seconds) *"
+                      multiline
+                      rows={1}
                       error={!!errors.digitsTimeOut}
                       helperText={errors.digitsTimeOut?.message}
+                      placeholder="Enter timeout in seconds"
                     />
                   )}
                 />
               </Stack>
+
               {/* Section 4: Error Messages */}
-              <Typography variant="h6" sx={{ mt: 3 }}>
-                Low Credit Error Messages
-              </Typography>
-              <Stack direction="column" py={1} spacing={2}>
+
+              <Stack direction="column" pt={3} spacing={2}>
                 <Controller
                   name="creditError"
                   control={control}
@@ -422,26 +544,29 @@ export default function CallRoutingSetting() {
                     <TextField
                       {...field}
                       fullWidth
+                      label="Low Credit Error Message *"
                       multiline
-                      placeholder="Low Credit Error Message"
+                      rows={3}
                       error={!!errors.creditError}
                       helperText={errors.creditError?.message}
+                      placeholder="Enter the low credit error message"
                     />
                   )}
                 />
               </Stack>
+
               {/* Section 5: Fallback */}
               <Typography variant="h6" sx={{ mt: 3 }}>
                 Fallback Settings
               </Typography>
-              <Stack direction="column">
+              <Stack direction="column" spacing={2}>
                 <Controller
                   name="enableFallback"
                   control={control}
                   render={({ field }) => (
                     <FormControlLabel
                       control={<Switch {...field} checked={field.value} />}
-                      label="Enable Fallback"
+                      label="Enable Fallback Number"
                     />
                   )}
                 />
@@ -451,7 +576,7 @@ export default function CallRoutingSetting() {
                     name="fallbackNumber"
                     control={control}
                     render={({ field }) => (
-                      <Stack spacing={1} mt={2}>
+                      <Stack spacing={1}>
                         <PhoneInput
                           defaultCountry="it"
                           inputStyle={{
@@ -479,18 +604,20 @@ export default function CallRoutingSetting() {
                     )}
                   />
                 )}
+
                 <Controller
                   name="noAnswerMessage"
                   control={control}
                   render={({ field }) => (
                     <TextField
-                      sx={{ mt: 2 }}
                       {...field}
                       fullWidth
+                      label="No Answer Message *"
                       multiline
-                      label="No Answer Message"
+                      rows={3}
                       error={!!errors.noAnswerMessage}
                       helperText={errors.noAnswerMessage?.message}
+                      placeholder="Enter the no answer message"
                     />
                   )}
                 />
