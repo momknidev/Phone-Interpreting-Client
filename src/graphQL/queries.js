@@ -469,14 +469,11 @@ export const GET_CALL_ROUTING_SETTING = gql`
       client_id
       phone_number
       enable_code
-      callingCodePrompt
-      callingCodePromptURL
+      callingCodePromptText
       askSourceLanguage
       askTargetLanguage
-      sourceLanguagePrompt
-      sourceLanguagePromptURL
-      targetLanguagePrompt
-      targetLanguagePromptURL
+      sourceLanguagePromptText
+      targetLanguagePromptText
       interpreterCallType
       retryAttempts
       enableFallback
@@ -484,16 +481,32 @@ export const GET_CALL_ROUTING_SETTING = gql`
       fallbackPrompt
       createdAt
       updatedAt
-      callingCodeError
-      sourceLanguageError
-      targetLanguageError
+      callingCodeErrorText
+      sourceLanguageErrorText
+      targetLanguageErrorText
       fallbackMessage
       fallbackType
       digitsTimeOut
-      creditError
-      noAnswerMessage
+      creditErrorText
+      noAnswerMessageText
       language
-      welcomeMessage
+      welcomeMessageText
+      callingCodeErrorMode
+      callingCodePromptMode
+      noAnswerMessageMode
+      sourceLanguageErrorMode
+      sourceLanguagePromptMode
+      targetLanguageErrorMode
+      callingCodeErrorFile
+      callingCodePromptFile
+      noAnswerMessageFile
+      sourceLanguageErrorFile
+      sourceLanguagePromptFile
+      targetLanguageErrorFile
+      targetLanguagePromptFile
+      targetLanguagePromptMode
+      welcomeMessageFile
+      welcomeMessageMode
     }
   }
 `;

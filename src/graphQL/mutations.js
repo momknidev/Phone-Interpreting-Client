@@ -372,14 +372,14 @@ export const CREATE_UPDATED_ROUTING_SETTING = gql`
       client_id
       phone_number
       enable_code
-      callingCodePrompt
-      callingCodePromptURL
+      callingCodePromptText
+      callingCodePromptFile
       askSourceLanguage
       askTargetLanguage
-      sourceLanguagePrompt
-      sourceLanguagePromptURL
-      targetLanguagePrompt
-      targetLanguagePromptURL
+      sourceLanguagePromptText
+      sourceLanguagePromptFile
+      targetLanguagePromptText
+      targetLanguagePromptFile
       interpreterCallType
       retryAttempts
       enableFallback

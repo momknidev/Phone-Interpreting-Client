@@ -1,4 +1,4 @@
-/* eslint-disable no-shadow */
+/* eslint-disable react/prop-types */
 import { useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import {
@@ -15,6 +15,9 @@ import {
   TextField,
   Typography,
   Autocomplete,
+  Button,
+  Box,
+  Chip,
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { PhoneInput } from 'react-international-phone';
@@ -33,10 +36,11 @@ import { GET_CALL_ROUTING_SETTING } from '../../graphQL/queries';
 import FormProvider from '../../components/hook-form';
 import { CREATE_UPDATED_ROUTING_SETTING } from '../../graphQL/mutations';
 import { NoPhoneSelected } from './CallReportPage';
+import Iconify from '../../components/iconify';
 
 const phoneUtil = PhoneNumberUtil.getInstance();
 
-const twilioVoices = [
+export const twilioVoices = [
   { label: 'Afrikaans (South Africa)', code: 'af-ZA' },
   { label: 'Arabic (Standard)', code: 'ar-XA' },
   { label: 'Basque (Spain)', code: 'eu-ES' },
@@ -103,10 +107,12 @@ export default function CallRoutingSetting() {
     fetchPolicy: 'no-cache',
   });
 
+  // eslint-disable-next-line no-shadow
   const isPhoneValid = (phone) => {
     try {
-      const number = phoneUtil.parseAndKeepRawInput(phone, 'IT'); // Use 'IT' for Italy or dynamically detect
+      const number = phoneUtil.parseAndKeepRawInput(phone, 'IT');
       return phoneUtil.isValidNumber(number);
+      // eslint-disable-next-line no-shadow
     } catch (error) {
       return false;
     }
@@ -114,34 +120,167 @@ export default function CallRoutingSetting() {
 
   const NewUserSchema = yup.object().shape({
     language: yup.string().required('Primary language selection is required'),
-    welcomeMessage: yup.string().required('Welcome message is required'),
+
+    // Welcome Message
+    welcomeMessageMode: yup.string().oneOf(['text', 'audio']).required(),
+    welcomeMessageText: yup
+      .string()
+      .when('welcomeMessageMode', {
+        is: 'text',
+        then: (schema) => schema.required('Welcome message is required'),
+      })
+      .nullable(),
+    welcomeMessageFile: yup
+      .mixed()
+      .when('welcomeMessageMode', {
+        is: 'audio',
+        then: (schema) => schema.required('Welcome message audio file is required'),
+      })
+      .nullable(),
+
     enableCode: yup.boolean(),
-    callingCodePrompt: yup.string().when('enableCode', {
+
+    // Calling Code Prompt
+    callingCodePromptMode: yup.string().when('enableCode', {
       is: true,
-      then: (schema) => schema.required('Voice message for code prompt is required'),
+      then: (schema) => schema.oneOf(['text', 'audio']).required(),
     }),
-    callingCodeError: yup.string().when('enableCode', {
-      is: true,
-      then: (schema) => schema.required('Error message for code prompt is required'),
-    }),
+    callingCodePromptText: yup
+      .string()
+      .when(['enableCode', 'callingCodePromptMode'], {
+        is: (enableCode, mode) => enableCode && mode === 'text',
+        then: (schema) => schema.required('Voice message for code prompt is required'),
+      })
+      .nullable(),
+    callingCodePromptFile: yup
+      .mixed()
+      .when(['enableCode', 'callingCodePromptMode'], {
+        is: (enableCode, mode) => enableCode && mode === 'audio',
+        then: (schema) => schema.required('Voice message audio file for code prompt is required'),
+      })
+      .nullable(),
+
+    // Calling Code Error
+    callingCodeErrorMode: yup
+      .string()
+      .when('enableCode', {
+        is: true,
+        then: (schema) => schema.oneOf(['text', 'audio']).required(),
+      })
+      .nullable(),
+    callingCodeErrorText: yup
+      .string()
+      .when(['enableCode', 'callingCodeErrorMode'], {
+        is: (enableCode, mode) => enableCode && mode === 'text',
+        then: (schema) => schema.required('Error message for code prompt is required'),
+      })
+      .nullable(),
+    callingCodeErrorFile: yup
+      .mixed()
+      .when(['enableCode', 'callingCodeErrorMode'], {
+        is: (enableCode, mode) => enableCode && mode === 'audio',
+        then: (schema) => schema.required('Error message audio file for code prompt is required'),
+      })
+      .nullable(),
+
     askSourceLanguage: yup.boolean(),
-    sourceLanguagePrompt: yup.string().when('askSourceLanguage', {
-      is: true,
-      then: (schema) => schema.required('Source language message is required'),
-    }),
-    sourceLanguageError: yup.string().when('askSourceLanguage', {
-      is: true,
-      then: (schema) => schema.required('Error message for source language is required'),
-    }),
+
+    // Source Language Prompt
+    sourceLanguagePromptMode: yup
+      .string()
+      .when('askSourceLanguage', {
+        is: true,
+        then: (schema) => schema.oneOf(['text', 'audio']).required(),
+      })
+      .nullable(),
+    sourceLanguagePromptText: yup
+      .string()
+      .when(['askSourceLanguage', 'sourceLanguagePromptMode'], {
+        is: (askSourceLanguage, mode) => askSourceLanguage && mode === 'text',
+        then: (schema) => schema.required('Source language message is required'),
+      })
+      .nullable(),
+    sourceLanguagePromptFile: yup
+      .mixed()
+      .when(['askSourceLanguage', 'sourceLanguagePromptMode'], {
+        is: (askSourceLanguage, mode) => askSourceLanguage && mode === 'audio',
+        then: (schema) => schema.required('Source language audio file is required'),
+      })
+      .nullable(),
+
+    // Source Language Error
+    sourceLanguageErrorMode: yup
+      .string()
+      .when('askSourceLanguage', {
+        is: true,
+        then: (schema) => schema.oneOf(['text', 'audio']).required(),
+      })
+      .nullable(),
+    sourceLanguageErrorText: yup
+      .string()
+      .when(['askSourceLanguage', 'sourceLanguageErrorMode'], {
+        is: (askSourceLanguage, mode) => askSourceLanguage && mode === 'text',
+        then: (schema) => schema.required('Error message for source language is required'),
+      })
+      .nullable(),
+    sourceLanguageErrorFile: yup
+      .mixed()
+      .when(['askSourceLanguage', 'sourceLanguageErrorMode'], {
+        is: (askSourceLanguage, mode) => askSourceLanguage && mode === 'audio',
+        then: (schema) =>
+          schema.required('Error message audio file for source language is required'),
+      })
+      .nullable(),
+
     askTargetLanguage: yup.boolean(),
-    targetLanguagePrompt: yup.string().when('askTargetLanguage', {
-      is: true,
-      then: (schema) => schema.required('Target language message is required'),
-    }),
-    targetLanguageError: yup.string().when('askTargetLanguage', {
-      is: true,
-      then: (schema) => schema.required('Error message for target language is required'),
-    }),
+
+    // Target Language Prompt
+    targetLanguagePromptMode: yup
+      .string()
+      .when('askTargetLanguage', {
+        is: true,
+        then: (schema) => schema.oneOf(['text', 'audio']).required(),
+      })
+      .nullable(),
+    targetLanguagePromptText: yup
+      .string()
+      .when(['askTargetLanguage', 'targetLanguagePromptMode'], {
+        is: (askTargetLanguage, mode) => askTargetLanguage && mode === 'text',
+        then: (schema) => schema.required('Target language message is required'),
+      })
+      .nullable(),
+    targetLanguagePromptFile: yup
+      .mixed()
+      .when(['askTargetLanguage', 'targetLanguagePromptMode'], {
+        is: (askTargetLanguage, mode) => askTargetLanguage && mode === 'audio',
+        then: (schema) => schema.required('Target language audio file is required'),
+      })
+      .nullable(),
+
+    // Target Language Error
+    targetLanguageErrorMode: yup
+      .string()
+      .when('askTargetLanguage', {
+        is: true,
+        then: (schema) => schema.oneOf(['text', 'audio']).required(),
+      })
+      .nullable(),
+    targetLanguageErrorText: yup
+      .string()
+      .when(['askTargetLanguage', 'targetLanguageErrorMode'], {
+        is: (askTargetLanguage, mode) => askTargetLanguage && mode === 'text',
+        then: (schema) => schema.required('Error message for target language is required'),
+      })
+      .nullable(),
+    targetLanguageErrorFile: yup
+      .mixed()
+      .when(['askTargetLanguage', 'targetLanguageErrorMode'], {
+        is: (askTargetLanguage, mode) => askTargetLanguage && mode === 'audio',
+        then: (schema) =>
+          schema.required('Error message audio file for target language is required'),
+      })
+      .nullable(),
+
     interpreterCallType: yup.string().oneOf(['simultaneous', 'sequential']).required(),
     enableFallback: yup.boolean(),
     fallbackType: yup.string().oneOf(['number', 'message']).nullable(),
@@ -162,8 +301,41 @@ export default function CallRoutingSetting() {
         is: true,
         then: (schema) => schema.required('Retry attempts required'),
       }),
-    creditError: yup.string().required('Low credit error message is required'),
-    noAnswerMessage: yup.string().required('No answer message is required'),
+
+    // Credit Error
+    creditErrorMode: yup.string().oneOf(['text', 'audio']).required(),
+    creditErrorText: yup
+      .string()
+      .when('creditErrorMode', {
+        is: 'text',
+        then: (schema) => schema.required('Low credit error message is required'),
+      })
+      .nullable(),
+    creditErrorFile: yup
+      .mixed()
+      .when('creditErrorMode', {
+        is: 'audio',
+        then: (schema) => schema.required('Low credit error audio file is required'),
+      })
+      .nullable(),
+
+    // No Answer Message
+    noAnswerMessageMode: yup.string().oneOf(['text', 'audio']).required(),
+    noAnswerMessageText: yup
+      .string()
+      .when('noAnswerMessageMode', {
+        is: 'text',
+        then: (schema) => schema.required('No answer message is required'),
+      })
+      .nullable(),
+    noAnswerMessageFile: yup
+      .mixed()
+      .when('noAnswerMessageMode', {
+        is: 'audio',
+        then: (schema) => schema.required('No answer message audio file is required'),
+      })
+      .nullable(),
+
     digitsTimeOut: yup
       .number()
       .min(1, 'Timeout must be at least 1 second')
@@ -173,24 +345,42 @@ export default function CallRoutingSetting() {
   const defaultValues = useMemo(
     () => ({
       language: data?.getCallRoutingSettings?.language ?? '',
-      welcomeMessage: data?.getCallRoutingSettings?.welcomeMessage ?? '',
+      welcomeMessageText: data?.getCallRoutingSettings?.welcomeMessageText ?? '',
+      welcomeMessageMode: 'text',
+      welcomeMessageFile: null,
       enableCode: data?.getCallRoutingSettings?.enable_code ?? false,
-      callingCodePrompt: data?.getCallRoutingSettings?.callingCodePrompt ?? '',
-      callingCodeError: data?.getCallRoutingSettings?.callingCodeError ?? '',
+      callingCodePromptText: data?.getCallRoutingSettings?.callingCodePromptText ?? '',
+      callingCodePromptMode: 'text',
+      callingCodePromptFile: null,
+      callingCodeErrorText: data?.getCallRoutingSettings?.callingCodeErrorText ?? '',
+      callingCodeErrorMode: 'text',
+      callingCodeErrorFile: null,
       askSourceLanguage: data?.getCallRoutingSettings?.askSourceLanguage ?? false,
-      sourceLanguagePrompt: data?.getCallRoutingSettings?.sourceLanguagePrompt ?? '',
-      sourceLanguageError: data?.getCallRoutingSettings?.sourceLanguageError ?? '',
+      sourceLanguagePromptText: data?.getCallRoutingSettings?.sourceLanguagePromptText ?? '',
+      sourceLanguagePromptMode: 'text',
+      sourceLanguagePromptFile: null,
+      sourceLanguageErrorText: data?.getCallRoutingSettings?.sourceLanguageErrorText ?? '',
+      sourceLanguageErrorMode: 'text',
+      sourceLanguageErrorFile: null,
       askTargetLanguage: data?.getCallRoutingSettings?.askTargetLanguage ?? false,
-      targetLanguagePrompt: data?.getCallRoutingSettings?.targetLanguagePrompt ?? '',
-      targetLanguageError: data?.getCallRoutingSettings?.targetLanguageError ?? '',
+      targetLanguagePromptText: data?.getCallRoutingSettings?.targetLanguagePromptText ?? '',
+      targetLanguagePromptMode: 'text',
+      targetLanguagePromptFile: null,
+      targetLanguageErrorText: data?.getCallRoutingSettings?.targetLanguageErrorText ?? '',
+      targetLanguageErrorMode: 'text',
+      targetLanguageErrorFile: null,
       interpreterCallType: data?.getCallRoutingSettings?.interpreterCallType ?? 'sequential',
       enableFallback: data?.getCallRoutingSettings?.enableFallback ?? false,
       fallbackType: data?.getCallRoutingSettings?.fallbackType ?? null,
       fallbackNumber: data?.getCallRoutingSettings?.fallbackNumber ?? '',
       fallbackMessage: data?.getCallRoutingSettings?.fallbackMessage ?? '',
       retryAttempts: data?.getCallRoutingSettings?.retryAttempts ?? 1,
-      creditError: data?.getCallRoutingSettings?.creditError ?? '',
-      noAnswerMessage: data?.getCallRoutingSettings?.noAnswerMessage ?? '',
+      creditErrorText: data?.getCallRoutingSettings?.creditErrorText ?? '',
+      creditErrorMode: 'text',
+      creditErrorFile: null,
+      noAnswerMessageText: data?.getCallRoutingSettings?.noAnswerMessageText ?? '',
+      noAnswerMessageMode: 'text',
+      noAnswerMessageFile: null,
       digitsTimeOut: data?.getCallRoutingSettings?.digitsTimeOut ?? '',
     }),
     [data]
@@ -213,6 +403,7 @@ export default function CallRoutingSetting() {
 
   const values = watch();
   console.log({ values, errors });
+
   // Watchers for conditional rendering
   const enableCode = watch('enableCode');
   const askSourceLanguage = watch('askSourceLanguage');
@@ -228,15 +419,50 @@ export default function CallRoutingSetting() {
   const onSubmit = async (formData) => {
     try {
       const payload = {
-        ...formData,
+        language: formData.language,
         enable_code: formData.enableCode,
-        callingCodePromptFile: null,
-        sourceLanguagePromptFile: null,
-        targetLanguagePromptFile: null,
+        askSourceLanguage: formData.askSourceLanguage,
+        askTargetLanguage: formData.askTargetLanguage,
+        interpreterCallType: formData.interpreterCallType,
+        enableFallback: formData.enableFallback,
+        fallbackType: formData.fallbackType,
+        fallbackNumber: formData.fallbackNumber,
+        fallbackMessage: formData.fallbackMessage,
+        retryAttempts: formData.retryAttempts,
+        digitsTimeOut: formData.digitsTimeOut,
         phone_number: phone,
       };
 
-      delete payload.enableCode;
+      // Handle text/audio for each field based on mode
+      const messageFields = [
+        'welcomeMessage',
+        'callingCodePrompt',
+        'callingCodeError',
+        'sourceLanguagePrompt',
+        'sourceLanguageError',
+        'targetLanguagePrompt',
+        'targetLanguageError',
+        'creditError',
+        'noAnswerMessage',
+      ];
+
+      messageFields.forEach((field) => {
+        const mode = formData[`${field}Mode`];
+
+        if (mode === 'text') {
+          // If mode is text, send text value and null for file
+          payload[`${field}Text`] = formData[`${field}Text`] || '';
+          payload[`${field}File`] = null;
+        } else if (mode === 'audio') {
+          // If mode is audio, send file and null for text
+          payload[`${field}Text`] = null;
+          payload[`${field}File`] = formData[`${field}File`] || null;
+        }
+        // Also include the mode in the payload
+        payload[`${field}Mode`] = mode;
+      });
+
+      console.log('Payload being sent:', payload);
 
       await updateRoutingSettings({
         variables: {
@@ -250,10 +476,16 @@ export default function CallRoutingSetting() {
       enqueueSnackbar('Error in saving settings.', { variant: 'error' });
     }
   };
+
   if (!phone) {
     return <NoPhoneSelected />;
   }
-  if (loading) return <Skeleton width="100%" height={300} />;
+  if (loading)
+    return (
+      <Container maxWidth={themeStretch ? false : 'lg'}>
+        <Skeleton width="100%" height={300} />
+      </Container>
+    );
   if (error) return `Error: ${error?.message}`;
 
   return (
@@ -302,21 +534,14 @@ export default function CallRoutingSetting() {
                     />
                   )}
                 />
-                <Controller
-                  name="welcomeMessage"
+
+                <TextOrAudioInput
                   control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      label="Welcome Message *"
-                      multiline
-                      rows={3}
-                      error={!!errors.welcomeMessage}
-                      helperText={errors.welcomeMessage?.message}
-                      placeholder="Enter the welcome message that will be played to callers"
-                    />
-                  )}
+                  fieldName="welcomeMessage"
+                  label="Welcome Message"
+                  placeholder="Enter the welcome message that will be played to callers"
+                  required
+                  errors={errors}
                 />
               </Stack>
             </Card>
@@ -337,37 +562,21 @@ export default function CallRoutingSetting() {
                 />
                 {enableCode && (
                   <>
-                    <Controller
-                      name="callingCodePrompt"
+                    <TextOrAudioInput
                       control={control}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          fullWidth
-                          label="Voice Message for Code Prompt *"
-                          multiline
-                          rows={3}
-                          error={!!errors.callingCodePrompt}
-                          helperText={errors.callingCodePrompt?.message}
-                          placeholder="Enter the voice message for code prompt"
-                        />
-                      )}
+                      fieldName="callingCodePrompt"
+                      label="Voice Message for Code Prompt"
+                      placeholder="Enter the voice message for code prompt"
+                      required
+                      errors={errors}
                     />
-                    <Controller
-                      name="callingCodeError"
+                    <TextOrAudioInput
                       control={control}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          fullWidth
-                          label="Error Message for Code Prompt *"
-                          multiline
-                          rows={3}
-                          error={!!errors.callingCodeError}
-                          helperText={errors.callingCodeError?.message}
-                          placeholder="Enter the error message for code prompt"
-                        />
-                      )}
+                      fieldName="callingCodeError"
+                      label="Error Message for Code Prompt"
+                      placeholder="Enter the error message for code prompt"
+                      required
+                      errors={errors}
                     />
                   </>
                 )}
@@ -390,37 +599,21 @@ export default function CallRoutingSetting() {
                 />
                 {askSourceLanguage && (
                   <>
-                    <Controller
-                      name="sourceLanguagePrompt"
+                    <TextOrAudioInput
                       control={control}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          fullWidth
-                          label="Voice Message for Source Language *"
-                          multiline
-                          rows={3}
-                          error={!!errors.sourceLanguagePrompt}
-                          helperText={errors.sourceLanguagePrompt?.message}
-                          placeholder="Enter the voice message for source language"
-                        />
-                      )}
+                      fieldName="sourceLanguagePrompt"
+                      label="Voice Message for Source Language"
+                      placeholder="Enter the voice message for source language"
+                      required
+                      errors={errors}
                     />
-                    <Controller
-                      name="sourceLanguageError"
+                    <TextOrAudioInput
                       control={control}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          fullWidth
-                          label="Error Message for Source Language *"
-                          multiline
-                          rows={3}
-                          error={!!errors.sourceLanguageError}
-                          helperText={errors.sourceLanguageError?.message}
-                          placeholder="Enter the error message for source language"
-                        />
-                      )}
+                      fieldName="sourceLanguageError"
+                      label="Error Message for Source Language"
+                      placeholder="Enter the error message for source language"
+                      required
+                      errors={errors}
                     />
                   </>
                 )}
@@ -436,37 +629,21 @@ export default function CallRoutingSetting() {
                 />
                 {askTargetLanguage && (
                   <>
-                    <Controller
-                      name="targetLanguagePrompt"
+                    <TextOrAudioInput
                       control={control}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          fullWidth
-                          label="Voice Message for Target Language *"
-                          multiline
-                          rows={3}
-                          error={!!errors.targetLanguagePrompt}
-                          helperText={errors.targetLanguagePrompt?.message}
-                          placeholder="Enter the voice message for target language"
-                        />
-                      )}
+                      fieldName="targetLanguagePrompt"
+                      label="Voice Message for Target Language"
+                      placeholder="Enter the voice message for target language"
+                      required
+                      errors={errors}
                     />
-                    <Controller
-                      name="targetLanguageError"
+                    <TextOrAudioInput
                       control={control}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          fullWidth
-                          label="Error Message for Target Language *"
-                          multiline
-                          rows={3}
-                          error={!!errors.targetLanguageError}
-                          helperText={errors.targetLanguageError?.message}
-                          placeholder="Enter the error message for target language"
-                        />
-                      )}
+                      fieldName="targetLanguageError"
+                      label="Error Message for Target Language"
+                      placeholder="Enter the error message for target language"
+                      required
+                      errors={errors}
                     />
                   </>
                 )}
@@ -507,8 +684,6 @@ export default function CallRoutingSetting() {
                       fullWidth
                       type="number"
                       label="Retry Attempts *"
-                      multiline
-                      rows={1}
                       error={!!errors.retryAttempts}
                       helperText={errors.retryAttempts?.message}
                       placeholder="Enter number of retry attempts"
@@ -524,8 +699,6 @@ export default function CallRoutingSetting() {
                       fullWidth
                       type="number"
                       label="Timeout for Digit Inputs (seconds) *"
-                      multiline
-                      rows={1}
                       error={!!errors.digitsTimeOut}
                       helperText={errors.digitsTimeOut?.message}
                       placeholder="Enter timeout in seconds"
@@ -535,23 +708,14 @@ export default function CallRoutingSetting() {
               </Stack>
 
               {/* Section 4: Error Messages */}
-
               <Stack direction="column" pt={3} spacing={2}>
-                <Controller
-                  name="creditError"
+                <TextOrAudioInput
                   control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      label="Low Credit Error Message *"
-                      multiline
-                      rows={3}
-                      error={!!errors.creditError}
-                      helperText={errors.creditError?.message}
-                      placeholder="Enter the low credit error message"
-                    />
-                  )}
+                  fieldName="creditError"
+                  label="Low Credit Error Message"
+                  placeholder="Enter the low credit error message"
+                  required
+                  errors={errors}
                 />
               </Stack>
 
@@ -605,21 +769,13 @@ export default function CallRoutingSetting() {
                   />
                 )}
 
-                <Controller
-                  name="noAnswerMessage"
+                <TextOrAudioInput
                   control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      label="No Answer Message *"
-                      multiline
-                      rows={3}
-                      error={!!errors.noAnswerMessage}
-                      helperText={errors.noAnswerMessage?.message}
-                      placeholder="Enter the no answer message"
-                    />
-                  )}
+                  fieldName="noAnswerMessage"
+                  label="No Answer Message"
+                  placeholder="Enter the no answer message"
+                  required
+                  errors={errors}
                 />
               </Stack>
             </Card>
@@ -633,3 +789,94 @@ export default function CallRoutingSetting() {
     </>
   );
 }
+
+// Component for text/audio toggle input using react-hook-form
+const TextOrAudioInput = ({ control, fieldName, label, placeholder, required = false, errors }) => (
+  <Stack spacing={2}>
+    <FormControl>
+      <FormLabel>
+        {label} {required && '*'}
+      </FormLabel>
+      <Controller
+        name={`${fieldName}Mode`}
+        control={control}
+        render={({ field }) => (
+          <RadioGroup row {...field}>
+            <FormControlLabel value="text" control={<Radio />} label="Text" />
+            <FormControlLabel value="audio" control={<Radio />} label="Audio File" />
+          </RadioGroup>
+        )}
+      />
+    </FormControl>
+
+    <Controller
+      name={`${fieldName}Mode`}
+      control={control}
+      render={({ field: modeField }) => {
+        if (modeField.value === 'text') {
+          return (
+            <Controller
+              name={`${fieldName}Text`}
+              control={control}
+              render={({ field: textField }) => (
+                <TextField
+                  {...textField}
+                  fullWidth
+                  multiline
+                  rows={3}
+                  error={!!errors[`${fieldName}Text`]}
+                  helperText={errors[`${fieldName}Text`]?.message}
+                  placeholder={placeholder}
+                />
+              )}
+            />
+          );
+        }
+
+        return (
+          <Controller
+            name={`${fieldName}File`}
+            control={control}
+            render={({ field: fileField }) => (
+              <Box>
+                <Button
+                  variant="outlined"
+                  component="label"
+                  startIcon={<Iconify icon="eva:upload-fill" />}
+                  fullWidth
+                >
+                  Upload Audio File
+                  <input
+                    accept="audio/*"
+                    style={{ display: 'none' }}
+                    type="file"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      console.log('Selected file:', file);
+                      fileField.onChange(file);
+                    }}
+                  />
+                </Button>
+                {fileField.value && fileField.value.name && (
+                  <Box mt={1}>
+                    <Chip
+                      label={fileField.value.name}
+                      onDelete={() => fileField.onChange(null)}
+                      color="primary"
+                      variant="outlined"
+                    />
+                  </Box>
+                )}
+                {errors[`${fieldName}File`] && (
+                  <Typography variant="caption" color="error">
+                    {errors[`${fieldName}File`]?.message}
+                  </Typography>
+                )}
+              </Box>
+            )}
+          />
+        );
+      }}
+    />
+  </Stack>
+);
