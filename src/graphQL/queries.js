@@ -478,7 +478,6 @@ export const GET_CALL_ROUTING_SETTING = gql`
       retryAttempts
       enableFallback
       fallbackNumber
-      fallbackPrompt
       createdAt
       updatedAt
       callingCodeErrorText

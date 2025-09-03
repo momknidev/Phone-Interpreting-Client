@@ -384,7 +384,7 @@ export const CREATE_UPDATED_ROUTING_SETTING = gql`
       retryAttempts
       enableFallback
       fallbackNumber
-      fallbackPrompt
+
       createdAt
       updatedAt
     }
