@@ -488,6 +488,8 @@ export const GET_CALL_ROUTING_SETTING = gql`
       fallbackType
       digitsTimeOut
       creditErrorText
+      creditErrorMode
+      creditErrorFile
       noAnswerMessageText
       language
       welcomeMessageText

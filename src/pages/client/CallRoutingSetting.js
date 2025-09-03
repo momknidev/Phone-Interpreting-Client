@@ -18,6 +18,7 @@ import {
   Button,
   Box,
   Chip,
+  Link,
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { PhoneInput } from 'react-international-phone';
@@ -466,15 +467,25 @@ export default function CallRoutingSetting() {
 
       messageFields.forEach((field) => {
         const mode = formData[`${field}Mode`];
+        const fileValue = formData[`${field}File`];
 
         if (mode === 'text') {
           // If mode is text, send text value and null for file
           payload[`${field}Text`] = formData[`${field}Text`] || '';
           payload[`${field}File`] = null;
         } else if (mode === 'audio') {
-          // If mode is audio, send file and null for text
+          // If mode is audio, check if the file is a new File object or existing URL string
           payload[`${field}Text`] = null;
-          payload[`${field}File`] = formData[`${field}File`] || null;
+
+          // Only send file if it's a new File object (not a string URL from database)
+          if (fileValue && typeof fileValue !== 'string') {
+            payload[`${field}File`] = fileValue;
+          } else if (typeof fileValue === 'string') {
+            // If it's a string URL, don't include it in the payload to keep existing file
+            payload[`${field}File`] = undefined;
+          } else {
+            payload[`${field}File`] = null;
+          }
         }
         // Also include the mode in the payload
         payload[`${field}Mode`] = mode;
@@ -554,6 +565,7 @@ export default function CallRoutingSetting() {
                 />
 
                 <TextOrAudioInput
+                  values={values}
                   control={control}
                   fieldName="welcomeMessage"
                   label="Welcome Message"
@@ -581,6 +593,7 @@ export default function CallRoutingSetting() {
                 {enableCode && (
                   <>
                     <TextOrAudioInput
+                      values={values}
                       control={control}
                       fieldName="callingCodePrompt"
                       label="Voice Message for Code Prompt"
@@ -589,6 +602,7 @@ export default function CallRoutingSetting() {
                       errors={errors}
                     />
                     <TextOrAudioInput
+                      values={values}
                       control={control}
                       fieldName="callingCodeError"
                       label="Error Message for Code Prompt"
@@ -618,6 +632,7 @@ export default function CallRoutingSetting() {
                 {askSourceLanguage && (
                   <>
                     <TextOrAudioInput
+                      values={values}
                       control={control}
                       fieldName="sourceLanguagePrompt"
                       label="Voice Message for Source Language"
@@ -626,6 +641,7 @@ export default function CallRoutingSetting() {
                       errors={errors}
                     />
                     <TextOrAudioInput
+                      values={values}
                       control={control}
                       fieldName="sourceLanguageError"
                       label="Error Message for Source Language"
@@ -648,6 +664,7 @@ export default function CallRoutingSetting() {
                 {askTargetLanguage && (
                   <>
                     <TextOrAudioInput
+                      values={values}
                       control={control}
                       fieldName="targetLanguagePrompt"
                       label="Voice Message for Target Language"
@@ -656,6 +673,7 @@ export default function CallRoutingSetting() {
                       errors={errors}
                     />
                     <TextOrAudioInput
+                      values={values}
                       control={control}
                       fieldName="targetLanguageError"
                       label="Error Message for Target Language"
@@ -728,6 +746,7 @@ export default function CallRoutingSetting() {
               {/* Section 4: Error Messages */}
               <Stack direction="column" pt={3} spacing={2}>
                 <TextOrAudioInput
+                  values={values}
                   control={control}
                   fieldName="creditError"
                   label="Low Credit Error Message"
@@ -788,6 +807,7 @@ export default function CallRoutingSetting() {
                 )}
 
                 <TextOrAudioInput
+                  values={values}
                   control={control}
                   fieldName="noAnswerMessage"
                   label="No Answer Message"
@@ -809,7 +829,15 @@ export default function CallRoutingSetting() {
 }
 
 // Component for text/audio toggle input using react-hook-form
-const TextOrAudioInput = ({ control, fieldName, label, placeholder, required = false, errors }) => (
+const TextOrAudioInput = ({
+  control,
+  fieldName,
+  label,
+  placeholder,
+  required = false,
+  errors,
+  values,
+}) => (
   <Stack spacing={2}>
     <FormControl>
       <FormLabel>
@@ -875,14 +903,42 @@ const TextOrAudioInput = ({ control, fieldName, label, placeholder, required = f
                     }}
                   />
                 </Button>
-                {fileField.value && fileField.value.name && (
+
+                {/* Show current file - either newly selected or existing URL */}
+                {values[fileField?.name] && (
                   <Box mt={1}>
-                    <Chip
-                      label={fileField.value.name}
-                      onDelete={() => fileField.onChange(null)}
-                      color="primary"
-                      variant="outlined"
-                    />
+                    {typeof values[fileField.name] === 'string' ? (
+                      // Show existing file URL from database
+                      <Box>
+                        <Typography variant="body2" color="textSecondary" gutterBottom>
+                          Current file:
+                        </Typography>
+                        <Chip
+                          label={
+                            <Link
+                              href={values[fileField?.name]}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              color="inherit"
+                              underline="hover"
+                            >
+                              {values[fileField?.name]?.split('/').pop() || 'Audio File'}
+                            </Link>
+                          }
+                          onDelete={() => fileField.onChange(null)}
+                          color="primary"
+                          variant="outlined"
+                        />
+                      </Box>
+                    ) : (
+                      // Show newly selected file
+                      <Chip
+                        label={fileField.value.name}
+                        onDelete={() => fileField.onChange(null)}
+                        color="primary"
+                        variant="outlined"
+                      />
+                    )}
                   </Box>
                 )}
 
