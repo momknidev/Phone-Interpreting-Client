@@ -346,41 +346,59 @@ export default function CallRoutingSetting() {
     () => ({
       language: data?.getCallRoutingSettings?.language ?? '',
       welcomeMessageText: data?.getCallRoutingSettings?.welcomeMessageText ?? '',
-      welcomeMessageMode: 'text',
-      welcomeMessageFile: null,
+      welcomeMessageMode: data?.getCallRoutingSettings?.welcomeMessageMode ?? 'text',
+      welcomeMessageFile: data?.getCallRoutingSettings?.welcomeMessageFile
+        ? data?.getCallRoutingSettings?.welcomeMessageFile
+        : null,
       enableCode: data?.getCallRoutingSettings?.enable_code ?? false,
       callingCodePromptText: data?.getCallRoutingSettings?.callingCodePromptText ?? '',
-      callingCodePromptMode: 'text',
-      callingCodePromptFile: null,
+      callingCodePromptMode: data?.getCallRoutingSettings?.callingCodePromptMode ?? 'text',
+      callingCodePromptFile: data?.getCallRoutingSettings?.callingCodePromptFile
+        ? data?.getCallRoutingSettings?.callingCodePromptFile
+        : null,
       callingCodeErrorText: data?.getCallRoutingSettings?.callingCodeErrorText ?? '',
-      callingCodeErrorMode: 'text',
-      callingCodeErrorFile: null,
+      callingCodeErrorMode: data?.getCallRoutingSettings?.callingCodeErrorMode ?? 'text',
+      callingCodeErrorFile: data?.getCallRoutingSettings?.callingCodeErrorFile
+        ? data?.getCallRoutingSettings?.callingCodeErrorFile
+        : null,
       askSourceLanguage: data?.getCallRoutingSettings?.askSourceLanguage ?? false,
       sourceLanguagePromptText: data?.getCallRoutingSettings?.sourceLanguagePromptText ?? '',
-      sourceLanguagePromptMode: 'text',
-      sourceLanguagePromptFile: null,
+      sourceLanguagePromptMode: data?.getCallRoutingSettings?.sourceLanguagePromptMode ?? 'text',
+      sourceLanguagePromptFile: data?.getCallRoutingSettings?.sourceLanguagePromptFile
+        ? data?.getCallRoutingSettings?.sourceLanguagePromptFile
+        : null,
       sourceLanguageErrorText: data?.getCallRoutingSettings?.sourceLanguageErrorText ?? '',
-      sourceLanguageErrorMode: 'text',
-      sourceLanguageErrorFile: null,
+      sourceLanguageErrorMode: data?.getCallRoutingSettings?.sourceLanguageErrorMode ?? 'text',
+      sourceLanguageErrorFile: data?.getCallRoutingSettings?.sourceLanguageErrorFile
+        ? data?.getCallRoutingSettings?.sourceLanguageErrorFile
+        : null,
       askTargetLanguage: data?.getCallRoutingSettings?.askTargetLanguage ?? false,
       targetLanguagePromptText: data?.getCallRoutingSettings?.targetLanguagePromptText ?? '',
-      targetLanguagePromptMode: 'text',
-      targetLanguagePromptFile: null,
+      targetLanguagePromptMode: data?.getCallRoutingSettings?.targetLanguagePromptMode ?? 'text',
+      targetLanguagePromptFile: data?.getCallRoutingSettings?.targetLanguagePromptFile
+        ? data?.getCallRoutingSettings?.targetLanguagePromptFile
+        : null,
       targetLanguageErrorText: data?.getCallRoutingSettings?.targetLanguageErrorText ?? '',
-      targetLanguageErrorMode: 'text',
-      targetLanguageErrorFile: null,
+      targetLanguageErrorMode: data?.getCallRoutingSettings?.targetLanguageErrorMode ?? 'text',
+      targetLanguageErrorFile: data?.getCallRoutingSettings?.targetLanguageErrorFile
+        ? data?.getCallRoutingSettings?.targetLanguageErrorFile
+        : null,
       interpreterCallType: data?.getCallRoutingSettings?.interpreterCallType ?? 'sequential',
       enableFallback: data?.getCallRoutingSettings?.enableFallback ?? false,
       fallbackType: data?.getCallRoutingSettings?.fallbackType ?? null,
       fallbackNumber: data?.getCallRoutingSettings?.fallbackNumber ?? '',
       fallbackMessage: data?.getCallRoutingSettings?.fallbackMessage ?? '',
-      retryAttempts: data?.getCallRoutingSettings?.retryAttempts ?? 1,
+      retryAttempts: data?.getCallRoutingSettings?.retryAttempts ?? 0,
       creditErrorText: data?.getCallRoutingSettings?.creditErrorText ?? '',
-      creditErrorMode: 'text',
-      creditErrorFile: null,
+      creditErrorMode: data?.getCallRoutingSettings?.creditErrorMode ?? 'text',
+      creditErrorFile: data?.getCallRoutingSettings?.creditErrorFile
+        ? data?.getCallRoutingSettings?.creditErrorFile
+        : null,
       noAnswerMessageText: data?.getCallRoutingSettings?.noAnswerMessageText ?? '',
-      noAnswerMessageMode: 'text',
-      noAnswerMessageFile: null,
+      noAnswerMessageMode: data?.getCallRoutingSettings?.noAnswerMessageMode ?? 'text',
+      noAnswerMessageFile: data?.getCallRoutingSettings?.noAnswerMessageFile
+        ? data?.getCallRoutingSettings?.noAnswerMessageFile
+        : null,
       digitsTimeOut: data?.getCallRoutingSettings?.digitsTimeOut ?? '',
     }),
     [data]
@@ -867,6 +885,7 @@ const TextOrAudioInput = ({ control, fieldName, label, placeholder, required = f
                     />
                   </Box>
                 )}
+
                 {errors[`${fieldName}File`] && (
                   <Typography variant="caption" color="error">
                     {errors[`${fieldName}File`]?.message}
