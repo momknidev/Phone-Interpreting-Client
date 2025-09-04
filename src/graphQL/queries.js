@@ -476,6 +476,10 @@ export const GET_CALL_ROUTING_SETTING = gql`
       targetLanguagePromptText
       interpreterCallType
       retryAttempts
+      inputAttemptsCount
+      inputAttemptsMode
+      inputAttemptsText
+      inputAttemptsFile
       enableFallback
       fallbackNumber
       createdAt

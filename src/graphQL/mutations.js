@@ -374,17 +374,43 @@ export const CREATE_UPDATED_ROUTING_SETTING = gql`
       enable_code
       callingCodePromptText
       callingCodePromptFile
+      callingCodePromptMode
+      callingCodeErrorText
+      callingCodeErrorFile
+      callingCodeErrorMode
       askSourceLanguage
       askTargetLanguage
       sourceLanguagePromptText
       sourceLanguagePromptFile
+      sourceLanguagePromptMode
+      sourceLanguageErrorText
+      sourceLanguageErrorFile
+      sourceLanguageErrorMode
       targetLanguagePromptText
       targetLanguagePromptFile
+      targetLanguagePromptMode
+      targetLanguageErrorText
+      targetLanguageErrorFile
+      targetLanguageErrorMode
       interpreterCallType
       retryAttempts
+      inputAttemptsCount
+      inputAttemptsMode
+      inputAttemptsText
+      inputAttemptsFile
       enableFallback
       fallbackNumber
-
+      digitsTimeOut
+      creditErrorText
+      creditErrorFile
+      creditErrorMode
+      noAnswerMessageText
+      noAnswerMessageFile
+      noAnswerMessageMode
+      welcomeMessageText
+      welcomeMessageFile
+      welcomeMessageMode
+      language
       createdAt
       updatedAt
     }

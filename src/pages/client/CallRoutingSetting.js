@@ -341,6 +341,28 @@ export default function CallRoutingSetting() {
       .number()
       .min(1, 'Timeout must be at least 1 second')
       .required('Timeout for digit inputs is required'),
+
+    // Input Attempts
+    inputAttemptsCount: yup
+      .number()
+      .min(1, 'Must be at least 1 attempt')
+      .max(10, 'Cannot exceed 10 attempts')
+      .required('Input attempts count is required'),
+    inputAttemptsMode: yup.string().oneOf(['text', 'audio']).required(),
+    inputAttemptsText: yup
+      .string()
+      .when('inputAttemptsMode', {
+        is: 'text',
+        then: (schema) => schema.required('Input attempts message is required'),
+      })
+      .nullable(),
+    inputAttemptsFile: yup
+      .mixed()
+      .when('inputAttemptsMode', {
+        is: 'audio',
+        then: (schema) => schema.required('Input attempts audio file is required'),
+      })
+      .nullable(),
   });
 
   const defaultValues = useMemo(
@@ -401,6 +423,12 @@ export default function CallRoutingSetting() {
         ? data?.getCallRoutingSettings?.noAnswerMessageFile
         : null,
       digitsTimeOut: data?.getCallRoutingSettings?.digitsTimeOut ?? '',
+      inputAttemptsCount: data?.getCallRoutingSettings?.inputAttemptsCount ?? 3,
+      inputAttemptsMode: data?.getCallRoutingSettings?.inputAttemptsMode ?? 'text',
+      inputAttemptsText: data?.getCallRoutingSettings?.inputAttemptsText ?? '',
+      inputAttemptsFile: data?.getCallRoutingSettings?.inputAttemptsFile
+        ? data?.getCallRoutingSettings?.inputAttemptsFile
+        : null,
     }),
     [data]
   );
@@ -449,6 +477,7 @@ export default function CallRoutingSetting() {
         fallbackMessage: formData.fallbackMessage,
         retryAttempts: formData.retryAttempts,
         digitsTimeOut: formData.digitsTimeOut,
+        inputAttemptsCount: formData.inputAttemptsCount,
         phone_number: phone,
       };
 
@@ -463,6 +492,7 @@ export default function CallRoutingSetting() {
         'targetLanguageError',
         'creditError',
         'noAnswerMessage',
+        'inputAttempts',
       ];
 
       messageFields.forEach((field) => {
@@ -740,6 +770,37 @@ export default function CallRoutingSetting() {
                       placeholder="Enter timeout in seconds"
                     />
                   )}
+                />
+                <Controller
+                  name="inputAttemptsCount"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      type="number"
+                      label="Invalid Input Attempts Count *"
+                      error={!!errors.inputAttemptsCount}
+                      helperText={errors.inputAttemptsCount?.message}
+                      placeholder="Enter number of invalid input attempts allowed"
+                    />
+                  )}
+                />
+              </Stack>
+
+              {/* Section 3.5: Input Attempts Error Message */}
+              <Typography variant="h6" sx={{ mt: 3 }}>
+                Invalid/Retry Input Handling
+              </Typography>
+              <Stack direction="column" spacing={2}>
+                <TextOrAudioInput
+                  values={values}
+                  control={control}
+                  fieldName="inputAttempts"
+                  label="Invalid/Retry Input Error Message"
+                  placeholder="Enter the message played when user provides invalid input"
+                  required
+                  errors={errors}
                 />
               </Stack>
 
