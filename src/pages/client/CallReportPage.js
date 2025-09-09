@@ -37,6 +37,7 @@ const TABLE_HEAD = [
   { id: '#', label: 'Duration', align: 'center' },
   { id: '#', label: 'Interpreter', align: 'center' },
   { id: 'created_at', label: 'Date', align: 'center' },
+  { id: 'response_time', label: 'Response Time', align: 'center' },
   { id: 'used_credits', label: 'Credits', align: 'center' },
   { id: 'status', label: 'Status', align: 'center' },
 ];

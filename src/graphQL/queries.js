@@ -458,6 +458,7 @@ export const PHONE_MEDIATION_PAGINATED_LIST = gql`
         used_credits
         created_at
         updated_at
+        response_time
       }
     }
   }

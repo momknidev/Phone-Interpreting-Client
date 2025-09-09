@@ -25,7 +25,7 @@ export default function BookingTableRow({ row }) {
     serial_no,
     status,
     call_duration,
-    // amount,
+    response_time,
     created_at,
     used_credits,
   } = row;
@@ -54,7 +54,9 @@ export default function BookingTableRow({ row }) {
       <TableCell align="center">{interpreter} </TableCell>
 
       <TableCell align="center">{fDateTime(created_at)}</TableCell>
+      <TableCell align="center">{response_time && `${response_time} sec`}</TableCell>
       <TableCell align="center">{used_credits}</TableCell>
+
       <TableCell align="center">
         <Label variant="soft" color={labelColor} sx={{ textTransform: 'capitalize' }}>
           {status}
