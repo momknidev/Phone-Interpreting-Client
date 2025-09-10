@@ -690,49 +690,6 @@ export default function CallRoutingSetting() {
                 Language Prompt Settings
               </Typography>
 
-              {/* Warning messages for missing language data */}
-              {(!sourceLanguagesData?.allSourceLanguages ||
-                sourceLanguagesData.allSourceLanguages.length === 0) && (
-                <Box
-                  sx={{
-                    p: 2,
-                    mb: 2,
-                    // border: '1px solid #ff9800',
-                    borderRadius: 1,
-                    // bgcolor: '#fff3e0',
-                  }}
-                >
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <Iconify icon="eva:alert-triangle-fill" sx={{ color: '#ff9800' }} />
-                    <Typography variant="body2" color="warning">
-                      No source languages found. Please add source languages in your database before
-                      configuring default settings.
-                    </Typography>
-                  </Stack>
-                </Box>
-              )}
-
-              {(!targetLanguagesData?.allTargetLanguages ||
-                targetLanguagesData.allTargetLanguages.length === 0) && (
-                <Box
-                  sx={{
-                    p: 2,
-                    mb: 2,
-                    // border: '1px solid #ff9800',
-                    borderRadius: 1,
-                    // bgcolor: '#fff3e0',
-                  }}
-                >
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <Iconify icon="eva:alert-triangle-fill" sx={{ color: '#ff9800' }} />
-                    <Typography variant="body2" color="warning">
-                      No target languages found. Please add target languages in your database before
-                      configuring default settings.
-                    </Typography>
-                  </Stack>
-                </Box>
-              )}
-
               <Stack direction="column" spacing={2}>
                 <Controller
                   name="askSourceLanguage"
@@ -744,6 +701,28 @@ export default function CallRoutingSetting() {
                     />
                   )}
                 />
+                {/* Warning messages for missing language data */}
+                {(!sourceLanguagesData?.allSourceLanguages ||
+                  sourceLanguagesData.allSourceLanguages.length === 0) && (
+                  <Box
+                    sx={{
+                      p: 2,
+                      mb: 2,
+                      // border: '1px solid #ff9800',
+                      borderRadius: 1,
+                      // bgcolor: '#fff3e0',
+                    }}
+                  >
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <Iconify icon="eva:alert-triangle-fill" sx={{ color: '#ff9800' }} />
+                      <Typography variant="body2" color="warning">
+                        No source languages found. Please add source languages in your database
+                        before configuring default settings.
+                      </Typography>
+                    </Stack>
+                  </Box>
+                )}
+
                 {askSourceLanguage && (
                   <>
                     <TextOrAudioInput
@@ -814,6 +793,26 @@ export default function CallRoutingSetting() {
                     />
                   )}
                 />
+                {(!targetLanguagesData?.allTargetLanguages ||
+                  targetLanguagesData.allTargetLanguages.length === 0) && (
+                  <Box
+                    sx={{
+                      p: 2,
+                      mb: 2,
+                      // border: '1px solid #ff9800',
+                      borderRadius: 1,
+                      // bgcolor: '#fff3e0',
+                    }}
+                  >
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <Iconify icon="eva:alert-triangle-fill" sx={{ color: '#ff9800' }} />
+                      <Typography variant="body2" color="warning">
+                        No target languages found. Please add target languages in your database
+                        before configuring default settings.
+                      </Typography>
+                    </Stack>
+                  </Box>
+                )}
                 {askTargetLanguage && (
                   <>
                     <TextOrAudioInput
