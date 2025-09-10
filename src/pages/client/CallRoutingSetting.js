@@ -33,7 +33,11 @@ import { useSnackbar } from 'notistack';
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 import { useSettingsContext } from '../../components/settings';
 import { PATH_DASHBOARD } from '../../routes/paths';
-import { GET_CALL_ROUTING_SETTING } from '../../graphQL/queries';
+import {
+  GET_CALL_ROUTING_SETTING,
+  ALL_SOURCE_LANGUAGES,
+  ALL_TARGET_LANGUAGES,
+} from '../../graphQL/queries';
 import FormProvider from '../../components/hook-form';
 import { CREATE_UPDATED_ROUTING_SETTING } from '../../graphQL/mutations';
 import { NoPhoneSelected } from './CallReportPage';
@@ -107,6 +111,23 @@ export default function CallRoutingSetting() {
     variables: { phone_number: phone },
     fetchPolicy: 'no-cache',
   });
+
+  // Fetch language data for default language selection
+  const { data: sourceLanguagesData, loading: sourceLanguagesLoading } = useQuery(
+    ALL_SOURCE_LANGUAGES,
+    {
+      variables: { phone_number: phone },
+      fetchPolicy: 'no-cache',
+    }
+  );
+
+  const { data: targetLanguagesData, loading: targetLanguagesLoading } = useQuery(
+    ALL_TARGET_LANGUAGES,
+    {
+      variables: { phone_number: phone },
+      fetchPolicy: 'no-cache',
+    }
+  );
 
   // eslint-disable-next-line no-shadow
   const isPhoneValid = (phone) => {
@@ -185,6 +206,14 @@ export default function CallRoutingSetting() {
       .nullable(),
 
     askSourceLanguage: yup.boolean(),
+    sourceLanguageId: yup
+      .string()
+      .when('askSourceLanguage', {
+        is: false,
+        then: (schema) =>
+          schema.required('Default source language is required when prompting is disabled'),
+      })
+      .nullable(),
 
     // Source Language Prompt
     sourceLanguagePromptMode: yup
@@ -234,6 +263,14 @@ export default function CallRoutingSetting() {
       .nullable(),
 
     askTargetLanguage: yup.boolean(),
+    targetLanguageId: yup
+      .string()
+      .when('askTargetLanguage', {
+        is: false,
+        then: (schema) =>
+          schema.required('Default target language is required when prompting is disabled'),
+      })
+      .nullable(),
 
     // Target Language Prompt
     targetLanguagePromptMode: yup
@@ -385,6 +422,7 @@ export default function CallRoutingSetting() {
         ? data?.getCallRoutingSettings?.callingCodeErrorFile
         : null,
       askSourceLanguage: data?.getCallRoutingSettings?.askSourceLanguage ?? false,
+      sourceLanguageId: data?.getCallRoutingSettings?.sourceLanguageId ?? '',
       sourceLanguagePromptText: data?.getCallRoutingSettings?.sourceLanguagePromptText ?? '',
       sourceLanguagePromptMode: data?.getCallRoutingSettings?.sourceLanguagePromptMode ?? 'text',
       sourceLanguagePromptFile: data?.getCallRoutingSettings?.sourceLanguagePromptFile
@@ -396,6 +434,7 @@ export default function CallRoutingSetting() {
         ? data?.getCallRoutingSettings?.sourceLanguageErrorFile
         : null,
       askTargetLanguage: data?.getCallRoutingSettings?.askTargetLanguage ?? false,
+      targetLanguageId: data?.getCallRoutingSettings?.targetLanguageId ?? '',
       targetLanguagePromptText: data?.getCallRoutingSettings?.targetLanguagePromptText ?? '',
       targetLanguagePromptMode: data?.getCallRoutingSettings?.targetLanguagePromptMode ?? 'text',
       targetLanguagePromptFile: data?.getCallRoutingSettings?.targetLanguagePromptFile
@@ -469,7 +508,9 @@ export default function CallRoutingSetting() {
         language: formData.language,
         enable_code: formData.enableCode,
         askSourceLanguage: formData.askSourceLanguage,
+        sourceLanguageId: formData.sourceLanguageId,
         askTargetLanguage: formData.askTargetLanguage,
+        targetLanguageId: formData.targetLanguageId,
         interpreterCallType: formData.interpreterCallType,
         enableFallback: formData.enableFallback,
         fallbackType: formData.fallbackType,
@@ -648,6 +689,50 @@ export default function CallRoutingSetting() {
               <Typography variant="h6" sx={{ mt: 3 }}>
                 Language Prompt Settings
               </Typography>
+
+              {/* Warning messages for missing language data */}
+              {(!sourceLanguagesData?.allSourceLanguages ||
+                sourceLanguagesData.allSourceLanguages.length === 0) && (
+                <Box
+                  sx={{
+                    p: 2,
+                    mb: 2,
+                    // border: '1px solid #ff9800',
+                    borderRadius: 1,
+                    // bgcolor: '#fff3e0',
+                  }}
+                >
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Iconify icon="eva:alert-triangle-fill" sx={{ color: '#ff9800' }} />
+                    <Typography variant="body2" color="warning">
+                      No source languages found. Please add source languages in your database before
+                      configuring default settings.
+                    </Typography>
+                  </Stack>
+                </Box>
+              )}
+
+              {(!targetLanguagesData?.allTargetLanguages ||
+                targetLanguagesData.allTargetLanguages.length === 0) && (
+                <Box
+                  sx={{
+                    p: 2,
+                    mb: 2,
+                    // border: '1px solid #ff9800',
+                    borderRadius: 1,
+                    // bgcolor: '#fff3e0',
+                  }}
+                >
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Iconify icon="eva:alert-triangle-fill" sx={{ color: '#ff9800' }} />
+                    <Typography variant="body2" color="warning">
+                      No target languages found. Please add target languages in your database before
+                      configuring default settings.
+                    </Typography>
+                  </Stack>
+                </Box>
+              )}
+
               <Stack direction="column" spacing={2}>
                 <Controller
                   name="askSourceLanguage"
@@ -681,6 +766,44 @@ export default function CallRoutingSetting() {
                     />
                   </>
                 )}
+
+                {/* Default Source Language Selection when prompting is disabled */}
+                {!askSourceLanguage && (
+                  <Controller
+                    name="sourceLanguageId"
+                    control={control}
+                    render={({ field }) => (
+                      <Autocomplete
+                        {...field}
+                        options={sourceLanguagesData?.allSourceLanguages || []}
+                        getOptionLabel={(option) => option?.language_name || ''}
+                        value={
+                          sourceLanguagesData?.allSourceLanguages?.find(
+                            (lang) => lang.id === field.value
+                          ) || null
+                        }
+                        onChange={(_, newValue) => {
+                          field.onChange(newValue?.id || '');
+                        }}
+                        loading={sourceLanguagesLoading}
+                        disabled={
+                          !sourceLanguagesData?.allSourceLanguages ||
+                          sourceLanguagesData.allSourceLanguages.length === 0
+                        }
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label="Default Source Language *"
+                            error={!!errors.sourceLanguageId}
+                            helperText={errors.sourceLanguageId?.message}
+                            placeholder="Select a default source language"
+                          />
+                        )}
+                      />
+                    )}
+                  />
+                )}
+
                 <Controller
                   name="askTargetLanguage"
                   control={control}
@@ -712,6 +835,43 @@ export default function CallRoutingSetting() {
                       errors={errors}
                     />
                   </>
+                )}
+
+                {/* Default Target Language Selection when prompting is disabled */}
+                {!askTargetLanguage && (
+                  <Controller
+                    name="targetLanguageId"
+                    control={control}
+                    render={({ field }) => (
+                      <Autocomplete
+                        {...field}
+                        options={targetLanguagesData?.allTargetLanguages || []}
+                        getOptionLabel={(option) => option?.language_name || ''}
+                        value={
+                          targetLanguagesData?.allTargetLanguages?.find(
+                            (lang) => lang.id === field.value
+                          ) || null
+                        }
+                        onChange={(_, newValue) => {
+                          field.onChange(newValue?.id || '');
+                        }}
+                        loading={targetLanguagesLoading}
+                        disabled={
+                          !targetLanguagesData?.allTargetLanguages ||
+                          targetLanguagesData.allTargetLanguages.length === 0
+                        }
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label="Default Target Language *"
+                            error={!!errors.targetLanguageId}
+                            helperText={errors.targetLanguageId?.message}
+                            placeholder="Select a default target language"
+                          />
+                        )}
+                      />
+                    )}
+                  />
                 )}
               </Stack>
 

@@ -472,7 +472,9 @@ export const GET_CALL_ROUTING_SETTING = gql`
       enable_code
       callingCodePromptText
       askSourceLanguage
+      sourceLanguageId
       askTargetLanguage
+      targetLanguageId
       sourceLanguagePromptText
       targetLanguagePromptText
       interpreterCallType
