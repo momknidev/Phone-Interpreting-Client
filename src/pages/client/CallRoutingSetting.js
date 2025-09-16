@@ -108,15 +108,16 @@ export default function CallRoutingSetting() {
   const [updateRoutingSettings, { loading: saving }] = useMutation(CREATE_UPDATED_ROUTING_SETTING);
 
   const { data, loading, error } = useQuery(GET_CALL_ROUTING_SETTING, {
-    variables: { phone_number: phone },
+    variables: { phoneNumberId: phone?.id },
     fetchPolicy: 'no-cache',
+    skip: !phone?.id,
   });
 
   // Fetch language data for default language selection
   const { data: sourceLanguagesData, loading: sourceLanguagesLoading } = useQuery(
     ALL_SOURCE_LANGUAGES,
     {
-      variables: { phone_number: phone },
+      variables: { phoneNumberId: phone?.id },
       fetchPolicy: 'no-cache',
     }
   );
@@ -124,7 +125,7 @@ export default function CallRoutingSetting() {
   const { data: targetLanguagesData, loading: targetLanguagesLoading } = useQuery(
     ALL_TARGET_LANGUAGES,
     {
-      variables: { phone_number: phone },
+      variables: { phoneNumberId: phone?.id },
       fetchPolicy: 'no-cache',
     }
   );
@@ -422,7 +423,7 @@ export default function CallRoutingSetting() {
         ? data?.getCallRoutingSettings?.callingCodeErrorFile
         : null,
       askSourceLanguage: data?.getCallRoutingSettings?.askSourceLanguage ?? false,
-      sourceLanguageId: data?.getCallRoutingSettings?.sourceLanguageId ?? '',
+      sourceLanguageId: data?.getCallRoutingSettings?.sourceLanguageId ?? null,
       sourceLanguagePromptText: data?.getCallRoutingSettings?.sourceLanguagePromptText ?? '',
       sourceLanguagePromptMode: data?.getCallRoutingSettings?.sourceLanguagePromptMode ?? 'text',
       sourceLanguagePromptFile: data?.getCallRoutingSettings?.sourceLanguagePromptFile
@@ -434,7 +435,7 @@ export default function CallRoutingSetting() {
         ? data?.getCallRoutingSettings?.sourceLanguageErrorFile
         : null,
       askTargetLanguage: data?.getCallRoutingSettings?.askTargetLanguage ?? false,
-      targetLanguageId: data?.getCallRoutingSettings?.targetLanguageId ?? '',
+      targetLanguageId: data?.getCallRoutingSettings?.targetLanguageId ?? null,
       targetLanguagePromptText: data?.getCallRoutingSettings?.targetLanguagePromptText ?? '',
       targetLanguagePromptMode: data?.getCallRoutingSettings?.targetLanguagePromptMode ?? 'text',
       targetLanguagePromptFile: data?.getCallRoutingSettings?.targetLanguagePromptFile
@@ -519,7 +520,7 @@ export default function CallRoutingSetting() {
         retryAttempts: formData.retryAttempts,
         digitsTimeOut: formData.digitsTimeOut,
         inputAttemptsCount: formData.inputAttemptsCount,
-        phone_number: phone,
+        phone_number_id: phone?.id,
       };
 
       // Handle text/audio for each field based on mode

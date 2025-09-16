@@ -85,7 +85,7 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
   const { enqueueSnackbar } = useSnackbar();
   const { data, loading } = useQuery(ALL_GROUPS, {
     variables: {
-      phone_number: phone,
+      phoneNumberId: phone?.id,
     },
     fetchPolicy: 'no-cache',
   });
@@ -101,13 +101,13 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
   };
   const { data: languagesData, loading: languagesLoading } = useQuery(ALL_SOURCE_LANGUAGES, {
     variables: {
-      phone_number: phone,
+      phoneNumberId: phone?.id,
     },
     fetchPolicy: 'no-cache',
   });
   const { data: targetLanguage, loading: targetLanguagesLoading } = useQuery(ALL_TARGET_LANGUAGES, {
     variables: {
-      phone_number: phone,
+      phoneNumberId: phone?.id,
     },
     fetchPolicy: 'no-cache',
   });
@@ -303,7 +303,7 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
               groupIDs: data?.group?.map((item) => item.id),
               priority: data?.priority,
               status: 'active',
-              phone_number: phone,
+              phone_number_id: phone?.id,
               sourceLanguages: data?.sourceLanguages?.map((item) => item.id),
               targetLanguages: data?.targetLanguages?.map((item) => item.id),
               ...availabilityData,
@@ -318,7 +318,7 @@ export default function MediatorNewEditForm({ isEdit = false, currentMediator })
               first_name: data?.first_name,
               last_name: data?.last_name,
               email: data?.email,
-              phone_number: phone,
+              phone_number_id: phone?.id,
               phone: data?.phone,
               groupIDs: data?.group?.map((item) => item.id),
               iban: data?.iban,

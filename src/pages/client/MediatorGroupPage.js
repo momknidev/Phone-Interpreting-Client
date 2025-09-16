@@ -93,9 +93,10 @@ export default function MediatorGroupPage() {
       orderBy,
       name: filterName,
       type: 'client',
-      phone_number: phone,
+      phoneNumberId: phone?.id,
     },
     fetchPolicy: 'no-cache',
+    skip: !phone?.id,
   });
 
   const [addGroup, { loading: loadingCreate }] = useMutation(ADD_GROUP, {
@@ -166,7 +167,7 @@ export default function MediatorGroupPage() {
         groupInput: {
           group_name,
           status: groupStatus,
-          phone_number: phone,
+          phone_number_id: phone?.id,
         },
       },
     });
@@ -179,7 +180,7 @@ export default function MediatorGroupPage() {
         groupInput: {
           group_name,
           status: groupStatus,
-          phone_number: phone,
+          phone_number_id: phone?.id,
         },
       },
     });

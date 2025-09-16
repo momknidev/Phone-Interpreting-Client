@@ -21,7 +21,7 @@ export default function MediatorEditPage() {
   const { themeStretch, phone } = useSettingsContext();
   const { id } = useParams();
   const { data, loading, error } = useQuery(MEDIATOR_BY_ID, {
-    variables: { id, phone_number: phone },
+    variables: { id, phoneNumberId: phone?.id },
     fetchPolicy: 'no-cache',
   });
   if (!phone) {

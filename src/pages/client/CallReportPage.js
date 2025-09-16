@@ -71,9 +71,10 @@ export default function CallReportPage() {
       limit: rowsPerPage,
       order,
       orderBy,
-      phone_number: phone || '',
+      phoneNumberId: phone?.id || '',
     },
     fetchPolicy: 'no-cache',
+    skip: !phone?.id,
   });
 
   const handleFilterName = (event) => {

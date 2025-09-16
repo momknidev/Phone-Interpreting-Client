@@ -91,9 +91,10 @@ export default function MediatorListPage() {
       order,
       orderBy,
       name: filterName,
-      phone_number: phone,
+      phoneNumberId: phone?.id,
     },
     fetchPolicy: 'no-cache',
+    skip: !phone?.id,
   });
 
   const handleDeleteRow = async (id) => {

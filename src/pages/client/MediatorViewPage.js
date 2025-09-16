@@ -22,7 +22,7 @@ export default function MediatorViewPage() {
   const { id } = useParams();
   console.log({ id });
   const { data, loading, error } = useQuery(MEDIATOR_BY_ID, {
-    variables: { id, phone_number: phone },
+    variables: { id, phoneNumberId: phone?.id },
     fetchPolicy: 'no-cache',
   });
 

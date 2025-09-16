@@ -51,7 +51,7 @@ export default function MediatorGroupDetailPage() {
   const [openAdd, setOpenAdd] = useState(false);
 
   const { loading, data, error, refetch } = useQuery(GROUP_BY_ID, {
-    variables: { groupByIdId: id, phone_number: phone },
+    variables: { groupByIdId: id, phoneNumberId: phone?.id },
     fetchPolicy: 'no-cache',
   });
 

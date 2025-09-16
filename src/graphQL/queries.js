@@ -75,7 +75,7 @@ export const GROUPS_PAGINATED_LIST = gql`
     $order: String
     $orderBy: String
     $name: String
-    $phone_number: String!
+    $phoneNumberId: ID!
   ) {
     groupsPaginatedList(
       offset: $offset
@@ -83,7 +83,7 @@ export const GROUPS_PAGINATED_LIST = gql`
       order: $order
       orderBy: $orderBy
       name: $name
-      phone_number: $phone_number
+      phone_number_id: $phoneNumberId
     ) {
       filteredCount
       groups {
@@ -100,8 +100,8 @@ export const GROUPS_PAGINATED_LIST = gql`
 `;
 
 export const MEDIATOR_BY_ID = gql`
-  query MediatorById($id: String!, $phone_number: String!) {
-    mediatorById(id: $id, phone_number: $phone_number) {
+  query MediatorById($id: String!, $phoneNumberId: String!) {
+    mediatorById(id: $id, phone_number_id: $phoneNumberId) {
       id
       client_id
       iban
@@ -109,10 +109,8 @@ export const MEDIATOR_BY_ID = gql`
       last_name
       email
       phone
-
       sourceLanguages
       targetLanguages
-
       created_at
       updated_at
       status
@@ -165,7 +163,7 @@ export const MEDIATORS_PAGINATED_LIST = gql`
     $orderBy: String
     $name: String
     $status: String
-    $phone_number: String!
+    $phoneNumberId: String!
   ) {
     mediatorsPaginatedList(
       offset: $offset
@@ -174,7 +172,7 @@ export const MEDIATORS_PAGINATED_LIST = gql`
       orderBy: $orderBy
       name: $name
       status: $status
-      phone_number: $phone_number
+      phone_number_id: $phoneNumberId
     ) {
       filteredCount
       mediators {
@@ -208,8 +206,8 @@ export const MEDIATORS_PAGINATED_LIST = gql`
   }
 `;
 export const ALL_SOURCE_LANGUAGES = gql`
-  query AllLanguages($phone_number: String!) {
-    allSourceLanguages(phone_number: $phone_number) {
+  query AllLanguages($phoneNumberId: ID!) {
+    allSourceLanguages(phone_number_id: $phoneNumberId) {
       id
       language_code
       language_name
@@ -219,8 +217,8 @@ export const ALL_SOURCE_LANGUAGES = gql`
   }
 `;
 export const ALL_TARGET_LANGUAGES = gql`
-  query AllLanguages($phone_number: String!) {
-    allTargetLanguages(phone_number: $phone_number) {
+  query AllLanguages($phoneNumberId: ID!) {
+    allTargetLanguages(phone_number_id: $phoneNumberId) {
       id
       language_code
       language_name
@@ -236,7 +234,7 @@ export const LANGUAGES = gql`
     $order: String
     $orderBy: String
     $search: String
-    $phone_number: String!
+    $phoneNumberId: ID!
   ) {
     sourceLanguages(
       offset: $offset
@@ -244,7 +242,7 @@ export const LANGUAGES = gql`
       order: $order
       orderBy: $orderBy
       search: $search
-      phone_number: $phone_number
+      phone_number_id: $phoneNumberId
     ) {
       filteredCount
       languages {
@@ -265,7 +263,7 @@ export const TARGET_LANGUAGES = gql`
     $order: String
     $orderBy: String
     $search: String
-    $phone_number: String!
+    $phoneNumberId: ID!
   ) {
     targetLanguages(
       offset: $offset
@@ -273,7 +271,7 @@ export const TARGET_LANGUAGES = gql`
       order: $order
       orderBy: $orderBy
       search: $search
-      phone_number: $phone_number
+      phone_number_id: $phoneNumberId
     ) {
       filteredCount
       languages {
@@ -301,8 +299,8 @@ export const LANGUAGE_BY_ID = gql`
 `;
 
 export const ALL_GROUPS = gql`
-  query AllGroups($phone_number: String!) {
-    allGroups(phone_number: $phone_number) {
+  query AllGroups($phoneNumberId: ID!) {
+    allGroups(phone_number_id: $phoneNumberId) {
       id
       group_name
       status
@@ -332,7 +330,7 @@ export const PAGINATED_CLIENT_CODES = gql`
     $order: String
     $orderBy: String
     $search: String
-    $phone_number: String!
+    $phoneNumberId: ID!
   ) {
     clientCodesPaginated(
       offset: $offset
@@ -340,7 +338,7 @@ export const PAGINATED_CLIENT_CODES = gql`
       order: $order
       orderBy: $orderBy
       search: $search
-      phone_number: $phone_number
+      phone_number_id: $phoneNumberId
     ) {
       filteredCount
       clientCodes {
@@ -369,8 +367,8 @@ export const ALL_CLIENT_CODES = gql`
   }
 `;
 export const GROUP_BY_ID = gql`
-  query GroupByID($groupByIdId: String, $phone_number: String!) {
-    groupByID(id: $groupByIdId, phone_number: $phone_number) {
+  query GroupByID($groupByIdId: String, $phoneNumberId: ID!) {
+    groupByID(id: $groupByIdId, phone_number_id: $phoneNumberId) {
       id
       group_name
       status
@@ -383,8 +381,8 @@ export const GROUP_BY_ID = gql`
   }
 `;
 export const MEDIATOR_LIST_BASIC = gql`
-  query MediatorList($phone_number: String!) {
-    mediatorList(phone_number: $phone_number) {
+  query MediatorList($phone_number_id: String!) {
+    mediatorList(phone_number_id: $phone_number_id) {
       first_name
       last_name
       id
@@ -463,11 +461,11 @@ export const PHONE_MEDIATION_PAGINATED_LIST = gql`
   }
 `;
 export const GET_CALL_ROUTING_SETTING = gql`
-  query GetCallRoutingSettings($phone_number: String!) {
-    getCallRoutingSettings(phone_number: $phone_number) {
+  query GetCallRoutingSettings($phoneNumberId: ID!) {
+    getCallRoutingSettings(phone_number_id: $phoneNumberId) {
       id
       client_id
-      phone_number
+      phone_number_id
       enable_code
       callingCodePromptText
       askSourceLanguage

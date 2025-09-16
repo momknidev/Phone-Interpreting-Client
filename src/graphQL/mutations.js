@@ -357,12 +357,12 @@ export const UPDATE_PHONE_MEDIATION = gql`
 
 export const SYNC_TARGET_LANGUAGES = gql`
   mutation SyncLanguagesData($phoneNumber: String!) {
-    syncTargetLanguagesData(phone_number: $phoneNumber)
+    syncTargetLanguagesData(phone_number_id: $phoneNumber)
   }
 `;
 export const SYNC_SOURCE_LANGUAGES = gql`
   mutation SyncLanguagesData($phoneNumber: String!) {
-    syncSourceLanguagesData(phone_number: $phoneNumber)
+    syncSourceLanguagesData(phone_number_id: $phoneNumber)
   }
 `;
 export const CREATE_UPDATED_ROUTING_SETTING = gql`
@@ -370,7 +370,7 @@ export const CREATE_UPDATED_ROUTING_SETTING = gql`
     createOrUpdateCallRoutingSettings(input: $input) {
       id
       client_id
-      phone_number
+      phone_number_id
       enable_code
       callingCodePromptText
       callingCodePromptFile

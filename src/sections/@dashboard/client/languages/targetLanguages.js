@@ -92,7 +92,7 @@ export default function SourceLanguages({ refreshKey }) {
       order,
       orderBy,
       search,
-      phone_number: phone || '',
+      phoneNumberId: phone?.id || '',
     },
     fetchPolicy: 'no-cache',
   });
@@ -158,7 +158,7 @@ export default function SourceLanguages({ refreshKey }) {
           variables: {
             id: currentLanguage.id,
             input: {
-              phone_number: phone,
+              phone_number_id: phone?.id || '',
               language_code: Number(currentLanguage.language_code),
               language_name: currentLanguage.language_name,
             },
@@ -169,7 +169,7 @@ export default function SourceLanguages({ refreshKey }) {
         await createLanguage({
           variables: {
             input: {
-              phone_number: phone,
+              phone_number_id: phone?.id || '',
               language_code: Number(currentLanguage.language_code),
               language_name: currentLanguage.language_name,
             },
