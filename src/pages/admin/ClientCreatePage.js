@@ -19,12 +19,13 @@ export default function ClientCreatePage() {
         <title> Client Create Page | Telephone Mediation App</title>
       </Helmet>
 
-      <Container maxWidth={themeStretch ? false : 'xl'}>
+      <Container maxWidth={themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
           heading="Account"
           links={[
             { name: 'Dashboard', href: PATH_DASHBOARD.adminDashboard },
-            { name: 'New Client Account' },
+            { name: 'Clients', href: PATH_DASHBOARD.adminClients.list },
+            { name: 'New Client' },
           ]}
         />
         <ClientCreateEditForm />

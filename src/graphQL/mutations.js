@@ -421,3 +421,32 @@ export const REQUEST_NUMBER = gql`
     requestNewPhone(description: $description)
   }
 `;
+export const ADD_CLIENT_PHONE = gql`
+  mutation AddClientPhone($clientId: ID!, $input: addClientPhoneInput!) {
+    addClientPhone(clientId: $clientId, input: $input) {
+      id
+      client_id
+      phone
+      label
+      created_at
+      updated_at
+    }
+  }
+`;
+export const UPDATE_CLIENT_PHONE = gql`
+  mutation UpdateClientPhone($updateClientPhoneId: ID!, $input: updateClientPhoneInput!) {
+    updateClientPhone(id: $updateClientPhoneId, input: $input) {
+      id
+      client_id
+      phone
+      label
+      created_at
+      updated_at
+    }
+  }
+`;
+export const DELETE_CLIENT_PHONE = gql`
+  mutation DeleteClientPhone($deleteClientPhoneId: ID!) {
+    deleteClientPhone(id: $deleteClientPhoneId)
+  }
+`;

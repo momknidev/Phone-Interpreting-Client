@@ -32,7 +32,6 @@ export const CLIENT_BY_ID = gql`
       token
       created_at
       updated_at
-      client_phones
       status
     }
   }
@@ -515,6 +514,18 @@ export const GET_CALL_ROUTING_SETTING = gql`
       targetLanguagePromptMode
       welcomeMessageFile
       welcomeMessageMode
+    }
+  }
+`;
+export const CLIENT_PHONES = gql`
+  query ClientPhones($clientId: ID!) {
+    clientPhones(clientId: $clientId) {
+      id
+      client_id
+      phone
+      label
+      created_at
+      updated_at
     }
   }
 `;

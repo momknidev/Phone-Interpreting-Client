@@ -26,7 +26,7 @@ export default function DashboardPage() {
         <title> Admin Dashboard | Telephone Mediation App</title>
       </Helmet>
 
-      <Container maxWidth={themeStretch ? false : 'xl'}>
+      <Container maxWidth={themeStretch ? false : 'lg'}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={12} lg={12}>
             <AppWelcome

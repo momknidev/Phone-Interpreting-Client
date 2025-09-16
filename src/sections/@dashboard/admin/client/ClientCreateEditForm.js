@@ -44,24 +44,13 @@ export default function ClientCreateEditForm({ isEdit = false, currentUser }) {
     last_name: Yup.string().required('Last name is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
     phone: Yup.string()
-
       .required('Phone is required')
       .test('phone-validation', 'Phone number must be valid', (value) => {
         if (!value) return false;
         return isPhoneValid(value);
       })
       .nullable(),
-    phone_list: Yup.array().of(
-      Yup.object().shape({
-        label: Yup.string().required('Label is required'),
-        phone: Yup.string()
-          .required('Phone is required')
-          .test('phone-validation', 'Phone number must be valid', (value) => {
-            if (!value) return false;
-            return isPhoneValid(value);
-          }),
-      })
-    ),
+
     password: isEdit
       ? Yup.string()
           .nullable()
@@ -100,7 +89,6 @@ export default function ClientCreateEditForm({ isEdit = false, currentUser }) {
       phone: currentUser?.phone || null,
       email: currentUser?.email || '',
       password: '',
-      phone_list: currentUser?.client_phones || [],
     }),
     [currentUser]
   );
@@ -120,11 +108,6 @@ export default function ClientCreateEditForm({ isEdit = false, currentUser }) {
     formState: { isSubmitting, errors },
   } = methods;
   const values = watch();
-  console.log('Form Values:', values, 'Errors', errors);
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'phone_list',
-  });
 
   const onSubmit = async (data) => {
     try {
@@ -135,11 +118,7 @@ export default function ClientCreateEditForm({ isEdit = false, currentUser }) {
           email: data.email,
           role: 'client',
           phone: data.phone,
-          phoneList:
-            data.phone_list?.map((item) => ({
-              label: item.label,
-              phone: item.phone,
-            })) || [],
+
           type: 'client',
           ...(data.password && { password: data.password }),
         },
@@ -254,73 +233,6 @@ export default function ClientCreateEditForm({ isEdit = false, currentUser }) {
                 label={isEdit ? 'New Password (Optional)' : 'Password'}
                 type="password"
               />
-            </Box>
-
-            <Box sx={{ mt: 4 }}>
-              <Stack direction="row" spacing={2} justifyContent="space-between">
-                <Typography variant="subtitle1" gutterBottom>
-                  Client Phone Numbers
-                </Typography>
-
-                <Button
-                  variant="contained"
-                  color="success"
-                  startIcon={<Iconify icon="eva:plus-fill" />}
-                  onClick={() => append({ label: '', phone: '' })}
-                >
-                  Add Phone
-                </Button>
-              </Stack>
-              <Stack spacing={2}>
-                {fields.map((item, index) => (
-                  <Grid container key={item.id}>
-                    <Grid item xs={12} sm={12} md={12}>
-                      <Stack direction="row" spacing={2} alignItems="center">
-                        <Stack direction="row" spacing={2} flexGrow={1}>
-                          <RHFTextField name={`phone_list.${index}.label`} label="Label" />
-
-                          <div style={{ minWidth: 300 }}>
-                            <PhoneInput
-                              defaultCountry="it"
-                              inputStyle={{
-                                width: '100%',
-                                height: '56px',
-                                borderRadius: '4px',
-                                border: '1px solid #ced4da',
-                                padding: '10px 12px',
-                                fontSize: '16px',
-                                boxSizing: 'border-box',
-                              }}
-                              buttonStyle={{
-                                height: '56px',
-                              }}
-                              value={values?.phone_list[index]?.phone ?? ''}
-                              onChange={(phone) => {
-                                setValue(`phone_list.${index}.phone`, phone, { shouldDirty: true });
-                              }}
-                              onBlur={() => {
-                                trigger(`phone_list.${index}.phone`);
-                              }}
-                            />
-                            {Array.isArray(errors.phone_list) &&
-                              errors.phone_list[index] &&
-                              errors.phone_list[index].phone && (
-                                <Typography variant="caption" color="error">
-                                  {errors.phone_list[index].phone.message}
-                                </Typography>
-                              )}
-                          </div>
-                        </Stack>
-                        <Stack direction="row" spacing={2} flexGrow={1}>
-                          <IconButton color="error" onClick={() => remove(index)}>
-                            <Iconify icon="eva:trash-2-outline" />
-                          </IconButton>
-                        </Stack>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                ))}
-              </Stack>
             </Box>
 
             <Stack alignItems="center" sx={{ mt: 4 }}>

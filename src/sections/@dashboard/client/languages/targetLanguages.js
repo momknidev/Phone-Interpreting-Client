@@ -170,7 +170,6 @@ export default function SourceLanguages({ refreshKey }) {
           variables: {
             input: {
               phone_number: phone,
-
               language_code: Number(currentLanguage.language_code),
               language_name: currentLanguage.language_name,
             },

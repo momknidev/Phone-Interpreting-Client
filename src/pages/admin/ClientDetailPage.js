@@ -8,10 +8,6 @@ import {
   Grid,
   Card,
   CardContent,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
   Button,
 } from '@mui/material';
 import { useParams } from 'react-router';
@@ -24,12 +20,14 @@ import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 import { PATH_DASHBOARD } from '../../routes/paths';
 import { CLIENT_BY_ID } from '../../graphQL/queries';
 import Iconify from '../../components/iconify';
+import PhoneList from '../../sections/@dashboard/admin/client/PhoneList';
 
 // ----------------------------------------------------------------------
 
 export default function ClientDetailPage() {
   const { themeStretch } = useSettingsContext();
   const { id } = useParams();
+
   const { data, loading, error } = useQuery(CLIENT_BY_ID, {
     variables: { id },
     fetchPolicy: 'no-cache',
@@ -43,7 +41,7 @@ export default function ClientDetailPage() {
         <title>Client Detail Page | Telephone Mediation App</title>
       </Helmet>
 
-      <Container maxWidth={themeStretch ? false : 'xl'}>
+      <Container maxWidth={themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
           heading="Account"
           links={[
@@ -84,60 +82,23 @@ export default function ClientDetailPage() {
                     <Typography variant="h4" gutterBottom>
                       {client.first_name} {client.last_name}
                     </Typography>
-
                     <Typography variant="body1" sx={{ mb: 1 }}>
                       <strong>Email:</strong> {client.email}
                     </Typography>
-
                     <Typography variant="body1" sx={{ mb: 1 }}>
                       <strong>Personal Phone:</strong> {client.phone}
                     </Typography>
-
                     <Typography variant="body1" sx={{ mb: 1 }}>
                       <strong>Status:</strong> {client.status}
                     </Typography>
-
                     <Typography variant="body1" sx={{ mb: 1 }}>
                       <strong>Created:</strong>{' '}
                       {new Date(Number(client.created_at)).toLocaleString()}
-                    </Typography>
+                    </Typography>{' '}
+                    <PhoneList />
                   </CardContent>
-                </Card>
+                </Card>{' '}
               </Grid>
-
-              {client.client_phones?.length > 0 && (
-                <Grid item xs={12}>
-                  <Card elevation={3}>
-                    <CardContent>
-                      <Typography variant="h6" sx={{ mb: 2 }}>
-                        Phone Numbers List
-                      </Typography>
-
-                      <List disablePadding>
-                        {client.client_phones.map((phone) => (
-                          <Box key={phone.id}>
-                            <ListItem>
-                              <ListItemText
-                                primary={
-                                  <Typography variant="body2">
-                                    <strong>Label:</strong> {phone.label}
-                                  </Typography>
-                                }
-                                secondary={
-                                  <Typography variant="body2">
-                                    <strong>Phone:</strong> {phone.phone}
-                                  </Typography>
-                                }
-                              />
-                            </ListItem>
-                            <Divider />
-                          </Box>
-                        ))}
-                      </List>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              )}
             </Grid>
           )}
         </Box>
