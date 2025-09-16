@@ -108,8 +108,6 @@ export function PhonePopover() {
               backgroundColor: 'white',
               transition: 'all 0.2s ease',
               '&.Mui-selected': {
-                // borderColor: (theme) => theme.palette.primary.main,
-                // color: (theme) => theme.palette.primary.main,
                 border: '2px solid green',
                 boxShadow: (theme) =>
                   `0 2px 8px ${theme.palette.primary.main}40, 0 4px 12px ${theme.palette.primary.main}20`,
@@ -122,8 +120,8 @@ export function PhonePopover() {
         >
           {user?.client_phones?.map((item) => (
             <ToggleButton
-              key={item.phone}
-              value={item.phone}
+              key={item.id}
+              value={item}
               sx={{
                 textTransform: 'none',
               }}

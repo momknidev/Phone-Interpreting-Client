@@ -427,7 +427,7 @@ export const PHONE_MEDIATION_PAGINATED_LIST = gql`
     $order: String
     $orderBy: String
     $search: String
-    $phone_number: String!
+    $phoneNumberId: ID!
   ) {
     phoneMediationPaginatedList(
       offset: $offset
@@ -435,7 +435,7 @@ export const PHONE_MEDIATION_PAGINATED_LIST = gql`
       order: $order
       orderBy: $orderBy
       search: $search
-      phone_number: $phone_number
+      phone_number_id: $phoneNumberId
     ) {
       filteredCount
       callReports {

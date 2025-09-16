@@ -72,7 +72,7 @@ export default function AuthLoginForm() {
         await login(token);
         const user = jwtDecode(token);
         console.log('User:', user);
-        onChangePhone(user?.client_phones[0]?.phone);
+        onChangePhone(user?.client_phones[0]);
         reset();
       } else {
         setError('afterSubmit', {
