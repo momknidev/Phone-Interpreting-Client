@@ -512,6 +512,10 @@ export const GET_CALL_ROUTING_SETTING = gql`
       targetLanguagePromptMode
       welcomeMessageFile
       welcomeMessageMode
+      enableCallType
+      callTypePromptText
+      callTypePromptFile
+      callTypePromptMode
     }
   }
 `;

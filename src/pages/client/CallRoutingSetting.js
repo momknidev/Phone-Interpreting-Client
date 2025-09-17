@@ -401,6 +401,30 @@ export default function CallRoutingSetting() {
         then: (schema) => schema.required('Input attempts audio file is required'),
       })
       .nullable(),
+
+    // Call Type
+    enableCallType: yup.boolean(),
+    callTypePromptMode: yup
+      .string()
+      .when('enableCallType', {
+        is: true,
+        then: (schema) => schema.oneOf(['text', 'audio']).required(),
+      })
+      .nullable(),
+    callTypePromptText: yup
+      .string()
+      .when(['enableCallType', 'callTypePromptMode'], {
+        is: (enableCallType, mode) => enableCallType && mode === 'text',
+        then: (schema) => schema.required('Call type prompt message is required'),
+      })
+      .nullable(),
+    callTypePromptFile: yup
+      .mixed()
+      .when(['enableCallType', 'callTypePromptMode'], {
+        is: (enableCallType, mode) => enableCallType && mode === 'audio',
+        then: (schema) => schema.required('Call type prompt audio file is required'),
+      })
+      .nullable(),
   });
 
   const defaultValues = useMemo(
@@ -469,6 +493,12 @@ export default function CallRoutingSetting() {
       inputAttemptsFile: data?.getCallRoutingSettings?.inputAttemptsFile
         ? data?.getCallRoutingSettings?.inputAttemptsFile
         : null,
+      enableCallType: data?.getCallRoutingSettings?.enableCallType ?? false,
+      callTypePromptMode: data?.getCallRoutingSettings?.callTypePromptMode ?? 'text',
+      callTypePromptText: data?.getCallRoutingSettings?.callTypePromptText ?? '',
+      callTypePromptFile: data?.getCallRoutingSettings?.callTypePromptFile
+        ? data?.getCallRoutingSettings?.callTypePromptFile
+        : null,
     }),
     [data]
   );
@@ -496,6 +526,7 @@ export default function CallRoutingSetting() {
   const askSourceLanguage = watch('askSourceLanguage');
   const askTargetLanguage = watch('askTargetLanguage');
   const enableFallback = watch('enableFallback');
+  const enableCallType = watch('enableCallType');
 
   useEffect(() => {
     if (data?.getCallRoutingSettings) {
@@ -520,6 +551,7 @@ export default function CallRoutingSetting() {
         retryAttempts: formData.retryAttempts,
         digitsTimeOut: formData.digitsTimeOut,
         inputAttemptsCount: formData.inputAttemptsCount,
+        enableCallType: formData.enableCallType,
         phone_number_id: phone?.id,
       };
 
@@ -535,6 +567,7 @@ export default function CallRoutingSetting() {
         'creditError',
         'noAnswerMessage',
         'inputAttempts',
+        'callTypePrompt',
       ];
 
       messageFields.forEach((field) => {
@@ -685,11 +718,39 @@ export default function CallRoutingSetting() {
                   </>
                 )}
               </Stack>
+            </Card>
 
-              {/* Section 2: Language Prompts */}
-              <Typography variant="h6" sx={{ mt: 3 }}>
-                Language Prompt Settings
-              </Typography>
+            {/* Section 2: Call Type */}
+            <Card sx={{ p: 3 }}>
+              <Stack direction="column" spacing={2}>
+                <Typography variant="h6">Call Type Settings</Typography>
+                <Controller
+                  name="enableCallType"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControlLabel
+                      control={<Switch {...field} checked={field.value} />}
+                      label="Enable Call Type Prompt"
+                    />
+                  )}
+                />
+                {enableCallType && (
+                  <TextOrAudioInput
+                    values={values}
+                    control={control}
+                    fieldName="callTypePrompt"
+                    label="Call Type Prompt Message"
+                    placeholder="Enter the message to prompt for call type selection"
+                    required
+                    errors={errors}
+                  />
+                )}
+              </Stack>
+            </Card>
+
+            {/* Section 3: Language Prompts */}
+            <Card sx={{ p: 3 }}>
+              <Typography variant="h6">Language Prompt Settings</Typography>
 
               <Stack direction="column" spacing={2}>
                 <Controller
@@ -875,7 +936,7 @@ export default function CallRoutingSetting() {
                 )}
               </Stack>
 
-              {/* Section 3: Call Algorithm */}
+              {/* Section 4: Call Algorithm */}
               <Typography variant="h6" sx={{ mt: 3 }}>
                 Call Settings
               </Typography>
@@ -948,7 +1009,7 @@ export default function CallRoutingSetting() {
                 />
               </Stack>
 
-              {/* Section 3.5: Input Attempts Error Message */}
+              {/* Section 4.5: Input Attempts Error Message */}
               <Typography variant="h6" sx={{ mt: 3 }}>
                 Invalid/Retry Input Handling
               </Typography>
@@ -964,7 +1025,7 @@ export default function CallRoutingSetting() {
                 />
               </Stack>
 
-              {/* Section 4: Error Messages */}
+              {/* Section 5: Error Messages */}
               <Stack direction="column" pt={3} spacing={2}>
                 <TextOrAudioInput
                   values={values}
@@ -977,7 +1038,7 @@ export default function CallRoutingSetting() {
                 />
               </Stack>
 
-              {/* Section 5: Fallback */}
+              {/* Section 6: Fallback */}
               <Typography variant="h6" sx={{ mt: 3 }}>
                 Fallback Settings
               </Typography>
