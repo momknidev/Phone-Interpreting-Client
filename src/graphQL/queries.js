@@ -513,9 +513,22 @@ export const GET_CALL_ROUTING_SETTING = gql`
       welcomeMessageFile
       welcomeMessageMode
       enableCallType
+      defaultCallType
       callTypePromptText
       callTypePromptFile
       callTypePromptMode
+      callTypeErrorText
+      callTypeErrorFile
+      callTypeErrorMode
+      askThirdPartyNumber
+      defaultThirdPartyNumber
+      thirdPartyNumberPromptText
+      thirdPartyNumberPromptFile
+      thirdPartyNumberPromptMode
+      thirdPartyNumberErrorText
+      thirdPartyNumberErrorFile
+      thirdPartyNumberErrorMode
+      skipThirdPartyNumber
     }
   }
 `;

@@ -404,6 +404,14 @@ export default function CallRoutingSetting() {
 
     // Call Type
     enableCallType: yup.boolean(),
+    defaultCallType: yup
+      .string()
+      .when('enableCallType', {
+        is: false,
+        then: (schema) =>
+          schema.oneOf(['1', '2']).required('Default call type selection is required'),
+      })
+      .nullable(),
     callTypePromptMode: yup
       .string()
       .when('enableCallType', {
@@ -425,6 +433,124 @@ export default function CallRoutingSetting() {
         then: (schema) => schema.required('Call type prompt audio file is required'),
       })
       .nullable(),
+    callTypeErrorMode: yup
+      .string()
+      .when('enableCallType', {
+        is: true,
+        then: (schema) => schema.oneOf(['text', 'audio']).required(),
+      })
+      .nullable(),
+    callTypeErrorText: yup
+      .string()
+      .when(['enableCallType', 'callTypeErrorMode'], {
+        is: (enableCallType, mode) => enableCallType && mode === 'text',
+        then: (schema) => schema.required('Call type error message is required'),
+      })
+      .nullable(),
+    callTypeErrorFile: yup
+      .mixed()
+      .when(['enableCallType', 'callTypeErrorMode'], {
+        is: (enableCallType, mode) => enableCallType && mode === 'audio',
+        then: (schema) => schema.required('Call type error audio file is required'),
+      })
+      .nullable(),
+    askThirdPartyNumber: yup.boolean(),
+    defaultThirdPartyNumber: yup
+      .string()
+      .when(['enableCallType', 'defaultCallType', 'askThirdPartyNumber'], {
+        is: (enableCallType, defaultCallType, askThirdPartyNumber) =>
+          (!enableCallType && defaultCallType === '1' && !askThirdPartyNumber) ||
+          (enableCallType && !askThirdPartyNumber),
+        then: (schema) =>
+          schema
+            .required('Default third party number is required')
+            .test('phone-validation', 'Phone number must be valid', (value) => {
+              if (!value) return false;
+              return isPhoneValid(value);
+            }),
+      })
+      .when(['enableCallType', 'askThirdPartyNumber'], {
+        is: (enableCallType, askThirdPartyNumber) => enableCallType && !askThirdPartyNumber,
+        then: (schema) =>
+          schema
+            .required('Default third party number is required')
+            .test('phone-validation', 'Phone number must be valid', (value) => {
+              if (!value) return false;
+              return isPhoneValid(value);
+            }),
+      })
+      .nullable(),
+    thirdPartyNumberPromptMode: yup
+      .string()
+      .when(['enableCallType', 'defaultCallType', 'askThirdPartyNumber'], {
+        is: (enableCallType, defaultCallType, askThirdPartyNumber) =>
+          (!enableCallType && defaultCallType === '1' && askThirdPartyNumber) ||
+          (enableCallType && askThirdPartyNumber),
+        then: (schema) => schema.oneOf(['text', 'audio']).required(),
+      })
+      .nullable(),
+    thirdPartyNumberPromptText: yup
+      .string()
+      .when(
+        ['enableCallType', 'defaultCallType', 'askThirdPartyNumber', 'thirdPartyNumberPromptMode'],
+        {
+          is: (enableCallType, defaultCallType, askThirdPartyNumber, mode) =>
+            ((!enableCallType && defaultCallType === '1' && askThirdPartyNumber) ||
+              (enableCallType && askThirdPartyNumber)) &&
+            mode === 'text',
+          then: (schema) => schema.required('Third party number prompt message is required'),
+        }
+      )
+      .nullable(),
+    thirdPartyNumberPromptFile: yup
+      .mixed()
+      .when(
+        ['enableCallType', 'defaultCallType', 'askThirdPartyNumber', 'thirdPartyNumberPromptMode'],
+        {
+          is: (enableCallType, defaultCallType, askThirdPartyNumber, mode) =>
+            ((!enableCallType && defaultCallType === '1' && askThirdPartyNumber) ||
+              (enableCallType && askThirdPartyNumber)) &&
+            mode === 'audio',
+          then: (schema) => schema.required('Third party number prompt audio file is required'),
+        }
+      )
+      .nullable(),
+    thirdPartyNumberErrorMode: yup
+      .string()
+      .when(['enableCallType', 'defaultCallType', 'askThirdPartyNumber'], {
+        is: (enableCallType, defaultCallType, askThirdPartyNumber) =>
+          (!enableCallType && defaultCallType === '1' && askThirdPartyNumber) ||
+          (enableCallType && askThirdPartyNumber),
+        then: (schema) => schema.oneOf(['text', 'audio']).required(),
+      })
+      .nullable(),
+    thirdPartyNumberErrorText: yup
+      .string()
+      .when(
+        ['enableCallType', 'defaultCallType', 'askThirdPartyNumber', 'thirdPartyNumberErrorMode'],
+        {
+          is: (enableCallType, defaultCallType, askThirdPartyNumber, mode) =>
+            ((!enableCallType && defaultCallType === '1' && askThirdPartyNumber) ||
+              (enableCallType && askThirdPartyNumber)) &&
+            mode === 'text',
+          then: (schema) => schema.required('Third party number error message is required'),
+        }
+      )
+      .nullable(),
+    thirdPartyNumberErrorFile: yup
+      .mixed()
+      .when(
+        ['enableCallType', 'defaultCallType', 'askThirdPartyNumber', 'thirdPartyNumberErrorMode'],
+        {
+          is: (enableCallType, defaultCallType, askThirdPartyNumber, mode) =>
+            ((!enableCallType && defaultCallType === '1' && askThirdPartyNumber) ||
+              (enableCallType && askThirdPartyNumber)) &&
+            mode === 'audio',
+          then: (schema) => schema.required('Third party number error audio file is required'),
+        }
+      )
+      .nullable(),
+    skipThirdPartyNumber: yup.boolean(),
   });
 
   const defaultValues = useMemo(
@@ -494,11 +620,31 @@ export default function CallRoutingSetting() {
         ? data?.getCallRoutingSettings?.inputAttemptsFile
         : null,
       enableCallType: data?.getCallRoutingSettings?.enableCallType ?? false,
+      defaultCallType: data?.getCallRoutingSettings?.defaultCallType ?? '1',
       callTypePromptMode: data?.getCallRoutingSettings?.callTypePromptMode ?? 'text',
       callTypePromptText: data?.getCallRoutingSettings?.callTypePromptText ?? '',
       callTypePromptFile: data?.getCallRoutingSettings?.callTypePromptFile
         ? data?.getCallRoutingSettings?.callTypePromptFile
         : null,
+      callTypeErrorMode: data?.getCallRoutingSettings?.callTypeErrorMode ?? 'text',
+      callTypeErrorText: data?.getCallRoutingSettings?.callTypeErrorText ?? '',
+      callTypeErrorFile: data?.getCallRoutingSettings?.callTypeErrorFile
+        ? data?.getCallRoutingSettings?.callTypeErrorFile
+        : null,
+      askThirdPartyNumber: data?.getCallRoutingSettings?.askThirdPartyNumber ?? false,
+      defaultThirdPartyNumber: data?.getCallRoutingSettings?.defaultThirdPartyNumber ?? '',
+      thirdPartyNumberPromptMode:
+        data?.getCallRoutingSettings?.thirdPartyNumberPromptMode ?? 'text',
+      thirdPartyNumberPromptText: data?.getCallRoutingSettings?.thirdPartyNumberPromptText ?? '',
+      thirdPartyNumberPromptFile: data?.getCallRoutingSettings?.thirdPartyNumberPromptFile
+        ? data?.getCallRoutingSettings?.thirdPartyNumberPromptFile
+        : null,
+      thirdPartyNumberErrorMode: data?.getCallRoutingSettings?.thirdPartyNumberErrorMode ?? 'text',
+      thirdPartyNumberErrorText: data?.getCallRoutingSettings?.thirdPartyNumberErrorText ?? '',
+      thirdPartyNumberErrorFile: data?.getCallRoutingSettings?.thirdPartyNumberErrorFile
+        ? data?.getCallRoutingSettings?.thirdPartyNumberErrorFile
+        : null,
+      skipThirdPartyNumber: data?.getCallRoutingSettings?.skipThirdPartyNumber ?? false,
     }),
     [data]
   );
@@ -527,6 +673,8 @@ export default function CallRoutingSetting() {
   const askTargetLanguage = watch('askTargetLanguage');
   const enableFallback = watch('enableFallback');
   const enableCallType = watch('enableCallType');
+  const defaultCallType = watch('defaultCallType');
+  const askThirdPartyNumber = watch('askThirdPartyNumber');
 
   useEffect(() => {
     if (data?.getCallRoutingSettings) {
@@ -552,7 +700,11 @@ export default function CallRoutingSetting() {
         digitsTimeOut: formData.digitsTimeOut,
         inputAttemptsCount: formData.inputAttemptsCount,
         enableCallType: formData.enableCallType,
+        defaultCallType: formData.defaultCallType,
+        askThirdPartyNumber: formData.askThirdPartyNumber,
+        defaultThirdPartyNumber: formData.defaultThirdPartyNumber,
         phone_number_id: phone?.id,
+        skipThirdPartyNumber: formData.skipThirdPartyNumber,
       };
 
       // Handle text/audio for each field based on mode
@@ -568,6 +720,9 @@ export default function CallRoutingSetting() {
         'noAnswerMessage',
         'inputAttempts',
         'callTypePrompt',
+        'callTypeError',
+        'thirdPartyNumberPrompt',
+        'thirdPartyNumberError',
       ];
 
       messageFields.forEach((field) => {
@@ -734,17 +889,151 @@ export default function CallRoutingSetting() {
                     />
                   )}
                 />
+
+                {/* When Call Type Prompt is ENABLED */}
                 {enableCallType && (
-                  <TextOrAudioInput
-                    values={values}
+                  <>
+                    <TextOrAudioInput
+                      values={values}
+                      control={control}
+                      fieldName="callTypePrompt"
+                      label="Call Type Prompt Message"
+                      placeholder="Enter the message to prompt for call type selection"
+                      required
+                      errors={errors}
+                    />
+                    <TextOrAudioInput
+                      values={values}
+                      control={control}
+                      fieldName="callTypeError"
+                      label="Call Type Error Message"
+                      placeholder="Enter the error message for invalid call type selection"
+                      required
+                      errors={errors}
+                    />
+                  </>
+                )}
+
+                {/* When Call Type Prompt is DISABLED - Show Default Call Type Selection */}
+                {!enableCallType && (
+                  <Controller
+                    name="defaultCallType"
                     control={control}
-                    fieldName="callTypePrompt"
-                    label="Call Type Prompt Message"
-                    placeholder="Enter the message to prompt for call type selection"
-                    required
-                    errors={errors}
+                    render={({ field }) => (
+                      <FormControl error={!!errors.defaultCallType}>
+                        <FormLabel>Default Call Type *</FormLabel>
+                        <RadioGroup row {...field}>
+                          <FormControlLabel
+                            value="2"
+                            control={<Radio />}
+                            label="Interpreter Only"
+                          />
+                          <FormControlLabel value="1" control={<Radio />} label="Three Way Call" />
+                        </RadioGroup>
+                        {errors.defaultCallType && (
+                          <Typography variant="caption" color="error">
+                            {errors.defaultCallType.message}
+                          </Typography>
+                        )}
+                      </FormControl>
+                    )}
                   />
                 )}
+
+                {/* Third Party Number Settings - Show when Three Way Call is selected (either enabled or default) */}
+                {(enableCallType || (!enableCallType && defaultCallType === '1')) && (
+                  <>
+                    <Typography variant="subtitle1" sx={{ mt: 2 }}>
+                      Third Party Number Settings
+                    </Typography>
+                    <Controller
+                      name="askThirdPartyNumber"
+                      control={control}
+                      render={({ field }) => (
+                        <FormControlLabel
+                          control={<Switch {...field} checked={field.value} />}
+                          label="Enable Third Party Number Prompt"
+                        />
+                      )}
+                    />
+
+                    {/* When Third Party Prompt is ENABLED */}
+                    {askThirdPartyNumber && (
+                      <>
+                        <TextOrAudioInput
+                          values={values}
+                          control={control}
+                          fieldName="thirdPartyNumberPrompt"
+                          label="Third Party Number Prompt"
+                          placeholder="Enter the message to prompt for third party number"
+                          required
+                          errors={errors}
+                        />
+                        <TextOrAudioInput
+                          values={values}
+                          control={control}
+                          fieldName="thirdPartyNumberError"
+                          label="Third Party Number Error Message"
+                          placeholder="Enter the error message for invalid third party number"
+                          required
+                          errors={errors}
+                        />
+                      </>
+                    )}
+
+                    {/* When Third Party Prompt is DISABLED - Show Default Phone Number Field */}
+                    {!askThirdPartyNumber && (
+                      <Controller
+                        name="defaultThirdPartyNumber"
+                        control={control}
+                        render={({ field }) => (
+                          <Stack spacing={1}>
+                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                              Default Third Party Number *
+                            </Typography>
+                            <PhoneInput
+                              defaultCountry="it"
+                              inputStyle={{
+                                width: '100%',
+                                height: '56px',
+                                borderRadius: '4px',
+                                border: '1px solid #ced4da',
+                                padding: '10px 12px',
+                                fontSize: '16px',
+                                boxSizing: 'border-box',
+                              }}
+                              buttonStyle={{
+                                height: '56px',
+                              }}
+                              value={field.value}
+                              onChange={(val) =>
+                                setValue('defaultThirdPartyNumber', val, { shouldDirty: true })
+                              }
+                              onBlur={() => trigger('defaultThirdPartyNumber')}
+                            />
+                            {errors.defaultThirdPartyNumber && (
+                              <Typography variant="caption" color="error">
+                                {errors.defaultThirdPartyNumber.message}
+                              </Typography>
+                            )}
+                          </Stack>
+                        )}
+                      />
+                    )}
+                  </>
+                )}
+
+                {/* Skip Third Party Number Option */}
+                <Controller
+                  name="skipThirdPartyNumber"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControlLabel
+                      control={<Switch {...field} checked={field.value} />}
+                      label="Skip Third Party Number If not connected"
+                    />
+                  )}
+                />
               </Stack>
             </Card>
 
