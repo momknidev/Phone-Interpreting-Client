@@ -402,7 +402,17 @@ export default function CallRoutingSetting() {
       })
       .nullable(),
 
-    // Call Type
+    // Call Type - Controls three-way calling vs interpreter-only calls
+    // Logic flow:
+    // 1. If enableCallType = false, use defaultCallType:
+    //    - If defaultCallType = '2': Normal interpreter call (current behavior)
+    //    - If defaultCallType = '1': Three-way call, check askThirdPartyNumber:
+    //      * If askThirdPartyNumber = false: Use defaultThirdPartyNumber
+    //      * If askThirdPartyNumber = true: Prompt for third party number
+    // 2. If enableCallType = true, ask user to choose:
+    //    - User enters '1': Three-way call (same logic as above for third party)
+    //    - User enters '2': Normal interpreter call
+    // 3. skipThirdPartyNumber: Controls whether to skip third party connection
     enableCallType: yup.boolean(),
     defaultCallType: yup
       .string()
@@ -469,11 +479,11 @@ export default function CallRoutingSetting() {
               return isPhoneValid(value);
             }),
       })
-      .when(['enableCallType', 'askThirdPartyNumber'], {
-        is: (enableCallType, askThirdPartyNumber) => enableCallType && !askThirdPartyNumber,
+      .when(['enableCallType', 'defaultCallType'], {
+        is: (enableCallType, defaultCallType) => !enableCallType && defaultCallType === '1',
         then: (schema) =>
           schema
-            .required('Default third party number is required')
+            .required('Default third party number is required for three-way calls')
             .test('phone-validation', 'Phone number must be valid', (value) => {
               if (!value) return false;
               return isPhoneValid(value);
@@ -619,7 +629,7 @@ export default function CallRoutingSetting() {
       inputAttemptsFile: data?.getCallRoutingSettings?.inputAttemptsFile
         ? data?.getCallRoutingSettings?.inputAttemptsFile
         : null,
-      enableCallType: data?.getCallRoutingSettings?.enableCallType ?? false,
+      enableCallType: data?.getCallRoutingSettings?.enableCallType ?? true,
       defaultCallType: data?.getCallRoutingSettings?.defaultCallType ?? '1',
       callTypePromptMode: data?.getCallRoutingSettings?.callTypePromptMode ?? 'text',
       callTypePromptText: data?.getCallRoutingSettings?.callTypePromptText ?? '',
@@ -631,8 +641,8 @@ export default function CallRoutingSetting() {
       callTypeErrorFile: data?.getCallRoutingSettings?.callTypeErrorFile
         ? data?.getCallRoutingSettings?.callTypeErrorFile
         : null,
-      askThirdPartyNumber: data?.getCallRoutingSettings?.askThirdPartyNumber ?? false,
-      defaultThirdPartyNumber: data?.getCallRoutingSettings?.defaultThirdPartyNumber ?? '',
+      askThirdPartyNumber: data?.getCallRoutingSettings?.askThirdPartyNumber ?? true,
+      defaultThirdPartyNumber: data?.getCallRoutingSettings?.defaultThirdPartyNumber ?? '+39',
       thirdPartyNumberPromptMode:
         data?.getCallRoutingSettings?.thirdPartyNumberPromptMode ?? 'text',
       thirdPartyNumberPromptText: data?.getCallRoutingSettings?.thirdPartyNumberPromptText ?? '',
@@ -640,11 +650,11 @@ export default function CallRoutingSetting() {
         ? data?.getCallRoutingSettings?.thirdPartyNumberPromptFile
         : null,
       thirdPartyNumberErrorMode: data?.getCallRoutingSettings?.thirdPartyNumberErrorMode ?? 'text',
-      thirdPartyNumberErrorText: data?.getCallRoutingSettings?.thirdPartyNumberErrorText ?? '',
+      thirdPartyNumberErrorText: data?.getCallRoutingSettings?.thirdPartyNumberErrorText ?? ' ',
       thirdPartyNumberErrorFile: data?.getCallRoutingSettings?.thirdPartyNumberErrorFile
         ? data?.getCallRoutingSettings?.thirdPartyNumberErrorFile
         : null,
-      skipThirdPartyNumber: data?.getCallRoutingSettings?.skipThirdPartyNumber ?? false,
+      skipThirdPartyNumber: data?.getCallRoutingSettings?.skipThirdPartyNumber ?? true,
     }),
     [data]
   );

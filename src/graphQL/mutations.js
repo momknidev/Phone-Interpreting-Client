@@ -411,6 +411,23 @@ export const CREATE_UPDATED_ROUTING_SETTING = gql`
       welcomeMessageFile
       welcomeMessageMode
       language
+      enableCallType
+      defaultCallType
+      callTypePromptText
+      callTypePromptFile
+      callTypePromptMode
+      callTypeErrorText
+      callTypeErrorFile
+      callTypeErrorMode
+      askThirdPartyNumber
+      thirdPartyNumberPromptText
+      thirdPartyNumberPromptFile
+      thirdPartyNumberPromptMode
+      thirdPartyNumberErrorText
+      thirdPartyNumberErrorFile
+      thirdPartyNumberErrorMode
+      defaultThirdPartyNumber
+      skipThirdPartyNumber
       createdAt
       updatedAt
     }
