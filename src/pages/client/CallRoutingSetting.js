@@ -1030,20 +1030,19 @@ export default function CallRoutingSetting() {
                         )}
                       />
                     )}
+                    {/* Skip Third Party Number Option */}
+                    <Controller
+                      name="skipThirdPartyNumber"
+                      control={control}
+                      render={({ field }) => (
+                        <FormControlLabel
+                          control={<Switch {...field} checked={field.value} />}
+                          label="Skip Third Party Number If not connected"
+                        />
+                      )}
+                    />
                   </>
                 )}
-
-                {/* Skip Third Party Number Option */}
-                <Controller
-                  name="skipThirdPartyNumber"
-                  control={control}
-                  render={({ field }) => (
-                    <FormControlLabel
-                      control={<Switch {...field} checked={field.value} />}
-                      label="Skip Third Party Number If not connected"
-                    />
-                  )}
-                />
               </Stack>
             </Card>
 
