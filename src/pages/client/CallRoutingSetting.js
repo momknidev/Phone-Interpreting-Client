@@ -933,12 +933,12 @@ export default function CallRoutingSetting() {
                       <FormControl error={!!errors.defaultCallType}>
                         <FormLabel>Default Call Type *</FormLabel>
                         <RadioGroup row {...field}>
+                          <FormControlLabel value="1" control={<Radio />} label="Three Way Call" />
                           <FormControlLabel
                             value="2"
                             control={<Radio />}
                             label="Interpreter Only"
                           />
-                          <FormControlLabel value="1" control={<Radio />} label="Three Way Call" />
                         </RadioGroup>
                         {errors.defaultCallType && (
                           <Typography variant="caption" color="error">
