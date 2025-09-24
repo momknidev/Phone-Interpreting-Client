@@ -428,6 +428,9 @@ export const CREATE_UPDATED_ROUTING_SETTING = gql`
       thirdPartyNumberErrorMode
       defaultThirdPartyNumber
       skipThirdPartyNumber
+      askForConfirmation
+      requireCountryCode
+      defaultCountryCode
       createdAt
       updatedAt
     }

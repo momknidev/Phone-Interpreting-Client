@@ -561,6 +561,16 @@ export default function CallRoutingSetting() {
       )
       .nullable(),
     skipThirdPartyNumber: yup.boolean(),
+    askForConfirmation: yup.boolean(),
+    requireCountryCode: yup.boolean(),
+    defaultCountryCode: yup
+      .string()
+      .when('requireCountryCode', {
+        is: false,
+        then: (schema) =>
+          schema.required('Default country code is required when country code is not required'),
+      })
+      .nullable(),
   });
 
   const defaultValues = useMemo(
@@ -655,6 +665,9 @@ export default function CallRoutingSetting() {
         ? data?.getCallRoutingSettings?.thirdPartyNumberErrorFile
         : null,
       skipThirdPartyNumber: data?.getCallRoutingSettings?.skipThirdPartyNumber ?? true,
+      askForConfirmation: data?.getCallRoutingSettings?.askForConfirmation ?? false,
+      requireCountryCode: data?.getCallRoutingSettings?.requireCountryCode ?? false,
+      defaultCountryCode: data?.getCallRoutingSettings?.defaultCountryCode ?? '+39',
     }),
     [data]
   );
@@ -685,6 +698,8 @@ export default function CallRoutingSetting() {
   const enableCallType = watch('enableCallType');
   const defaultCallType = watch('defaultCallType');
   const askThirdPartyNumber = watch('askThirdPartyNumber');
+  const askForConfirmation = watch('askForConfirmation');
+  const requireCountryCode = watch('requireCountryCode');
 
   useEffect(() => {
     if (data?.getCallRoutingSettings) {
@@ -715,6 +730,9 @@ export default function CallRoutingSetting() {
         defaultThirdPartyNumber: formData.defaultThirdPartyNumber,
         phone_number_id: phone?.id,
         skipThirdPartyNumber: formData.skipThirdPartyNumber,
+        askForConfirmation: formData.askForConfirmation,
+        requireCountryCode: formData.requireCountryCode,
+        defaultCountryCode: formData.defaultCountryCode,
       };
 
       // Handle text/audio for each field based on mode
@@ -1041,6 +1059,54 @@ export default function CallRoutingSetting() {
                         />
                       )}
                     />
+
+                    {/* Ask For Confirmation Option */}
+                    <Controller
+                      name="askForConfirmation"
+                      control={control}
+                      render={({ field }) => (
+                        <FormControlLabel
+                          control={<Switch {...field} checked={field.value} />}
+                          label="Ask for confirmation before connecting third party"
+                        />
+                      )}
+                    />
+
+                    {/* Country Code Settings */}
+                    <Typography variant="subtitle1" sx={{ mt: 2 }}>
+                      Country Code Settings
+                    </Typography>
+                    <Controller
+                      name="requireCountryCode"
+                      control={control}
+                      render={({ field }) => (
+                        <FormControlLabel
+                          control={<Switch {...field} checked={field.value} />}
+                          label="Require country code input from user"
+                        />
+                      )}
+                    />
+
+                    {/* Default Country Code - Only show when requireCountryCode is false */}
+                    {!requireCountryCode && (
+                      <Controller
+                        name="defaultCountryCode"
+                        control={control}
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            fullWidth
+                            label="Default Country Code *"
+                            placeholder="Enter default country code (e.g., +39, +1)"
+                            error={!!errors.defaultCountryCode}
+                            helperText={
+                              errors.defaultCountryCode?.message ||
+                              "Country code that will be used when users don't specify one"
+                            }
+                          />
+                        )}
+                      />
+                    )}
                   </>
                 )}
               </Stack>

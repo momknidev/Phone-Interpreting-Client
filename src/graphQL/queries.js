@@ -529,6 +529,9 @@ export const GET_CALL_ROUTING_SETTING = gql`
       thirdPartyNumberErrorFile
       thirdPartyNumberErrorMode
       skipThirdPartyNumber
+      askForConfirmation
+      requireCountryCode
+      defaultCountryCode
     }
   }
 `;
