@@ -957,6 +957,10 @@ export default function CallRoutingSetting() {
                       required
                       errors={errors}
                     />
+                    <Typography variant="caption" sx={{ color: 'red', mt: 1 }}>
+                      Note: Digit (1) will be used for Three-way call option and (2) for Interpreter
+                      only call
+                    </Typography>
                     <TextOrAudioInput
                       values={values}
                       control={control}
