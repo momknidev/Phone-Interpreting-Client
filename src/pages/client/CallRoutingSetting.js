@@ -321,6 +321,16 @@ export default function CallRoutingSetting() {
       .nullable(),
 
     interpreterCallType: yup.string().oneOf(['simultaneous', 'sequential']).required(),
+    sequenceOrder: yup
+      .string()
+      .when('interpreterCallType', {
+        is: 'sequential',
+        then: (schema) =>
+          schema
+            .oneOf(['a_to_z', 'z_to_a', 'random'])
+            .required('Sequence order is required for sequential calls'),
+      })
+      .nullable(),
     enableFallback: yup.boolean(),
     fallbackType: yup.string().oneOf(['number', 'message']).nullable(),
     fallbackNumber: yup.string().when('enableFallback', {
@@ -638,6 +648,7 @@ export default function CallRoutingSetting() {
         ? data?.getCallRoutingSettings?.targetLanguageErrorFile
         : null,
       interpreterCallType: data?.getCallRoutingSettings?.interpreterCallType ?? 'sequential',
+      sequenceOrder: data?.getCallRoutingSettings?.sequenceOrder ?? 'a_to_z',
       enableFallback: data?.getCallRoutingSettings?.enableFallback ?? false,
       fallbackType: data?.getCallRoutingSettings?.fallbackType ?? null,
       fallbackNumber: data?.getCallRoutingSettings?.fallbackNumber ?? '',
@@ -726,6 +737,7 @@ export default function CallRoutingSetting() {
   const askThirdPartyNumber = watch('askThirdPartyNumber');
   const askForConfirmation = watch('askForConfirmation');
   const requireCountryCode = watch('requireCountryCode');
+  const interpreterCallType = watch('interpreterCallType');
 
   useEffect(() => {
     if (data?.getCallRoutingSettings) {
@@ -743,6 +755,7 @@ export default function CallRoutingSetting() {
         askTargetLanguage: formData.askTargetLanguage,
         targetLanguageId: formData.targetLanguageId,
         interpreterCallType: formData.interpreterCallType,
+        sequenceOrder: formData.sequenceOrder,
         enableFallback: formData.enableFallback,
         fallbackType: formData.fallbackType,
         fallbackNumber: formData.fallbackNumber,
@@ -1374,6 +1387,33 @@ export default function CallRoutingSetting() {
                     </FormControl>
                   )}
                 />
+
+                {/* Sequence Order - Show only when Sequential is selected */}
+                {interpreterCallType === 'sequential' && (
+                  <Controller
+                    name="sequenceOrder"
+                    control={control}
+                    render={({ field }) => (
+                      <FormControl error={!!errors.sequenceOrder}>
+                        <FormLabel>Sequence Order *</FormLabel>
+                        <RadioGroup {...field}>
+                          <FormControlLabel value="a_to_z" control={<Radio />} label="A to Z" />
+                          <FormControlLabel value="z_to_a" control={<Radio />} label="Z to A" />
+                          <FormControlLabel value="random" control={<Radio />} label="Random" />
+                        </RadioGroup>
+                        {errors.sequenceOrder && (
+                          <Typography variant="caption" color="error">
+                            {errors.sequenceOrder.message}
+                          </Typography>
+                        )}
+                        <Typography variant="caption" sx={{ color: 'text.secondary', mt: 1 }}>
+                          This determines the order in which interpreters will be called when using
+                          sequential calling
+                        </Typography>
+                      </FormControl>
+                    )}
+                  />
+                )}
                 <Controller
                   name="retryAttempts"
                   control={control}

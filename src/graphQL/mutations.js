@@ -393,6 +393,7 @@ export const CREATE_UPDATED_ROUTING_SETTING = gql`
       targetLanguageErrorFile
       targetLanguageErrorMode
       interpreterCallType
+      sequenceOrder
       retryAttempts
       inputAttemptsCount
       inputAttemptsMode

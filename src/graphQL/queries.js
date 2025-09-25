@@ -21,6 +21,10 @@ export const LOGIN = gql`
 export const CLIENT_BY_ID = gql`
   query ($id: String) {
     clientByID(id: $id) {
+      targetLanguagePromptMode
+      interpreterCallType
+      sequenceOrder
+      retryAttempts
       id
       first_name
       last_name
@@ -535,6 +539,7 @@ export const GET_CALL_ROUTING_SETTING = gql`
       promptForConfirmationMode
       requireCountryCode
       defaultCountryCode
+      sequenceOrder
     }
   }
 `;
