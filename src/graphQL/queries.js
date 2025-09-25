@@ -530,6 +530,9 @@ export const GET_CALL_ROUTING_SETTING = gql`
       thirdPartyNumberErrorMode
       skipThirdPartyNumber
       askForConfirmation
+      promptForConfirmationText
+      promptForConfirmationFile
+      promptForConfirmationMode
       requireCountryCode
       defaultCountryCode
     }

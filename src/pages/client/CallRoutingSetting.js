@@ -562,6 +562,27 @@ export default function CallRoutingSetting() {
       .nullable(),
     skipThirdPartyNumber: yup.boolean(),
     askForConfirmation: yup.boolean(),
+    promptForConfirmationMode: yup
+      .string()
+      .when('askForConfirmation', {
+        is: true,
+        then: (schema) => schema.oneOf(['text', 'audio']).required(),
+      })
+      .nullable(),
+    promptForConfirmationText: yup
+      .string()
+      .when(['askForConfirmation', 'promptForConfirmationMode'], {
+        is: (askForConfirmation, mode) => askForConfirmation && mode === 'text',
+        then: (schema) => schema.required('Confirmation prompt text is required'),
+      })
+      .nullable(),
+    promptForConfirmationFile: yup
+      .mixed()
+      .when(['askForConfirmation', 'promptForConfirmationMode'], {
+        is: (askForConfirmation, mode) => askForConfirmation && mode === 'audio',
+        then: (schema) => schema.required('Confirmation prompt audio file is required'),
+      })
+      .nullable(),
     requireCountryCode: yup.boolean(),
     defaultCountryCode: yup
       .string()
@@ -666,6 +687,11 @@ export default function CallRoutingSetting() {
         : null,
       skipThirdPartyNumber: data?.getCallRoutingSettings?.skipThirdPartyNumber ?? true,
       askForConfirmation: data?.getCallRoutingSettings?.askForConfirmation ?? false,
+      promptForConfirmationMode: data?.getCallRoutingSettings?.promptForConfirmationMode ?? 'text',
+      promptForConfirmationText: data?.getCallRoutingSettings?.promptForConfirmationText ?? '',
+      promptForConfirmationFile: data?.getCallRoutingSettings?.promptForConfirmationFile
+        ? data?.getCallRoutingSettings?.promptForConfirmationFile
+        : null,
       requireCountryCode: data?.getCallRoutingSettings?.requireCountryCode ?? false,
       defaultCountryCode: data?.getCallRoutingSettings?.defaultCountryCode ?? '+39',
     }),
@@ -751,6 +777,7 @@ export default function CallRoutingSetting() {
         'callTypeError',
         'thirdPartyNumberPrompt',
         'thirdPartyNumberError',
+        'promptForConfirmation',
       ];
 
       messageFields.forEach((field) => {
@@ -984,7 +1011,6 @@ export default function CallRoutingSetting() {
                         />
                       )}
                     />
-
                     {/* When Third Party Prompt is ENABLED */}
                     {askThirdPartyNumber && (
                       <>
@@ -1008,7 +1034,6 @@ export default function CallRoutingSetting() {
                         />
                       </>
                     )}
-
                     {/* When Third Party Prompt is DISABLED - Show Default Phone Number Field */}
                     {!askThirdPartyNumber && (
                       <Controller
@@ -1059,7 +1084,6 @@ export default function CallRoutingSetting() {
                         />
                       )}
                     />
-
                     {/* Ask For Confirmation Option */}
                     <Controller
                       name="askForConfirmation"
@@ -1071,7 +1095,28 @@ export default function CallRoutingSetting() {
                         />
                       )}
                     />
+                    {/* Confirmation Prompt Settings - Show when askForConfirmation is enabled  */}
+                    {askForConfirmation && (
+                      <>
+                        <Typography variant="body2" sx={{ mt: 2, mb: 1, fontWeight: 500 }}>
+                          Confirmation Prompt Settings
+                        </Typography>
 
+                        <TextOrAudioInput
+                          values={values}
+                          control={control}
+                          fieldName="promptForConfirmation"
+                          label="Third Party Confirmation Prompt"
+                          placeholder="Enter the confirmation prompt message"
+                          required
+                          errors={errors}
+                        />
+
+                        <Typography variant="caption" sx={{ color: 'red', mt: 1 }}>
+                          Note: Digit(1) will be used for confirmation and (0) for re-try number
+                        </Typography>
+                      </>
+                    )}
                     {/* Country Code Settings */}
                     <Typography variant="subtitle1" sx={{ mt: 2 }}>
                       Country Code Settings
@@ -1086,7 +1131,6 @@ export default function CallRoutingSetting() {
                         />
                       )}
                     />
-
                     {/* Default Country Code - Only show when requireCountryCode is false */}
                     {!requireCountryCode && (
                       <Controller

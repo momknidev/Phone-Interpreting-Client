@@ -429,6 +429,10 @@ export const CREATE_UPDATED_ROUTING_SETTING = gql`
       defaultThirdPartyNumber
       skipThirdPartyNumber
       askForConfirmation
+
+      promptForConfirmationText
+      promptForConfirmationFile
+      promptForConfirmationMode
       requireCountryCode
       defaultCountryCode
       createdAt
