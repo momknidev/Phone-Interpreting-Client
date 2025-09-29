@@ -555,3 +555,34 @@ export const CLIENT_PHONES = gql`
     }
   }
 `;
+export const GET_CALL_STATISTICS = gql`
+  query GetCallStatistics($year: String!, $phoneNumberId: ID!) {
+    getCallStatistics(year: $year, phone_number_id: $phoneNumberId) {
+      completed
+      notCompleted
+      inProgress
+      total
+    }
+  }
+`;
+export const GET_GENERAL_CALL_STATISTICS = gql`
+  query GetGeneralCallStatistics($year: String!, $phoneNumberId: ID!) {
+    getGeneralCallStatistics(year: $year, phone_number_id: $phoneNumberId) {
+      callsLastMonth
+      medianCallsPerMonth
+      totalCalls
+      averageResponseTime
+      averageCallDuration
+    }
+  }
+`;
+export const GET_MONTHLY_CALL_STATISTICS = gql`
+  query GetMonthlyCallStatistics($year: String!, $phoneNumberId: ID!) {
+    getMonthlyCallStatistics(year: $year, phone_number_id: $phoneNumberId) {
+      month
+      totalCalls
+      completed
+      notCompleted
+    }
+  }
+`;
