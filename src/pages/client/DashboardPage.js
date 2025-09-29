@@ -25,7 +25,11 @@ export default function DashboardPage() {
     return <NoPhoneSelected />;
   }
 
-  const years = Array.from({ length: 10 }, (_, i) => (new Date().getFullYear() - i).toString());
+  const currentYear = new Date().getFullYear();
+  const startYear = 2025;
+  const years = Array.from({ length: currentYear - startYear + 1 }, (_, i) =>
+    (startYear + i).toString()
+  );
 
   return (
     <>
@@ -40,24 +44,26 @@ export default function DashboardPage() {
               title={`Welcome! \n ${user?.first_name || ' '} ${user?.last_name || ''}`}
               action={
                 <Stack direction="row" spacing={2} sx={{ py: 3 }}>
-                  <FormControl sx={{ minWidth: 120 }}>
-                    <InputLabel>Year</InputLabel>
-                    <Select
-                      value={selectedYear}
-                      onChange={(e) => setSelectedYear(e.target.value)}
-                      label="Year"
-                    >
-                      {years.map((year) => (
-                        <MenuItem key={year} value={year}>
-                          {year}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
                   <PhonePopover />
                 </Stack>
               }
             />
+          </Grid>
+          <Grid item xs={12} md={12} lg={12} sx={{ display: 'flex', justifyContent: 'center' }}>
+            <FormControl sx={{ minWidth: 120 }}>
+              <InputLabel>Year</InputLabel>
+              <Select
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(e.target.value)}
+                label="Year"
+              >
+                {years.map((year) => (
+                  <MenuItem key={year} value={year}>
+                    {year}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
           <Grid item xs={12} md={6} lg={6}>
             <Stats year={selectedYear} phoneNumberId={phone.id} />
