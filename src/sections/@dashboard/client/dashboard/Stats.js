@@ -14,19 +14,19 @@ export default function Stats() {
       }}
     >
       <Grid item xs={12}>
-        <AnalyticsWidgetSummary title="Weekly Sales" total={714000} />
+        <AnalyticsWidgetSummary title="Calls done in last Month:" total={714000} />
       </Grid>
       <Grid item xs={12}>
-        <AnalyticsWidgetSummary title="Weekly Sales" total={1} />
+        <AnalyticsWidgetSummary title="Median Calls per Month:" total={1} />
       </Grid>
       <Grid item xs={12}>
-        <AnalyticsWidgetSummary title="New Users" total={1352831} />
+        <AnalyticsWidgetSummary title="Total Number of calls:" total={1352831} />
       </Grid>
       <Grid item xs={12}>
-        <AnalyticsWidgetSummary title="Item Orders" total={1723315} />
+        <AnalyticsWidgetSummary title="Average Response Time:" total={1723315} />
       </Grid>
       <Grid item xs={12}>
-        <AnalyticsWidgetSummary title="Bug Reports" total={234} />
+        <AnalyticsWidgetSummary title="Average Duration of calls:" total={234} />
       </Grid>
     </Grid>
   );
